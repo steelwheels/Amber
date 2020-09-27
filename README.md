@@ -15,5 +15,5 @@ The AmberScript is declarative language to design the object called _component_.
 The _frame_ is used to declare the component.
 
 ## Documents
-* [AmberScript language specification](Document/Language/amber-script-language.md):
+* [AmberScript language specification](Document/language/amber-script-language.md): The specificiation of AmberScript language
 
