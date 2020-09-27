@@ -1,6 +1,6 @@
 # AmberScript: Language specification
 
-![Amber Icon](../resource/amber-icon.png "Amber Icon")
+![Amber Icon](https://github.com/steelwheels/Amber/blob/master/Document/resource/amber-icon-128x128.png)
 
 ## Introduction
 The AmberScript language consists of hierarchical structure of _frames_. The AmberScript has original syntax to define property of the frame, but the logic of the function is described by *JavaScript*. The frame is used to present component such as GUI parts.
