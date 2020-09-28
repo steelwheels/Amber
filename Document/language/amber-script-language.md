@@ -19,28 +19,45 @@ window_a: Window {
 ````
 
 ## Frame
-The frame is dictionary which contains some items with it's names. 
+The frame contains multile members such as properties, functions and child frames. The `identifier` is the name of the frame. The frame will  allocated as the instance of `class-name` class.
+
 ````
-{
+identifier : class-name {
     name : type value
     ....
 }
 ````
 
-Next table describes about types of items:
+The kind of members are categorized by the type. Here is the sample of items.
 
-|Category   |Type   |Description    |
-|:--        |:--    |:--            |
-|Property   |Bool   |Boolean variable which has `true` or `false` |
-|           |Int    |Signed integer value (32bit)   |
-|           |Float  |Floating point value           |
-|           |String |Strint value                   |
-|Function   |Procedural function |The normal function which is called by the other function and returns the result. |
-|           |Reactive function | The function which is called when at least one value of input parameter is updated. |
-|           |Event function |The function which is called when some event is occured. In usually, the trigger of the event is user action such as click, drag and key press. |
-|Frame     |Frame  |Nested frame                   |
+### Property member
+The named variable to store value. See [Type](#Type) section.
+````
+{
+    property_a : Int        0
+    property_b : Float      12.3
+}
+````
 
-Here is the syntax of _frame_:
+### Frame member
+The frame can contain child frame. See [Class](#Class) section.
+````
+{
+    object: Object {
+        ...
+    }
+}
+````
+
+### Function member
+Multiple kind of functions are supported. See [Function](#Function) section.
+````
+{
+    func_a: func(a:Int, b:Int) -> Int %{ return a + b ; %}
+}
+````
+
+Here is the syntax of the frame:
 ````
 frame           := '{' frame_items_opt '}'
 frame_items_opt := /* empty */
@@ -76,11 +93,12 @@ reactive_expression := <See Reactive Function Section>
 ### Procedural function
 ````
 {
-    func_name: Func(a:Int, b:Int) -> Int { return a + b ; }
+    func_name: Func(a:Int, b:Int) -> Int %{ return a + b ; %}
 }
 ````
 This function is used as normal function (method) of the object. It is called by the statement in the other function.
 
+Abount `function_body` see [Function body](#Functionbody) section.
 ````
 procedural_function
             := 'Func' '(' arguments ')' '->' argument_type   
@@ -94,18 +112,29 @@ The reactive function is executed when it's argument value is updated. The argum
 In the following example, the method "func_name" is called when the property "this.a" or "this.b" is updated. The variable "this.sum" is updated after executing function. 
 ````
 {
-    func_name: Listen(a: this.a, b: this.b) {
+    func_name: Listen(a: this.a, b: this.b) %{
         this.sum = a + b ;
-    }
+    %}
 }
 ````
 
 The reactive function can not be called by the statement. And the return value will be *ignored*.
 
+````
+listner_function
+            := 'Listner' '(' path_arguments ')'   
+               function_body
+            ;
+path_arguments
+            := path_argument
+            |  path_arguments ',' path_argument
+            ;
+````
+
 ### Event function
 ````
 {
-    event_name : Event(){ count = count + 1 ; }
+    event_name : Event() %{ count = count + 1 ; %}
 }
 ````
 This function will be called when some events are occurred. In usually, the event occured by the user action (such as click, drag and key typing). The event is received by system software. The software selects the event function to call and call it with some parameters.
@@ -185,6 +214,22 @@ path_sub_expression := instance
                 ;
 instance        := IDENTIFIER
 ````
+
+## Type
+|Category   |Type   |Description    |
+|:--        |:--    |:--            |
+|Property   |Bool   |Boolean variable which has `true` or `false` |
+|           |Int    |Signed integer value (32bit)   |
+|           |Float  |Floating point value           |
+|           |String |Strint value                   |
+|Function   |Procedural function |The normal function which is called by the other function and returns the result. |
+|           |Reactive function | The function which is called when at least one value of input parameter is updated. |
+|           |Event function |The function which is called when some event is occured. In usually, the trigger of the event is user action such as click, drag and key press. |
+|Frame      |Class-name  |Nested frame                   |
+
+## Class
+aaa
+
 
 ## Reserved values
 There is reserved word for AmberScript. They are case sensitive.

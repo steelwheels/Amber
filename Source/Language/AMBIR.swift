@@ -15,12 +15,14 @@ public struct AMBFrame {
 		case	frame(AMBFrame)
 	}
 
+	public var 	className:	String
 	public var	name:		String
-	public var	members:	Dictionary<String, Member>
+	public var	members:	Array<Member>
 
-	public init(name nm: String) {
-		name    = nm
-		members = [:]
+	public init(className cname: String, name nm: String) {
+		className	= cname
+		name    	= nm
+		members 	= []
 	}
 }
 
@@ -40,12 +42,24 @@ public enum AMBType {
 		}
 		return result
 	}
+
+	public static func decode(_ str: String) -> AMBType? {
+		let result: AMBType?
+		switch str {
+		case "Bool":	result = .booleanType
+		case "Int":	result = .intType
+		case "Float":	result = .floatType
+		case "String":	result = .stringType
+		default:	result = nil
+		}
+		return result
+	}
 }
 
 public enum AMBValue {
 	case	booleanValue(Bool)
 	case	intValue(Int)
-	case	floatValue(Float)
+	case	floatValue(Double)
 	case	stringValue(String)
 
 	public var type: AMBType {
@@ -118,12 +132,35 @@ public enum AMBProperty {
 
 public struct AMBFunction {
 	public enum FunctionType {
-		case procedural(Array<AMBArgument>, AMBType)	// arguments, return-type
+		case procedure(Array<AMBArgument>, AMBType)	// arguments, return-type
 		case listner(Array<AMBPathArgument>)		// arguments for path expression
 		case event					//
 	}
 
+	public enum FunctionCode {
+		case procedure
+		case listner
+		case event
+	}
+
 	public var	name	: String
 	public var	type	: FunctionType
-	public var	body	: Array<String>
+	public var	body	: String
+
+	public init(name nm: String, type typ: FunctionType, body bdy: String) {
+		name	= nm
+		type	= typ
+		body	= bdy
+	}
+
+	public static func decodeType(_ str: String) -> FunctionCode? {
+		let result: FunctionCode?
+		switch str {
+		case "Func":	result = .procedure
+		case "Listner":	result = .listner
+		case "Event":	result = .event
+		default:	result = nil
+		}
+		return result
+	}
 }

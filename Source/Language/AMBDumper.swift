@@ -16,10 +16,10 @@ public class AMBDumper
 
 	public func dumpToText(frame frm: AMBFrame) -> CNTextSection {
 		let frmtxt = CNTextSection()
-		frmtxt.header = "\(frm.name): {" ; frmtxt.footer = "}"
-		for (_, val) in frm.members {
+		frmtxt.header = "\(frm.name): \(frm.className) {" ; frmtxt.footer = "}"
+		for member in frm.members {
 			let membtxt: CNText
-			switch val {
+			switch member {
 			case .property(let prop):
 				membtxt = dumpToText(property: prop)
 			case .function(let afunc):
@@ -52,7 +52,7 @@ public class AMBDumper
 	private func dumpToText(functionType ftype: AMBFunction.FunctionType) -> String {
 		let line: String
 		switch ftype {
-		case .procedural(let args, let rettype):
+		case .procedure(let args, let rettype):
 			line = "Func" + dumpToText(arguments: args) + " -> " + rettype.name()
 		case .listner(let args):
 			line = "Linstner" + dumpToText(pathArguments: args)

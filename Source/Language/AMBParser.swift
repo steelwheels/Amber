@@ -51,15 +51,197 @@ public class AMBParser
 		guard strm.requireSymbol(symbol: ":") else {
 			throw requireSymbolError(symbol: ":")
 		}
+		guard let clsname = strm.getIdentifier() else {
+			throw requireDeclarationError(declaration: "Class name")
+		}
+		return try parseFrame(identifier: ident, className: clsname, stream: strm)
+	}
 
-		let newframe = AMBFrame(name: ident)
+	private func parseFrame(identifier ident: String, className clsname: String, stream strm: CNTokenStream) throws -> AMBFrame {
+		var newframe = AMBFrame(className: clsname, name: ident)
+
 		guard strm.requireSymbol(symbol: "{") else {
 			throw requireSymbolError(symbol: "{")
 		}
-		guard strm.requireSymbol(symbol: "}") else {
-			throw requireSymbolError(symbol: "}")
+
+		var finished = strm.requireSymbol(symbol: "}")
+		while !finished {
+			let _ = strm.unget()
+			let memb = try parseMember(frame: newframe, stream: strm)
+			newframe.members.append(memb)
+			finished = strm.requireSymbol(symbol: "}")
 		}
+
 		return newframe
+	}
+
+	private func parseMember(frame frm: AMBFrame, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+		guard let ident = strm.getIdentifier() else {
+			throw requireDeclarationError(declaration: "Identifier")
+		}
+		guard strm.requireSymbol(symbol: ":") else {
+			throw requireSymbolError(symbol: ":")
+		}
+		guard let typestr = strm.getIdentifier() else {
+			throw requireDeclarationError(declaration: "Type")
+		}
+		if let type = AMBType.decode(typestr) {
+			return try parseProperty(frame: frm, identifier: ident, type: type, stream: strm)
+		} else if let code = AMBFunction.decodeType(typestr) {
+			let result: AMBFrame.Member
+			switch code {
+			case .procedure: result = try parseProceduralFunc(frame: frm, identifier: ident, stream: strm)
+			case .listner:	 result = try parseListnerFunc(frame: frm, identifier: ident, stream: strm)
+			case .event:	 result = try parseEventFunc(frame: frm, identifier: ident, stream: strm)
+			}
+			return result
+		} else {
+			let child = try parseFrame(identifier: ident, className: typestr, stream: strm)
+			return .frame(child)
+		}
+	}
+
+	private func parseProperty(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+		let value: AMBValue
+		switch typ {
+		case .booleanType:
+			if let val = strm.getBool() {
+				value = .booleanValue(val)
+			} else {
+				throw requireDeclarationError(declaration: "Boolean value")
+			}
+		case .intType:
+			if let val = strm.getAnyInt() {
+				value = .intValue(val)
+			} else {
+				throw requireDeclarationError(declaration: "Integer value")
+			}
+		case .floatType:
+			if let val = strm.getAnyDouble() {
+				value = .floatValue(val)
+			} else {
+				throw requireDeclarationError(declaration: "Float value")
+			}
+		case .stringType:
+			if let val = strm.getString() {
+				value = .stringValue(val)
+			} else {
+				throw requireDeclarationError(declaration: "String value")
+			}
+		}
+		let prop: AMBProperty = .immediate(ident, value)
+		return .property(prop)
+	}
+
+	private func parseProceduralFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+		var args: Array<AMBArgument> = []
+		guard strm.requireSymbol(symbol: "(") else {
+			throw requireSymbolError(symbol: "(")
+		}
+		var finished = strm.requireSymbol(symbol: ")")
+		while !finished {
+			let _    = strm.unget()
+			let arg  = try parseArgument(stream: strm)
+			args.append(arg)
+			finished = strm.requireSymbol(symbol: ")")
+		}
+		guard strm.requireSymbol(symbol: "-") else {
+			throw requireSymbolError(symbol: "-")
+		}
+		guard strm.requireSymbol(symbol: ">") else {
+			throw requireSymbolError(symbol: ">")
+		}
+		guard let typestr = strm.getIdentifier() else {
+			throw requireDeclarationError(declaration: "Type")
+		}
+		guard let rettype = AMBType.decode(typestr) else {
+			throw NSError.parseError(message: "Unknown type: \(typestr)")
+		}
+		guard let text = strm.getText() else {
+			throw requireDeclarationError(declaration: "Function body")
+		}
+		let funcdecl = AMBFunction(name: ident, type: .procedure(args, rettype), body: text)
+		return .function(funcdecl)
+	}
+
+	private func parseListnerFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+		var args: Array<AMBPathArgument> = []
+		guard strm.requireSymbol(symbol: "(") else {
+			throw requireSymbolError(symbol: "(")
+		}
+		var finished = strm.requireSymbol(symbol: ")")
+		while !finished {
+			let _    = strm.unget()
+			let arg  = try parsePathArgument(stream: strm)
+			args.append(arg)
+			finished = strm.requireSymbol(symbol: ")")
+		}
+		guard let text = strm.getText() else {
+			throw requireDeclarationError(declaration: "Function body")
+		}
+		let funcdecl = AMBFunction(name: ident, type: .listner(args), body: text)
+		return .function(funcdecl)
+	}
+
+	private func parseEventFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+		guard strm.requireSymbol(symbol: "(") else {
+			throw requireSymbolError(symbol: "(")
+		}
+		guard strm.requireSymbol(symbol: ")") else {
+			throw requireSymbolError(symbol: ")")
+		}
+		guard let text = strm.getText() else {
+			throw requireDeclarationError(declaration: "Function body")
+		}
+		let funcdecl = AMBFunction(name: ident, type: .event, body: text)
+		return .function(funcdecl)
+	}
+
+	private func parseArgument(stream strm: CNTokenStream) throws -> AMBArgument {
+		guard let ident = strm.getIdentifier() else {
+			throw requireDeclarationError(declaration: "Argument name")
+		}
+		guard strm.requireSymbol(symbol: ":") else {
+			throw requireSymbolError(symbol: ":")
+		}
+		guard let typestr = strm.getIdentifier() else {
+			throw requireDeclarationError(declaration: "Type")
+		}
+		guard let type = AMBType.decode(typestr) else {
+			throw NSError.parseError(message: "Unknown type: \(typestr)")
+		}
+		return AMBArgument(name: ident, type: type)
+	}
+
+	private func parsePathArgument(stream strm: CNTokenStream) throws -> AMBPathArgument {
+		guard let ident = strm.getIdentifier() else {
+			throw requireDeclarationError(declaration: "Argument name")
+		}
+		guard strm.requireSymbol(symbol: ":") else {
+			throw requireSymbolError(symbol: ":")
+		}
+		let pathexp = try parsePathExpression(stream: strm)
+		return AMBPathArgument(name: ident, pathExpression: pathexp)
+	}
+
+	private func parsePathExpression(stream strm: CNTokenStream) throws -> AMBPathExpression {
+		var result = AMBPathExpression()
+		guard let head = strm.getIdentifier() else {
+			throw requireDeclarationError(declaration: "Path expression")
+		}
+		result.elements.append(head)
+
+		var hasnext = strm.requireSymbol(symbol: ".")
+		while hasnext {
+			guard let ident = strm.getIdentifier() else {
+				throw requireDeclarationError(declaration: "Path expression element")
+			}
+			result.elements.append(ident)
+			hasnext = strm.requireSymbol(symbol: ".")
+		}
+		let _ = strm.unget()
+
+		return result
 	}
 
 	private func requireSymbolError(symbol sym: Character) -> NSError {

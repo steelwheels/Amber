@@ -11,8 +11,8 @@ import Foundation
 
 public func UTParser(console cons: CNConsole) -> Bool
 {
-	let src0   = "object: { }"
-	let src1   = "object: { a: Int 0 } "
+	let src0   = "object: Object { }"
+	let src1   = "object: Object { a: Int 0 } "
 	let srcs   = [src0, src1]
 	var result = true
 	for src in srcs {
@@ -32,9 +32,11 @@ private func testParser(source src: String, console cons: CNConsole) -> Bool {
 		let dumper = AMBDumper()
 		let text   = dumper.dumpToText(frame: frame)
 		text.print(console: cons, terminal: "")
+		cons.print(string: "Result ... OK\n")
 		result = true
 	case .error(let error):
 		cons.print(string: "[Error] \(error.toString())\n")
+		cons.print(string: "Result ... NG\n")
 		result = false
 	}
 	return result
