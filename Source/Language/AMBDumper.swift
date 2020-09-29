@@ -44,8 +44,9 @@ public class AMBDumper
 	private func dumpToText(function afunc: AMBFunction) -> CNTextSection {
 		let functxt = CNTextSection()
 		let typetxt = dumpToText(functionType: afunc.type)
-		functxt.header = "\(afunc.name): \(typetxt) {" ; functxt.footer = "}"
-
+		functxt.header = "\(afunc.name): \(typetxt) %{" ; functxt.footer = "%}"
+		let body = CNTextLine(string: afunc.body)
+		functxt.add(text: body)
 		return functxt
 	}
 

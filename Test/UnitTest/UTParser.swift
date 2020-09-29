@@ -13,7 +13,11 @@ public func UTParser(console cons: CNConsole) -> Bool
 {
 	let src0   = "object: Object { }"
 	let src1   = "object: Object { a: Int 0 } "
-	let srcs   = [src0, src1]
+	let src2   = "object: Object { f: Func(a:Int, b:Float) -> Int %{ return a+b ; %} }"
+	let src3   = "object: Object { f: Event() %{ console.log(\"a\") ; %} }"
+	let src4   = "object: Object { f: Listner(a: self.a) %{ console.log(a) ; %} }"
+	let src5   = "object: Object { f: Listner(a: self.a, b:self.b) %{ console.log(a+b) ; %} }"
+	let srcs   = [src0, src1, src2, src3, src4, src5]
 	var result = true
 	for src in srcs {
 		if !testParser(source: src, console: cons) {

@@ -144,12 +144,19 @@ public class AMBParser
 			let arg  = try parseArgument(stream: strm)
 			args.append(arg)
 			finished = strm.requireSymbol(symbol: ")")
+			if !finished {
+				let _ = strm.unget()
+				guard strm.requireSymbol(symbol: ",") else {
+					throw requireSymbolError(symbol: ",")
+				}
+				finished = strm.requireSymbol(symbol: ")")	// get next for future unget
+			}
 		}
 		guard strm.requireSymbol(symbol: "-") else {
-			throw requireSymbolError(symbol: "-")
+			throw requireSymbolError(symbol: "->")
 		}
 		guard strm.requireSymbol(symbol: ">") else {
-			throw requireSymbolError(symbol: ">")
+			throw requireSymbolError(symbol: "->")
 		}
 		guard let typestr = strm.getIdentifier() else {
 			throw requireDeclarationError(declaration: "Type")
@@ -174,7 +181,16 @@ public class AMBParser
 			let _    = strm.unget()
 			let arg  = try parsePathArgument(stream: strm)
 			args.append(arg)
+			//dumpStream(title: "pLF0", stream: strm)
 			finished = strm.requireSymbol(symbol: ")")
+			if !finished {
+				let _ = strm.unget()
+				guard strm.requireSymbol(symbol: ",") else {
+					throw requireSymbolError(symbol: ",")
+				}
+				finished = strm.requireSymbol(symbol: ")")	// get next for future unget
+			}
+			//dumpStream(title: "pL1F", stream: strm)
 		}
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Function body")
@@ -215,7 +231,7 @@ public class AMBParser
 
 	private func parsePathArgument(stream strm: CNTokenStream) throws -> AMBPathArgument {
 		guard let ident = strm.getIdentifier() else {
-			throw requireDeclarationError(declaration: "Argument name")
+			throw requireDeclarationError(declaration: "Listening argument name")
 		}
 		guard strm.requireSymbol(symbol: ":") else {
 			throw requireSymbolError(symbol: ":")
@@ -240,16 +256,25 @@ public class AMBParser
 			hasnext = strm.requireSymbol(symbol: ".")
 		}
 		let _ = strm.unget()
+		//dumpStream(title: "pPE", stream: strm)
 
 		return result
 	}
 
-	private func requireSymbolError(symbol sym: Character) -> NSError {
+	private func requireSymbolError(symbol sym: String) -> NSError {
 		return NSError.parseError(message: "Symbol \"\(sym)\" is required but it is not given")
 	}
 
 	private func requireDeclarationError(declaration decl: String) -> NSError {
 		return NSError.parseError(message: "\(decl) is required but it is not given")
+	}
+
+	private func dumpStream(title str: String, stream strm: CNTokenStream) {
+		if let token = strm.peek(offset: 0) {
+			NSLog("\(str): \(token.description)")
+		} else {
+			NSLog("\(str): nil")
+		}
 	}
 
 }
