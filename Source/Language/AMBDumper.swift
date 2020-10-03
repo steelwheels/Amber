@@ -16,14 +16,18 @@ public class AMBDumper
 
 	public func dumpToText(frame frm: AMBFrame) -> CNTextSection {
 		let frmtxt = CNTextSection()
-		frmtxt.header = "\(frm.name): \(frm.className) {" ; frmtxt.footer = "}"
+		frmtxt.header = "\(frm.instanceName): \(frm.className) {" ; frmtxt.footer = "}"
 		for member in frm.members {
 			let membtxt: CNText
 			switch member {
 			case .property(let prop):
-				membtxt = dumpToText(property: prop)
-			case .function(let afunc):
-				membtxt = dumpToText(function: afunc)
+				membtxt = propertyToText(prop)
+			case .procedureFunction(let pfunc):
+				membtxt = procedureFunctionToText(pfunc)
+			case .listnerFunction(let lfunc):
+				membtxt = listnerFunctionToText(lfunc)
+			case .eventFunction(let efunc):
+				membtxt = eventFunctionToText(efunc)
 			case .frame(let child):
 				membtxt = dumpToText(frame: child)
 			}
@@ -32,62 +36,81 @@ public class AMBDumper
 		return frmtxt
 	}
 
-	private func dumpToText(property prop: AMBProperty) -> CNTextLine {
-		let line: String
-		switch prop {
-		case .immediate(let name, let val):
-			line = "\(name): \(val.type.name()) \(val.toString())"
-		}
+	private func propertyToText(_ prop: AMBProperty) -> CNTextLine {
+		let valtxt = prop.value.toText().toStrings(terminal: "").joined()
+		let line   = "\(prop.name): \(prop.type.name()) \(valtxt)"
 		return CNTextLine(string: line)
 	}
 
-	private func dumpToText(function afunc: AMBFunction) -> CNTextSection {
-		let functxt = CNTextSection()
-		let typetxt = dumpToText(functionType: afunc.type)
-		functxt.header = "\(afunc.name): \(typetxt) %{" ; functxt.footer = "%}"
-		let body = CNTextLine(string: afunc.body)
+	private func procedureFunctionToText(_ pfunc: AMBProcedureFunction) -> CNTextSection {
+		let functxt     = CNTextSection()
+		let paramstr    = argumentsToString(arguments: pfunc.arguments)
+		functxt.header  = makeFunctionHeader(function: pfunc, parameterString: paramstr, returnType: pfunc.returnType)
+		functxt.footer	= makeFunctionFooter()
+		let body = CNTextLine(string: pfunc.functionBody)
 		functxt.add(text: body)
 		return functxt
 	}
 
-	private func dumpToText(functionType ftype: AMBFunction.FunctionType) -> String {
-		let line: String
-		switch ftype {
-		case .procedure(let args, let rettype):
-			line = "Func" + dumpToText(arguments: args) + " -> " + rettype.name()
-		case .listner(let args):
-			line = "Linstner" + dumpToText(pathArguments: args)
-		case .event:
-			line = "Event()"
+	private func listnerFunctionToText(_ lfunc: AMBListnerFunction) -> CNTextSection {
+		let functxt     = CNTextSection()
+		let paramstr	= pathArgumentsToString(pathArguments: lfunc.arguments)
+		functxt.header  = makeFunctionHeader(function: lfunc, parameterString: paramstr, returnType: nil)
+		functxt.footer	= makeFunctionFooter()
+		let body = CNTextLine(string: lfunc.functionBody)
+		functxt.add(text: body)
+		return functxt
+	}
+
+	private func eventFunctionToText(_ efunc: AMBEventFunction) -> CNTextSection {
+		let functxt     = CNTextSection()
+		functxt.header	= makeFunctionHeader(function: efunc, parameterString: "", returnType: nil)
+		functxt.footer	= makeFunctionFooter()
+		let body = CNTextLine(string: efunc.functionBody)
+		functxt.add(text: body)
+		return functxt
+	}
+
+	private func makeFunctionHeader(function afunc: AMBFunction, parameterString paramstr: String, returnType rettype: AMBType?) -> String {
+		let functype = AMBFunction.encode(type: afunc.functionType)
+		var line     = afunc.functionName + " : " + functype + "(\(paramstr)) "
+		if let type = rettype {
+			let typestr = type.name()
+			line += "-> \(typestr) "
+		}
+		line += "%{"
+		return line
+	}
+
+	private func makeFunctionFooter() -> String {
+		return "%}"
+	}
+
+	private func argumentsToString(arguments args: Array<AMBArgument>) -> String {
+		var line: String = ""
+		var is1st = true
+		for arg in args {
+			if is1st { is1st = false} else { line += ", " }
+			line += argumentToString(argument: arg)
 		}
 		return line
 	}
 
-	private func dumpToText(arguments args: Array<AMBArgument>) -> String {
-		var line: String = "("
-		var is1st = true
-		for arg in args {
-			if is1st { is1st = false} else { line += ", " }
-			line += dumpToText(argument: arg) 
-		}
-		return line + ")"
-	}
-
-	private func dumpToText(pathArguments pargs: Array<AMBPathArgument>) -> String {
-		var line: String = "("
+	private func pathArgumentsToString(pathArguments pargs: Array<AMBPathArgument>) -> String {
+		var line: String = ""
 		var is1st = true
 		for parg in pargs {
 			if is1st { is1st = false} else { line += ", " }
-			line += dumpToText(pathArgument: parg)
+			line += pathArgumentToString(pathArgument: parg)
 		}
-		return line + ")"
+		return line
 	}
 
-	private func dumpToText(argument arg: AMBArgument) -> String {
+	private func argumentToString(argument arg: AMBArgument) -> String {
 		return "\(arg.name): \(arg.type.name())"
 	}
 
-	private func dumpToText(pathArgument arg: AMBPathArgument) -> String {
+	private func pathArgumentToString(pathArgument arg: AMBPathArgument) -> String {
 		return "\(arg.name): \(arg.expression.toString())"
 	}
 }

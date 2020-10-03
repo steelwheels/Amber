@@ -12,8 +12,9 @@ print("Hello, World!")
 
 let cons = CNFileConsole()
 let res0 = UTParser(console: cons)
+let res1 = UTCompiler(console: cons)
 
-let result = res0
+let result = res0 && res1
 if result {
 	cons.print(string: "SUMMARY: OK\n")
 } else {

@@ -58,7 +58,7 @@ public class AMBParser
 	}
 
 	private func parseFrame(identifier ident: String, className clsname: String, stream strm: CNTokenStream) throws -> AMBFrame {
-		var newframe = AMBFrame(className: clsname, name: ident)
+		var newframe = AMBFrame(className: clsname, instanceName: ident)
 
 		guard strm.requireSymbol(symbol: "{") else {
 			throw requireSymbolError(symbol: "{")
@@ -102,23 +102,23 @@ public class AMBParser
 	}
 
 	private func parseProperty(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBFrame.Member {
-		let value: AMBValue
+		let value:	CNNativeValue
 		switch typ {
 		case .booleanType:
 			if let val = strm.getBool() {
-				value = .booleanValue(val)
+				value = .numberValue(NSNumber(booleanLiteral: val))
 			} else {
 				throw requireDeclarationError(declaration: "Boolean value")
 			}
 		case .intType:
 			if let val = strm.getAnyInt() {
-				value = .intValue(val)
+				value = .numberValue(NSNumber(integerLiteral: val))
 			} else {
 				throw requireDeclarationError(declaration: "Integer value")
 			}
 		case .floatType:
 			if let val = strm.getAnyDouble() {
-				value = .floatValue(val)
+				value = .numberValue(NSNumber(floatLiteral: val))
 			} else {
 				throw requireDeclarationError(declaration: "Float value")
 			}
@@ -129,8 +129,7 @@ public class AMBParser
 				throw requireDeclarationError(declaration: "String value")
 			}
 		}
-		let prop: AMBProperty = .immediate(ident, value)
-		return .property(prop)
+		return .property(AMBProperty(name: ident, type: typ, value: value))
 	}
 
 	private func parseProceduralFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBFrame.Member {
@@ -167,8 +166,8 @@ public class AMBParser
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Function body")
 		}
-		let funcdecl = AMBFunction(name: ident, type: .procedure(args, rettype), body: text)
-		return .function(funcdecl)
+		let proc = AMBProcedureFunction(name: ident, arguments: args, returnType: rettype, body: text)
+		return .procedureFunction(proc)
 	}
 
 	private func parseListnerFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBFrame.Member {
@@ -195,8 +194,8 @@ public class AMBParser
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Function body")
 		}
-		let funcdecl = AMBFunction(name: ident, type: .listner(args), body: text)
-		return .function(funcdecl)
+		let listner = AMBListnerFunction(name: ident, arguments: args, body: text)
+		return .listnerFunction(listner)
 	}
 
 	private func parseEventFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBFrame.Member {
@@ -209,8 +208,8 @@ public class AMBParser
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Function body")
 		}
-		let funcdecl = AMBFunction(name: ident, type: .event, body: text)
-		return .function(funcdecl)
+		let event = AMBEventFunction(name: ident, body: text)
+		return .eventFunction(event)
 	}
 
 	private func parseArgument(stream strm: CNTokenStream) throws -> AMBArgument {
@@ -276,6 +275,5 @@ public class AMBParser
 			NSLog("\(str): nil")
 		}
 	}
-
 }
 

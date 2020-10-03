@@ -11,17 +11,19 @@ import Foundation
 public struct AMBFrame {
 	public enum Member {
 		case	property(AMBProperty)
-		case	function(AMBFunction)
+		case	procedureFunction(AMBProcedureFunction)
+		case	listnerFunction(AMBListnerFunction)
+		case	eventFunction(AMBEventFunction)
 		case	frame(AMBFrame)
 	}
 
 	public var 	className:	String
-	public var	name:		String
+	public var	instanceName:	String
 	public var	members:	Array<Member>
 
-	public init(className cname: String, name nm: String) {
+	public init(className cname: String, instanceName iname: String) {
 		className	= cname
-		name    	= nm
+		instanceName	= iname
 		members 	= []
 	}
 }
@@ -56,39 +58,8 @@ public enum AMBType {
 	}
 }
 
-public enum AMBValue {
-	case	booleanValue(Bool)
-	case	intValue(Int)
-	case	floatValue(Double)
-	case	stringValue(String)
-
-	public var type: AMBType {
-		get {
-			let result: AMBType
-			switch self {
-			case .booleanValue(_):	result = .booleanType
-			case .intValue(_):	result = .intType
-			case .floatValue(_):	result = .floatType
-			case .stringValue(_):	result = .stringType
-			}
-			return result
-		}
-	}
-
-	public func toString() -> String {
-		let result: String
-		switch self {
-		case .booleanValue(let val):	result = "\(val)"
-		case .intValue(let val):	result = "\(val)"
-		case .floatValue(let val):	result = "\(val)"
-		case .stringValue(let val):	result = "\"\(val)\""
-		}
-		return result
-	}
-
-}
-
-public struct AMBPathExpression {
+public struct AMBPathExpression
+{
 	public var	elements:	Array<String>
 
 	public init() {
@@ -126,35 +97,44 @@ public struct AMBPathArgument {
 	}
 }
 
-public enum AMBProperty {
-	case	immediate(String, AMBValue)	// name, immediate value
-}
+public class AMBProperty
+{
+	public var	name:	String
+	public var	type:	AMBType
+	public var	value:	CNNativeValue
 
-public struct AMBFunction {
-	public enum FunctionType {
-		case procedure(Array<AMBArgument>, AMBType)	// arguments, return-type
-		case listner(Array<AMBPathArgument>)		// arguments for path expression
-		case event					//
+	public init(name nm: String, type typ: AMBType, value val: CNNativeValue) {
+		name	= nm
+		type	= typ
+		value	= val
 	}
 
-	public enum FunctionCode {
+	public func toString() -> String {
+		let valtxt = value.toText().toStrings(terminal: "").joined()
+		return "\(name): \(type.name()) \(valtxt)"
+	}
+}
+
+open class AMBFunction
+{
+	public enum FunctionType {
 		case procedure
 		case listner
 		case event
 	}
 
-	public var	name	: String
-	public var	type	: FunctionType
-	public var	body	: String
+	public var 	functionType	: FunctionType
+	public var 	functionName	: String
+	public var	functionBody	: String
 
-	public init(name nm: String, type typ: FunctionType, body bdy: String) {
-		name	= nm
-		type	= typ
-		body	= bdy
+	public init(type ftyp: FunctionType, name nm: String, body bdy: String) {
+		functionType = ftyp
+		functionName = nm
+		functionBody = bdy
 	}
 
-	public static func decodeType(_ str: String) -> FunctionCode? {
-		let result: FunctionCode?
+	public static func decodeType(_ str: String) -> FunctionType? {
+		let result: FunctionType?
 		switch str {
 		case "Func":	result = .procedure
 		case "Listner":	result = .listner
@@ -163,4 +143,45 @@ public struct AMBFunction {
 		}
 		return result
 	}
+
+	public static func encode(type typ: FunctionType) -> String {
+		let result: String
+		switch typ {
+		case .procedure:	result = "Func"
+		case .listner:		result = "Listner"
+		case .event:		result = "Event"
+		}
+		return result
+	}
 }
+
+public class AMBProcedureFunction: AMBFunction
+{
+	public var	arguments: 	Array<AMBArgument>
+	public var	returnType:	AMBType
+
+	public init(name nm: String, arguments args: Array<AMBArgument>, returnType rettyp: AMBType, body bdy: String) {
+		arguments	= args
+		returnType	= rettyp
+		super.init(type: .procedure, name: nm, body: bdy)
+	}
+}
+
+public class AMBListnerFunction: AMBFunction
+{
+	public var	arguments: 	Array<AMBPathArgument>
+
+	public init(name nm: String, arguments args: Array<AMBPathArgument>, body bdy: String) {
+		arguments	= args
+		super.init(type: .listner, name: nm, body: bdy)
+	}
+}
+
+public class AMBEventFunction: AMBFunction
+{
+	public init(name nm: String, body bdy: String) {
+		super.init(type: .procedure, name: nm, body: bdy)
+	}
+}
+
+

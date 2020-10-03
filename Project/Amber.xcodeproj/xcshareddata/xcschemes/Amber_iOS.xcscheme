@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0535C1782520AD19002A9172"
-               BuildableName = "AmberBundle.bundle"
-               BlueprintName = "AmberBundle"
+               BlueprintIdentifier = "05ED777725204BF9000EC3FC"
+               BuildableName = "Amber.framework"
+               BlueprintName = "Amber_iOS"
                ReferencedContainer = "container:Amber.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,9 +50,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0535C1782520AD19002A9172"
-            BuildableName = "AmberBundle.bundle"
-            BlueprintName = "AmberBundle"
+            BlueprintIdentifier = "05ED777725204BF9000EC3FC"
+            BuildableName = "Amber.framework"
+            BlueprintName = "Amber_iOS"
             ReferencedContainer = "container:Amber.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
