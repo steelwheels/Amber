@@ -47,9 +47,9 @@ private func testCompiler(source src: String, context ctxt: KEContext, console c
 		/* compile */
 		let compiler = AMBCompiler()
 		switch compiler.compile(frame: frame, context: ctxt) {
-		case .ok(let obj):
-			cons.print(string: "--- Print code\n")
-			obj.toText().print(console: cons, terminal: "")
+		case .ok(let comp):
+			cons.print(string: "--- Print component\n")
+			comp.toText().print(console: cons, terminal: "")
 			cons.print(string: "Result ... OK\n")
 			result = true
 		case .error(let err):

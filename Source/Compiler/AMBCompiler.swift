@@ -15,7 +15,7 @@ public class AMBCompiler
 	public static let TEMPORARY_VARIABLE_NAME = "_amber_temp_var"
 
 	public enum CompileResult {
-	case ok(AMBReactObject)
+	case ok(AMBComponent)
 	case error(NSError)
 	}
 
@@ -26,7 +26,8 @@ public class AMBCompiler
 		do {
 			let robj = try compileFrame(frame: frm, context: ctxt)
 			try linkFrame(rootObject: robj)
-			return .ok(robj)
+			let comp = try allocateComponents(reactObject: robj, context: ctxt)
+			return .ok(comp)
 		} catch let err as NSError {
 			return .error(err)
 		} catch {
@@ -118,6 +119,8 @@ public class AMBCompiler
 		*/
 		/* make object pointer for each listner function parameters */
 		try makeObjectPointers(reactObject: root, objectMap: omap, currentPath: "")
+		/* Link listner functions */
+		try linkListnerFunctions(reactObject: root)
 	}
 
 	private func makeObjectMap(pathString path: String?, object obj: AMBReactObject) -> Dictionary<String, AMBReactObject> {
@@ -206,45 +209,48 @@ public class AMBCompiler
 		return (abspath, propname)
 	}
 
-	/*
-	private func linkFrame(rootObject root: AMBReactObject, path pth: Array<String>, targetObject targ: AMBReactObject) throws {
-		var curpath: Array<String> = pth ; curpath.append(targ.frame.instanceName)
-		/* link current frame */
-		try linkCurrentFrame(rootObject: root, path: curpath, targetObject: targ)
-		/* link child frame */
-		for key in targ.keys {
-			if let nval = targ.get(forKey: key) {
-				if let robj = valueToReactObject(value: nval) {
-					try linkFrame(rootObject: root, path: curpath, targetObject: robj)
-				}
-			}
-		}
-	}
-
-	private func linkCurrentFrame(rootObject root: AMBReactObject, path pth: Array<String>, targetObject targ: AMBReactObject) throws {
-		/* Link with listner function */
-		for member in frm.members {
-			switch member {
-			case .property(_):
-				break
-			case .function(let afunc):
-				switch afunc.type {
-				case .procedure(_, _):
-					break
-				case .listner(let args):
-					for arg in args {
-						try linkListnerFunc(rootFrame: root, path: pth, frame: frm, member: member, pathArgument: arg)
+	private func linkListnerFunctions(reactObject obj: AMBReactObject) throws {
+		for key in obj.keys {
+			if let childval = obj.get(forKey: key) {
+				switch childval.value {
+				case .reactObject(let child):
+					try linkListnerFunctions(reactObject: child)
+				case .listnerFunction(let fval):
+					if let listners = obj.listningObjectPointer(byListnerFunctionName: key) {
+						for listner in listners {
+							let obj  = listner.pointedObject
+							let name = listner.pointedName
+							obj.setCallbackFunctionValue(forKey: name, scriptCallback: fval)
+							//NSLog("dst=\(obj.frame.instanceName) name=\(name) fval=\(fval.description)")
+						}
 					}
-				case .event:
+				default:
 					break
 				}
-			case .frame(_):
-				break
 			}
 		}
 	}
 
-	private func linkListnerFunc(rootObject root: AMBReactObject, path pth: Array<String>, targetObject targ: AMBReactObject, member memb: AMBFrame.Member, pathArgument parg: AMBPathArgument) throws {
+	private func allocateComponents(reactObject obj: AMBReactObject, context ctxt: KEContext) throws -> AMBComponent {
+		let curcomp: AMBComponent
+		switch AMBComponentManager.shared.allocate(reactObject: obj, context: ctxt) {
+		case .ok(let comp):
+			curcomp = comp
+		case .error(let err):
+			throw err
+		}
 
-	}*/
+		/* Allocate children */
+		for key in obj.keys {
+			if let rval = obj.get(forKey: key) {
+				if let childobj = rval.reactObject {
+					let childcomp = try allocateComponents(reactObject: childobj, context: ctxt)
+					curcomp.addChild(component: childcomp)
+				}
+			} else {
+				NSLog("[Error] No react value")
+			}
+		}
+		return curcomp
+	}
 }

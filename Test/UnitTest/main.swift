@@ -13,8 +13,9 @@ print("Hello, World!")
 let cons = CNFileConsole()
 let res0 = UTParser(console: cons)
 let res1 = UTCompiler(console: cons)
+let res2 = UTAllocator(console: cons)
 
-let result = res0 && res1
+let result = res0 && res1 && res2
 if result {
 	cons.print(string: "SUMMARY: OK\n")
 } else {

@@ -11,13 +11,6 @@ import KiwiLibrary
 import CoconutData
 import JavaScriptCore
 
-public protocol AMBReactObjectProtocol
-{
-	func set(_ key: JSValue, _ value: JSValue)
-	func get(_ key: JSValue) -> JSValue
-	func setScriptCallback(_ key: JSValue, _ callback: JSValue)
-}
-
 @objc public class AMBReactValue: NSObject
 {
 	public enum ObjectValue {
@@ -109,7 +102,7 @@ public struct AMBObjectPointer {
 }
 
 
-@objc public class AMBReactObject: NSObject, AMBReactObjectProtocol
+@objc public class AMBReactObject: NSObject
 {
 	public typealias ComponentCallbackFunc	= (_ value: CNNativeValue) -> Void
 
@@ -117,8 +110,7 @@ public struct AMBObjectPointer {
 	private var mContext:			KEContext
 	private var mTable:			CNObservedValueTable
 	private var mListeningObjects:		Dictionary<String, Array<AMBObjectPointer>>	// listner-function, listner-parameters
-	private var mComponentCallbacks:	Dictionary<String, ComponentCallbackFunc>
-	private var mScriptCallbacks:		Dictionary<String, JSValue>
+	private var mCallbackFunctionValues:	Dictionary<String, JSValue>
 
 	public var frame: AMBFrame { get { return mFrame }}
 	public var keys: Array<String> { get { return mTable.keys }}
@@ -128,8 +120,7 @@ public struct AMBObjectPointer {
 		mContext   		= ctxt
 		mTable    		= CNObservedValueTable()
 		mListeningObjects	= [:]
-		mComponentCallbacks	= [:]
-		mScriptCallbacks	= [:]
+		mCallbackFunctionValues	= [:]
 	}
 
 	public func set(_ key: JSValue, _ value: JSValue) {
@@ -185,39 +176,43 @@ public struct AMBObjectPointer {
 		mListeningObjects[name] = ptrs
 	}
 
-	public func setScriptCallback(_ key: JSValue, _ callback: JSValue) {
-		if let keystr = key.toString() {
-			mScriptCallbacks[keystr] = callback
-			if mTable.countOfObservers(forKey: keystr) == 0 {
-				setCallback(key: keystr)
-			}
-		} else {
-			CNLog(logLevel: .error, message: "\(#function) [Error] The key must be string")
-		}
+	public func listningObjectPointer(byListnerFunctionName name: String) -> Array<AMBObjectPointer>? {
+		return mListeningObjects[name]
 	}
 
-	public func setComponentCallback(forKey key: String, callback cbfunc: @escaping ComponentCallbackFunc) {
-		mComponentCallbacks[key] = cbfunc
-		if mTable.countOfObservers(forKey: key) == 0 {
-			setCallback(key: key)
-		}
+	public func setCallbackFunctionValue(forKey key: String, scriptCallback callback: JSValue) {
+		mCallbackFunctionValues[key] = callback
 	}
 
-	private func setCallback(key keystr: String) {
-		mTable.setObserver(forKey: keystr, listnerFunction: {
+	private func setCallback(propertyName propname: String, functionName funcname: String) {
+		mTable.setObserver(forKey: propname, listnerFunction: {
 			(_ val: Any) -> Void in
-			if let val = val as? CNNativeValue {
-				/* component callback */
-				if let cbfunc = self.mComponentCallbacks[keystr] {
-					cbfunc(val)
+			/* Prepare functions */
+			var params: Array<JSValue> = []
+			guard let pointers = self.listningObjectPointer(byListnerFunctionName: funcname) else {
+				NSLog("No parameter pointers")
+				return
+			}
+			for pointer in pointers {
+				let srcobj  = pointer.pointedObject
+				let srcprop = pointer.pointedName
+				if let rval = srcobj.get(forKey: srcprop) {
+					switch rval.value {
+					case .property(let nval):
+						let jsval = nval.toJSValue(context: self.mContext)
+						params.append(jsval)
+					default:
+						NSLog("[Error] Invalid property \(srcprop) in \(srcobj.frame.instanceName)")
+					}
 				}
-				/* script callback */
-				if let cbvar = self.mScriptCallbacks[keystr] {
-					let param = val.toJSValue(context: self.mContext)
-					cbvar.call(withArguments: [param])
+			}
+			/* component callback */
+			if let cbfunc = self.mCallbackFunctionValues[propname] {
+				if let retval = cbfunc.call(withArguments: params) {
+					NSLog("Return value: \(retval.description)")
 				}
 			} else {
-				CNLog(logLevel: .error, message: "\(#function) [Error] Can not happen")
+				NSLog("[Error] No callback function for \(propname)")
 			}
 		})
 	}
