@@ -29,6 +29,21 @@ import JavaScriptCore
 		mObjectValue = .property(val)
 	}
 
+	public convenience init(booleanProperty val: Bool) {
+		let nval: CNNativeValue = .numberValue(NSNumber(booleanLiteral: val))
+		self.init(property: nval)
+	}
+
+	public convenience init(intProperty val: Int) {
+		let nval: CNNativeValue = .numberValue(NSNumber(integerLiteral: val))
+		self.init(property: nval)
+	}
+
+	public convenience init(stringProperty val: String) {
+		let nval: CNNativeValue = .stringValue(val)
+		self.init(property: nval)
+	}
+
 	public init(procedureFunction val: JSValue) {
 		mObjectValue = .procedureFunction(val)
 	}
@@ -52,6 +67,33 @@ import JavaScriptCore
 			default:			return nil
 			}
 		}
+	}
+
+	public var booleanProperty: Bool? {
+		if let prop = property {
+			if let num = prop.toNumber() {
+				return num.boolValue
+			}
+		}
+		return nil
+	}
+
+	public var intProperty: Int? {
+		if let prop = property {
+			if let num = prop.toNumber() {
+				return num.intValue
+			}
+		}
+		return nil
+	}
+
+	public var stringProperty: String? {
+		if let prop = property {
+			if let str = prop.toString() {
+				return str
+			}
+		}
+		return nil
 	}
 
 	public var procedureFunctionValue: JSValue? {
@@ -104,23 +146,23 @@ public struct AMBObjectPointer {
 
 @objc public class AMBReactObject: NSObject
 {
-	public typealias ComponentCallbackFunc	= (_ value: CNNativeValue) -> Void
+	public typealias CallbackFunction	= (_ val: Any) -> Void
 
 	private var mFrame:			AMBFrame
 	private var mContext:			KEContext
 	private var mTable:			CNObservedValueTable
-	private var mListeningObjects:		Dictionary<String, Array<AMBObjectPointer>>	// listner-function, listner-parameters
-	private var mCallbackFunctionValues:	Dictionary<String, JSValue>
+	private var mListeningObjectPointers:	Dictionary<String, Array<AMBObjectPointer>>	// listner-function-name, listner-parameters
+	private var mCallbackFunctionValues:	Dictionary<String, JSValue>			// listner-function-name, listner-function
 
 	public var frame: AMBFrame { get { return mFrame }}
 	public var keys: Array<String> { get { return mTable.keys }}
 
 	public init(frame frm: AMBFrame, context ctxt: KEContext) {
-		mFrame			= frm
-		mContext   		= ctxt
-		mTable    		= CNObservedValueTable()
-		mListeningObjects	= [:]
-		mCallbackFunctionValues	= [:]
+		mFrame				= frm
+		mContext   			= ctxt
+		mTable    			= CNObservedValueTable()
+		mListeningObjectPointers	= [:]
+		mCallbackFunctionValues		= [:]
 	}
 
 	public func set(_ key: JSValue, _ value: JSValue) {
@@ -135,6 +177,21 @@ public struct AMBObjectPointer {
 
 	public func set(key keystr: String, value val: AMBReactValue) {
 		mTable.setValue(val, forKey: keystr)
+	}
+
+	public func set(key keystr: String, booleanValue val: Bool) {
+		let rval = AMBReactValue(booleanProperty: val)
+		set(key: keystr, value: rval)
+	}
+
+	public func set(key keystr: String, intValue val: Int) {
+		let rval = AMBReactValue(intProperty: val)
+		set(key: keystr, value: rval)
+	}
+
+	public func set(key keystr: String, stringValue val: String) {
+		let rval = AMBReactValue(stringProperty: val)
+		set(key: keystr, value: rval)
 	}
 
 	public func get(_ key: JSValue) -> JSValue {
@@ -172,24 +229,48 @@ public struct AMBObjectPointer {
 		}
 	}
 
+	public func getBooleanProperty(forKey key: String) -> Bool? {
+		if let val = get(forKey: key) {
+			return val.booleanProperty
+		} else {
+			return nil
+		}
+	}
+
+	public func getIntProperty(forKey key: String) -> Int? {
+		if let val = get(forKey: key) {
+			return val.intProperty
+		} else {
+			return nil
+		}
+	}
+
+	public func getStringProperty(forKey key: String) -> String? {
+		if let val = get(forKey: key) {
+			return val.stringProperty
+		} else {
+			return nil
+		}
+	}
+
 	public func setListningObjectPointers(listnerFunctionName name: String, pointers ptrs: Array<AMBObjectPointer>) {
-		mListeningObjects[name] = ptrs
+		mListeningObjectPointers[name] = ptrs
 	}
 
-	public func listningObjectPointer(byListnerFunctionName name: String) -> Array<AMBObjectPointer>? {
-		return mListeningObjects[name]
+	public func listningObjectPointers(byListnerFunctionName name: String) -> Array<AMBObjectPointer>? {
+		return mListeningObjectPointers[name]
 	}
 
-	public func setCallbackFunctionValue(forKey key: String, scriptCallback callback: JSValue) {
-		mCallbackFunctionValues[key] = callback
+	public func setCallbackFunctionValue(listnerFunctionName name: String, scriptCallback callback: JSValue) {
+		mCallbackFunctionValues[name] = callback
 	}
 
-	private func setCallback(propertyName propname: String, functionName funcname: String) {
-		mTable.setObserver(forKey: propname, listnerFunction: {
+	public func addCallbackSource(forProperty prop: String, listnerFunctionName name: String) {
+		mTable.addObserver(forKey: prop, listnerFunction: {
 			(_ val: Any) -> Void in
 			/* Prepare functions */
 			var params: Array<JSValue> = []
-			guard let pointers = self.listningObjectPointer(byListnerFunctionName: funcname) else {
+			guard let pointers = self.listningObjectPointers(byListnerFunctionName: name) else {
 				NSLog("No parameter pointers")
 				return
 			}
@@ -207,13 +288,19 @@ public struct AMBObjectPointer {
 				}
 			}
 			/* component callback */
-			if let cbfunc = self.mCallbackFunctionValues[propname] {
+			if let cbfunc = self.mCallbackFunctionValues[prop] {
 				if let retval = cbfunc.call(withArguments: params) {
 					NSLog("Return value: \(retval.description)")
 				}
 			} else {
-				NSLog("[Error] No callback function for \(propname)")
+				NSLog("[Error] No callback function for \(name)")
 			}
+		})
+	}
+
+	public func addCallbackSource(forProperty prop: String, callbackFunction cbfunc: @escaping CallbackFunction) {
+		mTable.addObserver(forKey: prop, listnerFunction: {
+			(_ val: Any) -> Void in cbfunc(val)
 		})
 	}
 
@@ -246,11 +333,11 @@ public struct AMBObjectPointer {
 			}
 		}
 
-		for key in mListeningObjects.keys {
+		for key in mListeningObjectPointers.keys {
 			let subsec = CNTextSection()
 			subsec.header = "listning-objects: \(key) {"
 			subsec.footer = "}"
-			if let pointers = mListeningObjects[key] {
+			if let pointers = mListeningObjectPointers[key] {
 				for pointer in pointers {
 					let line = pointer.toString()
 					subsec.add(text: CNTextLine(string: line))

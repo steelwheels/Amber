@@ -164,7 +164,7 @@ public class AMBParser
 			throw NSError.parseError(message: "Unknown type: \(typestr)")
 		}
 		guard let text = strm.getText() else {
-			throw requireDeclarationError(declaration: "Function body")
+			throw requireDeclarationError(declaration: "Procedure function body")
 		}
 		let proc = AMBProcedureFunction(name: ident, arguments: args, returnType: rettype, body: text)
 		return .procedureFunction(proc)
@@ -192,7 +192,7 @@ public class AMBParser
 			//dumpStream(title: "pL1F", stream: strm)
 		}
 		guard let text = strm.getText() else {
-			throw requireDeclarationError(declaration: "Function body")
+			throw requireDeclarationError(declaration: "Listner function body")
 		}
 		let listner = AMBListnerFunction(name: ident, arguments: args, body: text)
 		return .listnerFunction(listner)
@@ -206,7 +206,7 @@ public class AMBParser
 			throw requireSymbolError(symbol: ")")
 		}
 		guard let text = strm.getText() else {
-			throw requireDeclarationError(declaration: "Function body")
+			throw requireDeclarationError(declaration: "Event function body")
 		}
 		let event = AMBEventFunction(name: ident, body: text)
 		return .eventFunction(event)

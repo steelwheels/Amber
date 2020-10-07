@@ -10,8 +10,9 @@ import CoconutData
 import JavaScriptCore
 import Foundation
 
-public class AMBCompiler
+open class AMBCompiler
 {
+	public typealias AllocationResult = AMBComponentManager.AllocationResult
 	public static let TEMPORARY_VARIABLE_NAME = "_amber_temp_var"
 
 	public enum CompileResult {
@@ -24,6 +25,7 @@ public class AMBCompiler
 
 	public func compile(frame frm: AMBFrame, context ctxt: KEContext) -> CompileResult {
 		do {
+			addAllocators()
 			let robj = try compileFrame(frame: frm, context: ctxt)
 			try linkFrame(rootObject: robj)
 			let comp = try allocateComponents(reactObject: robj, context: ctxt)
@@ -34,6 +36,19 @@ public class AMBCompiler
 			let err = NSError.parseError(message: "Unknown error")
 			return .error(err)
 		}
+	}
+
+	open func addAllocators() {
+		let manager = AMBComponentManager.shared
+		manager.addAllocator(className: "Object", allocatorFunc: {
+			(_ robj: AMBReactObject, _ ctxt: KEContext) -> AllocationResult in
+			let newcomp = AMBComponentObject()
+			if let err = newcomp.setup(reactObject: robj, context: ctxt) {
+				return .error(err)
+			} else {
+				return .ok(newcomp)
+			}
+		})
 	}
 
 	private func compileFrame(frame frm: AMBFrame, context ctxt: KEContext) throws -> AMBReactObject {
@@ -216,11 +231,12 @@ public class AMBCompiler
 				case .reactObject(let child):
 					try linkListnerFunctions(reactObject: child)
 				case .listnerFunction(let fval):
-					if let listners = obj.listningObjectPointer(byListnerFunctionName: key) {
+					if let listners = obj.listningObjectPointers(byListnerFunctionName: key) {
 						for listner in listners {
-							let obj  = listner.pointedObject
-							let name = listner.pointedName
-							obj.setCallbackFunctionValue(forKey: name, scriptCallback: fval)
+							let obj   = listner.pointedObject
+							let pname = listner.pointedName
+							obj.setCallbackFunctionValue(listnerFunctionName: key, scriptCallback: fval)
+							obj.addCallbackSource(forProperty: pname, listnerFunctionName: key)
 							//NSLog("dst=\(obj.frame.instanceName) name=\(name) fval=\(fval.description)")
 						}
 					}

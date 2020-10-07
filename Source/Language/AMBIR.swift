@@ -180,7 +180,7 @@ public class AMBListnerFunction: AMBFunction
 public class AMBEventFunction: AMBFunction
 {
 	public init(name nm: String, body bdy: String) {
-		super.init(type: .procedure, name: nm, body: bdy)
+		super.init(type: .event, name: nm, body: bdy)
 	}
 }
 

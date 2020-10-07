@@ -12,7 +12,7 @@ import Foundation
 
 public protocol AMBComponent
 {
-	func setup(reactObject robj: AMBReactObject) -> NSError?
+	func setup(reactObject robj: AMBReactObject, context ctxt: KEContext) -> NSError?
 
 	var reactObject: AMBReactObject { get }
 	var context: KEContext { get }
@@ -25,7 +25,7 @@ public protocol AMBComponent
 
 public class AMBComponentObject: AMBComponent
 {
-	private var mContext:		KEContext
+	private var mContext:		KEContext?
 	private var mReactObject:	AMBReactObject?
 	private var mChildren:		Array<AMBComponent>
 
@@ -36,22 +36,38 @@ public class AMBComponentObject: AMBComponent
 			fatalError("No react object")
 		}
 	}}
-	public var context: KEContext      		{ get { return mContext     	}}
+	public var context: KEContext      		{ get {
+		if let ctxt = mContext {
+			return ctxt
+		} else {
+			fatalError("No context")
+		}
+
+	}}
 	public var children: Array<AMBComponent> 	{ get { return mChildren	}}
 
-	public init(context ctxt: KEContext) {
-		mContext	= ctxt
+	public init() {
+		mContext	= nil
 		mReactObject	= nil
 		mChildren	= []
 	}
 
-	public func setup(reactObject robj: AMBReactObject) -> NSError? {
-		mReactObject = robj
+	public func setup(reactObject robj: AMBReactObject, context ctxt: KEContext) -> NSError? {
+		mReactObject	= robj
+		mContext	= ctxt
 		return nil
 	}
 
 	public func addChild(component comp: AMBComponent) {
 		mChildren.append(comp)
+	}
+
+	public func get(forKey key:String) -> AMBReactValue? {
+		return reactObject.get(forKey: key)
+	}
+
+	public func set(key keystr: String, value val: AMBReactValue) {
+		reactObject.set(key: keystr, value: val)
 	}
 
 	public func toText() -> CNTextSection {

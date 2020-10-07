@@ -38,8 +38,8 @@ public class AMBComponentManager
 		let allocfuncs: Dictionary<String, ComponentAllocatorFunc> = [
 			"Object": {
 				(_ robj: AMBReactObject, _ ctxt: KEContext) -> AllocationResult in
-				let newcomp = AMBComponentObject(context: ctxt)
-				if let err = newcomp.setup(reactObject: robj) {
+				let newcomp = AMBComponentObject()
+				if let err = newcomp.setup(reactObject: robj, context: ctxt) {
 					return .error(err)
 				} else {
 					return .ok(newcomp)
@@ -55,6 +55,14 @@ public class AMBComponentManager
 		} else {
 			let clsname = robj.frame.className
 			return .error(NSError.parseError(message: "Failed to allocate unknown class object: \(clsname)"))
+		}
+	}
+
+	public func hasAllocator(named nm: String) -> Bool {
+		if let _ = mAllocators[nm] {
+			return true
+		} else {
+			return false
 		}
 	}
 

@@ -32,7 +32,10 @@ public func sampleScripts() -> Array<String> {
 		     + "     return a + b ;\n"
 		     + "  %}\n"
 		     + "}\n"
-	let srcs   = [src0, src1, src2, src3, src4, src5, src7, src6]
+	let src8   =   "rootObj: Object {\n"
+		     + "  f: Event() %{ console.log(\"pressed\\n\") ; %} "
+		     + "}\n"
+	let srcs   = [src0, src1, src2, src3, src4, src5, src6, src7, src8]
 	return srcs
 }
 
