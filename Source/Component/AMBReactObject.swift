@@ -44,6 +44,11 @@ import JavaScriptCore
 		self.init(property: nval)
 	}
 
+	public convenience init(colorProperty val: CNColor) {
+		let nval: CNNativeValue = .colorValue(val)
+		self.init(property: nval)
+	}
+
 	public init(procedureFunction val: JSValue) {
 		mObjectValue = .procedureFunction(val)
 	}
@@ -91,6 +96,15 @@ import JavaScriptCore
 		if let prop = property {
 			if let str = prop.toString() {
 				return str
+			}
+		}
+		return nil
+	}
+
+	public var colorProperty: CNColor? {
+		if let prop = property {
+			if let col = prop.toColor() {
+				return col
 			}
 		}
 		return nil
@@ -194,6 +208,11 @@ public struct AMBObjectPointer {
 		set(key: keystr, value: rval)
 	}
 
+	public func set(key keystr: String, colorValue val: CNColor) {
+		let rval = AMBReactValue(colorProperty: val)
+		set(key: keystr, value: rval)
+	}
+
 	public func get(_ key: JSValue) -> JSValue {
 		if let keystr = key.toString() {
 			if let rval = get(forKey: keystr) {
@@ -248,6 +267,14 @@ public struct AMBObjectPointer {
 	public func getStringProperty(forKey key: String) -> String? {
 		if let val = get(forKey: key) {
 			return val.stringProperty
+		} else {
+			return nil
+		}
+	}
+
+	public func getColorProperty(forKey key: String) -> CNColor? {
+		if let val = get(forKey: key) {
+			return val.colorProperty
 		} else {
 			return nil
 		}

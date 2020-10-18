@@ -1,10 +1,11 @@
-# AmberScript: Language specification
+# Amber Programming Language
 
 ![Amber Icon](https://github.com/steelwheels/Amber/blob/master/Document/resource/amber-icon-128x128.png)
 
 ## Introduction
-The AmberScript language consists of hierarchical structure of _frames_. The AmberScript has original syntax to define property of the frame, but the logic of the function is described by *JavaScript*. The frame is used to present component such as GUI parts.
-This is a sample AmberScript:
+The Amber programming language is decribed as hierarchical structure of _frames_. The frame is used to design the component such as GUI parts. The layout of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
+
+This is a sample Amber script:
 ````
 window_a: Window {
     button_a: Button {
@@ -19,7 +20,7 @@ window_a: Window {
 ````
 
 ## Frame
-The frame contains multile members such as properties, functions and child frames. The `identifier` is the name of the frame. The frame will  allocated as the instance of `class-name` class.
+The frame contains multiple members such as properties, functions and child frames. The `identifier` is the name of the frame. The frame will  allocated as the instance of `class-name` class.
 
 ````
 identifier : class-name {
@@ -98,7 +99,7 @@ reactive_expression := <See Reactive Function Section>
 ````
 This function is used as normal function (method) of the object. It is called by the statement in the other function.
 
-Abount `function_body` see [Function body](#Functionbody) section.
+Here is the syntax of the procedural function:
 ````
 procedural_function
             := 'Func' '(' arguments ')' '->' argument_type   
@@ -109,11 +110,11 @@ procedural_function
 ### Reactive function
 The reactive function is executed when it's argument value is updated. The argument value is presented by  _path expression_ (See [Path Expression](#PathExpression)). The path expression points the object in other frame.
 
-In the following example, the method "func_name" is called when the property "this.a" or "this.b" is updated. The variable "this.sum" is updated after executing function. 
+In the following example, the method "func_name" is called when the property "self.a" or "self.b" is updated. The variable "self.sum" is updated after executing function. 
 ````
 {
-    func_name: Listen(a: this.a, b: this.b) %{
-        this.sum = a + b ;
+    func_name: Listen(a: self.a, b: self.b) %{
+        self.sum = a + b ;
     %}
 }
 ````
@@ -164,7 +165,7 @@ argument_type   := 'Bool'
 ```
 
 ### Function body
-The function body is declared by JavaScript. It is NOT parsed by AmberScript compiler. It will be parsed by JavaScript compiler.
+The function body is declared by JavaScript. It is NOT parsed by Amber compiler. It will be parsed by JavaScript compiler.
 ````
 function_body := '%{' ANY-TEXT '%}'
 ````
@@ -232,7 +233,7 @@ aaa
 
 
 ## Reserved values
-There is reserved word for AmberScript. They are case sensitive.
+There is reserved word for Amber programming language. They are case sensitive.
 * `Bool`
 * `false`
 * `Float`

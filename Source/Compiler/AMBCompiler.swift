@@ -23,12 +23,12 @@ open class AMBCompiler
 	public init() {		
 	}
 
-	public func compile(frame frm: AMBFrame, context ctxt: KEContext) -> CompileResult {
+	public func compile(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment) -> CompileResult {
 		do {
 			addAllocators()
 			let robj = try compileFrame(frame: frm, context: ctxt)
 			try linkFrame(rootObject: robj)
-			let comp = try allocateComponents(reactObject: robj, context: ctxt)
+			let comp = try allocateComponents(reactObject: robj, context: ctxt, processManager: pmgr, environment: env)
 			return .ok(comp)
 		} catch let err as NSError {
 			return .error(err)
@@ -41,9 +41,9 @@ open class AMBCompiler
 	open func addAllocators() {
 		let manager = AMBComponentManager.shared
 		manager.addAllocator(className: "Object", allocatorFunc: {
-			(_ robj: AMBReactObject, _ ctxt: KEContext) -> AllocationResult in
+			(_ robj: AMBReactObject, _ ctxt: KEContext, _ pmgr: CNProcessManager, _ env: CNEnvironment) -> AllocationResult in
 			let newcomp = AMBComponentObject()
-			if let err = newcomp.setup(reactObject: robj, context: ctxt) {
+			if let err = newcomp.setup(reactObject: robj, context: ctxt, processManager: pmgr, environment: env) {
 				return .error(err)
 			} else {
 				return .ok(newcomp)
@@ -247,9 +247,9 @@ open class AMBCompiler
 		}
 	}
 
-	private func allocateComponents(reactObject obj: AMBReactObject, context ctxt: KEContext) throws -> AMBComponent {
+	private func allocateComponents(reactObject obj: AMBReactObject, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment) throws -> AMBComponent {
 		let curcomp: AMBComponent
-		switch AMBComponentManager.shared.allocate(reactObject: obj, context: ctxt) {
+		switch AMBComponentManager.shared.allocate(reactObject: obj, context: ctxt, processManager: pmgr, environment: env) {
 		case .ok(let comp):
 			curcomp = comp
 		case .error(let err):
@@ -260,7 +260,7 @@ open class AMBCompiler
 		for key in obj.keys {
 			if let rval = obj.get(forKey: key) {
 				if let childobj = rval.reactObject {
-					let childcomp = try allocateComponents(reactObject: childobj, context: ctxt)
+					let childcomp = try allocateComponents(reactObject: childobj, context: ctxt, processManager: pmgr, environment: env)
 					curcomp.addChild(component: childcomp)
 				}
 			} else {

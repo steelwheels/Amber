@@ -19,10 +19,12 @@ public func UTCompiler(console cons: CNConsole) -> Bool
 		cons.print(string: "Failed to allocate vm\n")
 		return false
 	}
-	let context = KEContext(virtualMachine: vm)
+	let procmgr  = CNProcessManager()
+	let env      = CNEnvironment()
+	let context  = KEContext(virtualMachine: vm)
 
 	for src in sampleScripts() {
-		if !testCompiler(source: src, context: context, console: cons) {
+		if !testCompiler(source: src, context: context, processManager: procmgr, environment: env, console: cons) {
 			result = false
 		}
 	}
@@ -34,7 +36,7 @@ public func UTCompiler(console cons: CNConsole) -> Bool
 	return result
 }
 
-private func testCompiler(source src: String, context ctxt: KEContext, console cons: CNConsole) -> Bool {
+private func testCompiler(source src: String, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment, console cons: CNConsole) -> Bool {
 	let result: Bool
 	cons.print(string: "SOURCE: \(src)\n")
 	let parser = AMBParser()
@@ -46,7 +48,7 @@ private func testCompiler(source src: String, context ctxt: KEContext, console c
 		text.print(console: cons, terminal: "")
 		/* compile */
 		let compiler = AMBCompiler()
-		switch compiler.compile(frame: frame, context: ctxt) {
+		switch compiler.compile(frame: frame, context: ctxt, processManager: pmgr, environment: env) {
 		case .ok(let comp):
 			cons.print(string: "--- Print component\n")
 			comp.toText().print(console: cons, terminal: "")

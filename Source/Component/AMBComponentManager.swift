@@ -16,7 +16,7 @@ public class AMBComponentManager
 		case error(NSError)
 	}
 
-	public typealias ComponentAllocatorFunc = (_ robj: AMBReactObject, _ ctxt: KEContext) -> AllocationResult
+	public typealias ComponentAllocatorFunc = (_ robj: AMBReactObject, _ ctxt: KEContext, _ pmgr: CNProcessManager, _ env: CNEnvironment) -> AllocationResult
 
 	private static var mComponentManager: AMBComponentManager? = nil
 
@@ -37,9 +37,9 @@ public class AMBComponentManager
 	public init(){
 		let allocfuncs: Dictionary<String, ComponentAllocatorFunc> = [
 			"Object": {
-				(_ robj: AMBReactObject, _ ctxt: KEContext) -> AllocationResult in
+				(_ robj: AMBReactObject, _ ctxt: KEContext, _ pmgr: CNProcessManager, _ env: CNEnvironment) -> AllocationResult in
 				let newcomp = AMBComponentObject()
-				if let err = newcomp.setup(reactObject: robj, context: ctxt) {
+				if let err = newcomp.setup(reactObject: robj, context: ctxt, processManager: pmgr, environment: env) {
 					return .error(err)
 				} else {
 					return .ok(newcomp)
@@ -49,9 +49,9 @@ public class AMBComponentManager
 		mAllocators = allocfuncs
 	}
 
-	public func allocate(reactObject robj: AMBReactObject, context ctxt: KEContext) -> AllocationResult {
+	public func allocate(reactObject robj: AMBReactObject, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment) -> AllocationResult {
 		if let allocfunc = mAllocators[robj.frame.className] {
-			return allocfunc(robj, ctxt)
+			return allocfunc(robj, ctxt, pmgr, env)
 		} else {
 			let clsname = robj.frame.className
 			return .error(NSError.parseError(message: "Failed to allocate unknown class object: \(clsname)"))
