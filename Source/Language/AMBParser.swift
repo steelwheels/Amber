@@ -128,6 +128,16 @@ public class AMBParser
 			} else {
 				throw requireDeclarationError(declaration: "String value")
 			}
+		case .enumType(let etype):
+			if let val = strm.getIdentifier() {
+				if let ival = etype.search(byMemberName: val) {
+					value = .numberValue(NSNumber(integerLiteral: Int(ival)))
+				} else {
+					throw requireDeclarationError(declaration: "Unknown member of Enum \"\(etype.typeName)\" value")
+				}
+			} else {
+				throw requireDeclarationError(declaration: "Enum \"\(etype.typeName)\" value")
+			}
 		}
 		return .property(AMBProperty(name: ident, type: typ, value: value))
 	}

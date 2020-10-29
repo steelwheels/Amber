@@ -5,6 +5,7 @@
  *   Copyright (C) 2020 Steel Wheels Project
  */
 
+import KiwiEngine
 import CoconutData
 import Foundation
 
@@ -33,14 +34,16 @@ public enum AMBType {
 	case	intType
 	case	floatType
 	case	stringType
+	case	enumType(KEEnumType)
 
 	public func name() -> String {
 		let result: String
 		switch self {
-		case .booleanType:	result = "Bool"
-		case .intType:		result = "Int"
-		case .floatType:	result = "Float"
-		case .stringType:	result = "String"
+		case .booleanType:		result = "Bool"
+		case .intType:			result = "Int"
+		case .floatType:		result = "Float"
+		case .stringType:		result = "String"
+		case .enumType(let etype):	result = etype.typeName
 		}
 		return result
 	}
@@ -52,7 +55,13 @@ public enum AMBType {
 		case "Int":	result = .intType
 		case "Float":	result = .floatType
 		case "String":	result = .stringType
-		default:	result = nil
+		default:
+			let etable = KEEnumTable.shared
+			if let etype = etable.search(by: str) {
+				result = .enumType(etype)
+			} else {
+				result = nil
+			}
 		}
 		return result
 	}
