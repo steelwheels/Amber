@@ -316,8 +316,10 @@ public struct AMBObjectPointer {
 			}
 			/* component callback */
 			if let cbfunc = self.mCallbackFunctionValues[prop] {
-				if let retval = cbfunc.call(withArguments: params) {
-					NSLog("Return value: \(retval.description)")
+				DispatchQueue.global().async {
+					if let retval = cbfunc.call(withArguments: params) {
+						NSLog("Return value: \(retval.description)")
+					}
 				}
 			} else {
 				NSLog("[Error] No callback function for \(name)")

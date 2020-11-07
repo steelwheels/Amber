@@ -3,7 +3,7 @@
 ![Amber Icon](https://github.com/steelwheels/Amber/blob/master/Document/resource/amber-icon-128x128.png)
 
 ## Introduction
-The Amber programming language is decribed as hierarchical structure of _frames_. The frame is used to design the component such as GUI parts. The layout of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
+The Amber programming language consists　of hierarchical structure of _frames_. The frame is used to design the component such as GUI parts. The structure and property of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
 
 This is a sample Amber script:
 ````
@@ -191,8 +191,8 @@ In the "Listner" function, the path expression "a.b.c.d0" is binded to argument 
 a: Object {
     b: Object { 
         c: Object {
-            d0: Int 100,                // pointed object 0
-            d1: Int 200,                // pointed object 1
+            d0: Int 100                 // pointed object 0
+            d1: Int 200                 // pointed object 1
             d2: Int 300
         },
         adder: Listner(a0: a.b.c.d0,    // path expression 0
