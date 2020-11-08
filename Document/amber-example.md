@@ -1,7 +1,7 @@
 # Example to learn Amber Programming Language
 
 ## About this document
-This document describes about the introduction of learning the [Amber Programming Language](https://github.com/steelwheels/Amber/blob/master/Document/language/amber-script-language.md). The following application is use as an example:
+This document describes about the introduction of learning the [Amber Programming Language](https://github.com/steelwheels/Amber/blob/master/Document/amber-language.md). The following application is use as an example:
 
 
 ## Prepare package

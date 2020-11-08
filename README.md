@@ -15,5 +15,5 @@ The Amber programming language is declarative language to design the object call
 The _frame_ is used to declare the component.
 
 ## Documents
-* [AmberScript language specification](Document/language/amber-script-language.md): The specificiation of Amber programming language
+* [AmberScript language specification](Document/amber-language.md): The specificiation of Amber programming language
 
