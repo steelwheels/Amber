@@ -14,13 +14,9 @@
 		054449CC252B5CDE00FBF305 /* Amber.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05ED77DC252098B5000EC3FC /* Amber.xcframework */; };
 		054449CE252B5CF000FBF305 /* CoconutData.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05ED77DB2520987B000EC3FC /* CoconutData.xcframework */; };
 		055C9EA725236BED00E6B266 /* KiwiEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */; };
-		055C9EA825236BED00E6B266 /* KiwiEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		055C9EA925236BED00E6B266 /* KiwiLibrary.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */; };
-		055C9EAA25236BED00E6B266 /* KiwiLibrary.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		055C9EAE25236C0100E6B266 /* KiwiEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */; };
-		055C9EAF25236C0100E6B266 /* KiwiEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		055C9EB025236C0100E6B266 /* KiwiLibrary.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */; };
-		055C9EB125236C0100E6B266 /* KiwiLibrary.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0589BCB92524C5990077892D /* UTCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0589BCB82524C5990077892D /* UTCompiler.swift */; };
 		05A392682523763700A1A37A /* AMBReactObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A392672523763700A1A37A /* AMBReactObject.swift */; };
 		05A392692523763700A1A37A /* AMBReactObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A392672523763700A1A37A /* AMBReactObject.swift */; };
@@ -74,30 +70,6 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
-		};
-		055C9EAB25236BED00E6B266 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				055C9EA825236BED00E6B266 /* KiwiEngine.xcframework in Embed Frameworks */,
-				055C9EAA25236BED00E6B266 /* KiwiLibrary.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		055C9EB225236C0100E6B266 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				055C9EAF25236C0100E6B266 /* KiwiEngine.xcframework in Embed Frameworks */,
-				055C9EB125236C0100E6B266 /* KiwiLibrary.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -336,7 +308,6 @@
 				05ED776525204BD2000EC3FC /* Sources */,
 				05ED776625204BD2000EC3FC /* Frameworks */,
 				05ED776725204BD2000EC3FC /* Resources */,
-				055C9EAB25236BED00E6B266 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -355,7 +326,6 @@
 				05ED777425204BF9000EC3FC /* Sources */,
 				05ED777525204BF9000EC3FC /* Frameworks */,
 				05ED777625204BF9000EC3FC /* Resources */,
-				055C9EB225236C0100E6B266 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
