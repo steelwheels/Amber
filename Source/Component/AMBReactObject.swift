@@ -164,17 +164,19 @@ public struct AMBObjectPointer {
 
 	private var mFrame:			AMBFrame
 	private var mContext:			KEContext
-	private var mTable:			CNObservedValueTable
+	private var mProperties:		CNObservedValueTable
+	private var mNames:			Array<String>
 	private var mListeningObjectPointers:	Dictionary<String, Array<AMBObjectPointer>>	// listner-function-name, listner-parameters
 	private var mCallbackFunctionValues:	Dictionary<String, JSValue>			// listner-function-name, listner-function
 
 	public var frame: AMBFrame { get { return mFrame }}
-	public var keys: Array<String> { get { return mTable.keys }}
+	public var proprtyNames: Array<String> { get { return mNames }}
 
 	public init(frame frm: AMBFrame, context ctxt: KEContext) {
 		mFrame				= frm
 		mContext   			= ctxt
-		mTable    			= CNObservedValueTable()
+		mProperties   			= CNObservedValueTable()
+		mNames				= []
 		mListeningObjectPointers	= [:]
 		mCallbackFunctionValues		= [:]
 	}
@@ -190,7 +192,8 @@ public struct AMBObjectPointer {
 	}
 
 	public func set(key keystr: String, value val: AMBReactValue) {
-		mTable.setValue(val, forKey: keystr)
+		mProperties.setValue(val, forKey: keystr)
+		mNames.append(keystr)
 	}
 
 	public func set(key keystr: String, booleanValue val: Bool) {
@@ -236,7 +239,7 @@ public struct AMBObjectPointer {
 	}
 
 	public func get(forKey key: String) -> AMBReactValue? {
-		if let aval = mTable.value(forKey: key) {
+		if let aval = mProperties.value(forKey: key) {
 			if let rval = aval as? AMBReactValue {
 				return rval
 			} else {
@@ -293,7 +296,7 @@ public struct AMBObjectPointer {
 	}
 
 	public func addCallbackSource(forProperty prop: String, listnerFunctionName name: String) {
-		mTable.addObserver(forKey: prop, listnerFunction: {
+		mProperties.addObserver(forKey: prop, listnerFunction: {
 			(_ val: Any) -> Void in
 			/* Prepare functions */
 			var params: Array<JSValue> = []
@@ -328,7 +331,7 @@ public struct AMBObjectPointer {
 	}
 
 	public func addCallbackSource(forProperty prop: String, callbackFunction cbfunc: @escaping CallbackFunction) {
-		mTable.addObserver(forKey: prop, listnerFunction: {
+		mProperties.addObserver(forKey: prop, listnerFunction: {
 			(_ val: Any) -> Void in cbfunc(val)
 		})
 	}
@@ -338,7 +341,7 @@ public struct AMBObjectPointer {
 		sect.header = "\(self.frame.instanceName): \(self.frame.className) {"
 		sect.footer = "}"
 
-		for key in self.keys {
+		for key in self.proprtyNames {
 			if let rval = self.get(forKey: key) {
 				switch rval.value {
 				case .property(let nval):

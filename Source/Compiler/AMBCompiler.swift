@@ -147,7 +147,7 @@ open class AMBCompiler
 			newpath = objname
 		}
 		var result: Dictionary<String, AMBReactObject> = [newpath: obj]
-		for key in obj.keys {
+		for key in obj.proprtyNames {
 			if let rval = obj.get(forKey: key) {
 				if let robj = rval.reactObject {
 					let subres = makeObjectMap(pathString: newpath, object: robj)
@@ -163,7 +163,7 @@ open class AMBCompiler
 	private func makeObjectPointers(reactObject obj: AMBReactObject, objectMap omap: Dictionary<String, AMBReactObject>, currentPath curpath: String) throws {
 		let newpath = (curpath != "") ? curpath + "." + obj.frame.instanceName : obj.frame.instanceName
 		try makeObjectPointer(reactObject: obj, objectMap: omap, currentPath: newpath)
-		for key in obj.keys {
+		for key in obj.proprtyNames {
 			if let aval = obj.get(forKey: key) {
 				if let robj = aval.reactObject {
 					try makeObjectPointers(reactObject: robj, objectMap: omap, currentPath: newpath)
@@ -225,7 +225,7 @@ open class AMBCompiler
 	}
 
 	private func linkListnerFunctions(reactObject obj: AMBReactObject) throws {
-		for key in obj.keys {
+		for key in obj.proprtyNames {
 			if let childval = obj.get(forKey: key) {
 				switch childval.value {
 				case .reactObject(let child):
@@ -257,7 +257,7 @@ open class AMBCompiler
 		}
 
 		/* Allocate children */
-		for key in obj.keys {
+		for key in obj.proprtyNames {
 			if let rval = obj.get(forKey: key) {
 				if let childobj = rval.reactObject {
 					let childcomp = try allocateComponents(reactObject: childobj, context: ctxt, processManager: pmgr, environment: env)

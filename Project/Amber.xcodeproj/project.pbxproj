@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		052F4589256A9F0400CF8A99 /* CoconutData.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 052F4588256A9F0400CF8A99 /* CoconutData.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		052F458C256A9F1800CF8A99 /* KiwiLibrary.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 052F458A256A9F1800CF8A99 /* KiwiLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		052F458D256A9F1800CF8A99 /* KiwiEngine.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 052F458B256A9F1800CF8A99 /* KiwiEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		052F458F256A9F2700CF8A99 /* Amber.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 052F458E256A9F2700CF8A99 /* Amber.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0535C1A32520B1F4002A9172 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1A22520B1F4002A9172 /* main.swift */; };
 		0535C1B72520B4F4002A9172 /* UTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1B62520B4F4002A9172 /* UTParser.swift */; };
 		0535C1BC2520B9D7002A9172 /* AMBDumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1BB2520B9D7002A9172 /* AMBDumper.swift */; };
@@ -38,12 +42,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0535C1AB2520B249002A9172 /* PBXContainerItemProxy */ = {
+		052F4557256A9D3700CF8A99 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 05B7616B25204B3700B6BF0B /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 05ED77A3252093C3000EC3FC;
 			remoteInfo = Install;
+		};
+		052F4559256A9D3E00CF8A99 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05B7616B25204B3700B6BF0B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 052F4548256A9D2B00CF8A99;
+			remoteInfo = UnitTestBundle;
 		};
 		05ED77A9252093CD000EC3FC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -62,6 +73,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		052F457F256A9ECC00CF8A99 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				052F458F256A9F2700CF8A99 /* Amber.framework in CopyFiles */,
+				052F458C256A9F1800CF8A99 /* KiwiLibrary.framework in CopyFiles */,
+				052F458D256A9F1800CF8A99 /* KiwiEngine.framework in CopyFiles */,
+				052F4589256A9F0400CF8A99 /* CoconutData.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0535C19E2520B1F3002A9172 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -74,6 +98,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		052F4549256A9D2B00CF8A99 /* UnitTest.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTest.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		052F454B256A9D2B00CF8A99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		052F4580256A9EEE00CF8A99 /* CoconutData.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CoconutData.xcframework; path = ../../../Library/Frameworks/CoconutData.xcframework; sourceTree = "<group>"; };
+		052F4588256A9F0400CF8A99 /* CoconutData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoconutData.framework; path = ../../../local/Frameworks/macos/CoconutData.framework; sourceTree = "<group>"; };
+		052F458A256A9F1800CF8A99 /* KiwiLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KiwiLibrary.framework; path = ../../../local/Frameworks/macos/KiwiLibrary.framework; sourceTree = "<group>"; };
+		052F458B256A9F1800CF8A99 /* KiwiEngine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KiwiEngine.framework; path = ../../../local/Frameworks/macos/KiwiEngine.framework; sourceTree = "<group>"; };
+		052F458E256A9F2700CF8A99 /* Amber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Amber.framework; path = ../../../local/Frameworks/macos/Amber.framework; sourceTree = "<group>"; };
 		0535C1A02520B1F3002A9172 /* UnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0535C1A22520B1F4002A9172 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		0535C1B62520B4F4002A9172 /* UTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTParser.swift; sourceTree = "<group>"; };
@@ -99,6 +130,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		052F4546256A9D2B00CF8A99 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0535C19D2520B1F3002A9172 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -131,6 +169,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		052F454A256A9D2B00CF8A99 /* UnitTestBundle */ = {
+			isa = PBXGroup;
+			children = (
+				052F454B256A9D2B00CF8A99 /* Info.plist */,
+			);
+			path = UnitTestBundle;
+			sourceTree = "<group>";
+		};
 		0535C1A12520B1F4002A9172 /* UnitTest */ = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +191,7 @@
 		0535C1AA2520B207002A9172 /* Test */ = {
 			isa = PBXGroup;
 			children = (
+				052F454A256A9D2B00CF8A99 /* UnitTestBundle */,
 				0535C1A12520B1F4002A9172 /* UnitTest */,
 			);
 			name = Test;
@@ -164,6 +211,11 @@
 		05B7616A25204B3700B6BF0B = {
 			isa = PBXGroup;
 			children = (
+				052F458E256A9F2700CF8A99 /* Amber.framework */,
+				052F458B256A9F1800CF8A99 /* KiwiEngine.framework */,
+				052F458A256A9F1800CF8A99 /* KiwiLibrary.framework */,
+				052F4588256A9F0400CF8A99 /* CoconutData.framework */,
+				052F4580256A9EEE00CF8A99 /* CoconutData.xcframework */,
 				05ED778225204C55000EC3FC /* Source */,
 				0535C1AA2520B207002A9172 /* Test */,
 				05ED776B25204BD3000EC3FC /* Amber_macOS */,
@@ -187,6 +239,7 @@
 				05ED776925204BD3000EC3FC /* Amber.framework */,
 				05ED777825204BF9000EC3FC /* Amber.framework */,
 				0535C1A02520B1F3002A9172 /* UnitTest */,
+				052F4549256A9D2B00CF8A99 /* UnitTest.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -282,6 +335,25 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
+		052F4548256A9D2B00CF8A99 /* UnitTestBundle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 052F454C256A9D2B00CF8A99 /* Build configuration list for PBXNativeTarget "UnitTestBundle" */;
+			buildPhases = (
+				052F4545256A9D2B00CF8A99 /* Sources */,
+				052F4546256A9D2B00CF8A99 /* Frameworks */,
+				052F4547256A9D2B00CF8A99 /* Resources */,
+				052F457F256A9ECC00CF8A99 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				052F4558256A9D3700CF8A99 /* PBXTargetDependency */,
+			);
+			name = UnitTestBundle;
+			productName = UnitTestBundle;
+			productReference = 052F4549256A9D2B00CF8A99 /* UnitTest.bundle */;
+			productType = "com.apple.product-type.bundle";
+		};
 		0535C19F2520B1F3002A9172 /* UnitTest */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0535C1A42520B1F4002A9172 /* Build configuration list for PBXNativeTarget "UnitTest" */;
@@ -293,7 +365,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				0535C1AC2520B249002A9172 /* PBXTargetDependency */,
+				052F455A256A9D3E00CF8A99 /* PBXTargetDependency */,
 			);
 			name = UnitTest;
 			productName = UnitTest;
@@ -343,8 +415,11 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1200;
-				LastUpgradeCheck = 1210;
+				LastUpgradeCheck = 1220;
 				TargetAttributes = {
+					052F4548256A9D2B00CF8A99 = {
+						CreatedOnToolsVersion = 12.2;
+					};
 					0535C19F2520B1F3002A9172 = {
 						CreatedOnToolsVersion = 12.0.1;
 					};
@@ -377,12 +452,20 @@
 				05ED776825204BD2000EC3FC /* Amber_macOS */,
 				05ED777725204BF9000EC3FC /* Amber_iOS */,
 				05ED77A3252093C3000EC3FC /* Install */,
+				052F4548256A9D2B00CF8A99 /* UnitTestBundle */,
 				0535C19F2520B1F3002A9172 /* UnitTest */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		052F4547256A9D2B00CF8A99 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		05ED776725204BD2000EC3FC /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -400,6 +483,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		052F4545256A9D2B00CF8A99 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0535C19C2520B1F3002A9172 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -442,10 +532,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		0535C1AC2520B249002A9172 /* PBXTargetDependency */ = {
+		052F4558256A9D3700CF8A99 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 05ED77A3252093C3000EC3FC /* Install */;
-			targetProxy = 0535C1AB2520B249002A9172 /* PBXContainerItemProxy */;
+			targetProxy = 052F4557256A9D3700CF8A99 /* PBXContainerItemProxy */;
+		};
+		052F455A256A9D3E00CF8A99 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 052F4548256A9D2B00CF8A99 /* UnitTestBundle */;
+			targetProxy = 052F4559256A9D3E00CF8A99 /* PBXContainerItemProxy */;
 		};
 		05ED77AA252093CD000EC3FC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -460,6 +555,85 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		052F454D256A9D2B00CF8A99 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = TR2DNF3P93;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = ../Test/UnitTestBundle/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = github.com.steelwheels.UnitTestBundle;
+				PRODUCT_NAME = UnitTest;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Debug;
+		};
+		052F454E256A9D2B00CF8A99 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = TR2DNF3P93;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = ../Test/UnitTestBundle/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = github.com.steelwheels.UnitTestBundle;
+				PRODUCT_NAME = UnitTest;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				WRAPPER_EXTENSION = bundle;
+			};
+			name = Release;
+		};
 		0535C1A52520B1F4002A9172 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -494,14 +668,14 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TR2DNF3P93;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "$(TARGET_BUILD_DIR)/$(PRODUCT_NAME).bundle/Contents/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -516,12 +690,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(HOME)/Library/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/$(PRODUCT_NAME).bundle/Contents/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = github.com.steelwheels.Amber.UnitTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_INCLUDE_PATHS = "";
@@ -564,14 +740,14 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TR2DNF3P93;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(HOME)/Library/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "$(TARGET_BUILD_DIR)/$(PRODUCT_NAME).bundle/Contents/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 2;
@@ -581,11 +757,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "$(HOME)/Library/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/$(PRODUCT_NAME).bundle/Contents/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = github.com.steelwheels.Amber.UnitTest;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INCLUDE_PATHS = "";
@@ -694,7 +872,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -778,7 +956,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
@@ -1106,6 +1284,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		052F454C256A9D2B00CF8A99 /* Build configuration list for PBXNativeTarget "UnitTestBundle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				052F454D256A9D2B00CF8A99 /* Debug */,
+				052F454E256A9D2B00CF8A99 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0535C1A42520B1F4002A9172 /* Build configuration list for PBXNativeTarget "UnitTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
