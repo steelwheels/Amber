@@ -57,10 +57,6 @@ open class AMBCompiler
 			switch member {
 			case .property(let prop):
 				try compileProperty(component: component, property: prop, context: ctxt)
-			case .procedureFunction(let pfunc):
-				try compileFunction(component: component, function: pfunc, context: ctxt)
-			case .listnerFunction(let lfunc):
-				try compileFunction(component: component, function: lfunc, context: ctxt)
 			case .eventFunction(let efunc):
 				try compileFunction(component: component, function: efunc, context: ctxt)
 			case .frame(let childframe):
@@ -73,8 +69,15 @@ open class AMBCompiler
 	}
 
 	private func compileProperty(component dst: AMBReactObject, property prop: AMBProperty, context ctxt: KEContext) throws {
-		let reactval = AMBReactValue(property: prop.value)
-		dst.set(key: prop.name, value: reactval)
+		switch prop.value {
+		case .nativeValue(let val):
+			let reactval = AMBReactValue(property: val)
+			dst.set(key: prop.name, value: reactval)
+		case .listnerFunction(let lfunc):
+			try compileFunction(component: dst, function: lfunc, context: ctxt)
+		case .procedureFunction(let pfunc):
+			try compileFunction(component: dst, function: pfunc, context: ctxt)
+		}
 	}
 
 	private func compileFunction(component dst: AMBReactObject, function afunc: AMBFunction, context ctxt: KEContext) throws {
@@ -176,13 +179,18 @@ open class AMBCompiler
 		let frame = obj.frame
 		for member in frame.members {
 			switch member {
-			case .listnerFunction(let lfunc):
-				var pointers: Array<AMBObjectPointer> = []
-				for arg in lfunc.arguments {
-					let ptr = try pathToPointer(pathArgument: arg, objectMap: omap, currentPath: curpath)
-					pointers.append(ptr)
+			case .property(let prop):
+				switch prop.value {
+				case .listnerFunction(let lfunc):
+					var pointers: Array<AMBObjectPointer> = []
+					for arg in lfunc.arguments {
+						let ptr = try pathToPointer(pathArgument: arg, objectMap: omap, currentPath: curpath)
+						pointers.append(ptr)
+					}
+					obj.setListningObjectPointers(listnerFunctionName: lfunc.functionName, pointers: pointers)
+				default:
+					break
 				}
-				obj.setListningObjectPointers(listnerFunctionName: lfunc.functionName, pointers: pointers)
 			default:
 				break
 			}

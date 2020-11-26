@@ -12,8 +12,6 @@ import Foundation
 public struct AMBFrame {
 	public enum Member {
 		case	property(AMBProperty)
-		case	procedureFunction(AMBProcedureFunction)
-		case	listnerFunction(AMBListnerFunction)
 		case	eventFunction(AMBEventFunction)
 		case	frame(AMBFrame)
 	}
@@ -108,19 +106,45 @@ public struct AMBPathArgument {
 
 public class AMBProperty
 {
+	public enum PropertyValue {
+		case nativeValue(CNNativeValue)
+		case listnerFunction(AMBListnerFunction)
+		case procedureFunction(AMBProcedureFunction)
+	}
+
 	public var	name:	String
 	public var	type:	AMBType
-	public var	value:	CNNativeValue
+	public var	value:	PropertyValue
 
-	public init(name nm: String, type typ: AMBType, value val: CNNativeValue) {
+	public init(name nm: String, type typ: AMBType, nativeValue val: CNNativeValue) {
 		name	= nm
 		type	= typ
-		value	= val
+		value	= .nativeValue(val)
+	}
+
+	public init(name nm: String, type typ: AMBType, listnerFunction lfunc: AMBListnerFunction) {
+		name	= nm
+		type	= typ
+		value	= .listnerFunction(lfunc)
+	}
+
+	public init(name nm: String, type typ: AMBType, procedureFunction pfunc: AMBProcedureFunction) {
+		name	= nm
+		type	= typ
+		value	= .procedureFunction(pfunc)
 	}
 
 	public func toString() -> String {
-		let valtxt = value.toText().toStrings(terminal: "").joined()
-		return "\(name): \(type.name()) \(valtxt)"
+		let valstr: String
+		switch value {
+		case .nativeValue(let val):
+			valstr = "\(type.name()) " + val.toText().toStrings(terminal: "").joined()
+		case .listnerFunction(let lfunc):
+			valstr = lfunc.toText().toStrings(terminal: "").joined()
+		case .procedureFunction(let pfunc):
+			valstr = pfunc.toText().toStrings(terminal: "").joined()
+		}
+		return "\(name): \(valstr)"
 	}
 }
 
@@ -140,6 +164,19 @@ open class AMBFunction
 		functionType = ftyp
 		functionName = nm
 		functionBody = bdy
+	}
+
+	public func toText() -> CNTextSection {
+		let functxt     = CNTextSection()
+		functxt.header = makeFunctionHeader()
+		functxt.footer = "%}"
+		let body = CNTextLine(string: self.functionBody)
+		functxt.add(text: body)
+		return functxt
+	}
+
+	open func makeFunctionHeader() -> String {
+		return "<Must be override>"
 	}
 
 	public static func decodeType(_ str: String) -> FunctionType? {
@@ -174,23 +211,92 @@ public class AMBProcedureFunction: AMBFunction
 		returnType	= rettyp
 		super.init(type: .procedure, name: nm, body: bdy)
 	}
+
+	open override func makeFunctionHeader() -> String {
+		let paramstr = argumentsToString(arguments: self.arguments)
+		let functype = AMBFunction.encode(type: self.functionType)
+		let rettype  = returnType.name()
+		return rettype + " " + functype + "(\(paramstr)) %{"
+	}
+
+	private func argumentsToString(arguments args: Array<AMBArgument>) -> String {
+		var line: String = ""
+		var is1st = true
+		for arg in args {
+			if is1st { is1st = false} else { line += ", " }
+			line += argumentToString(argument: arg)
+		}
+		return line
+	}
+
+	private func argumentToString(argument arg: AMBArgument) -> String {
+		return "\(arg.name): \(arg.type.name())"
+	}
 }
 
 public class AMBListnerFunction: AMBFunction
 {
 	public var	arguments: 	Array<AMBPathArgument>
+	public var	returnType:	AMBType
 
-	public init(name nm: String, arguments args: Array<AMBPathArgument>, body bdy: String) {
+	public init(name nm: String, arguments args: Array<AMBPathArgument>, returnType rettyp: AMBType, body bdy: String) {
 		arguments	= args
+		returnType	= rettyp
 		super.init(type: .listner, name: nm, body: bdy)
 	}
+
+	open override func makeFunctionHeader() -> String {
+		let paramstr = pathArgumentsToString(pathArguments: self.arguments)
+		let functype = AMBFunction.encode(type: self.functionType)
+		let rettype  = returnType.name()
+		return rettype + " " + functype + "(\(paramstr)) %{"
+	}
+
+	private func pathArgumentsToString(pathArguments pargs: Array<AMBPathArgument>) -> String {
+		var line: String = ""
+		var is1st = true
+		for parg in pargs {
+			if is1st { is1st = false} else { line += ", " }
+			line += pathArgumentToString(pathArgument: parg)
+		}
+		return line
+	}
+
+	private func pathArgumentToString(pathArgument arg: AMBPathArgument) -> String {
+		return "\(arg.name): \(arg.expression.toString())"
+	}
+
 }
 
 public class AMBEventFunction: AMBFunction
 {
-	public init(name nm: String, body bdy: String) {
+	public var	arguments: 	Array<AMBArgument>
+
+	public init(name nm: String, arguments args: Array<AMBArgument>, body bdy: String) {
+		arguments = args
 		super.init(type: .event, name: nm, body: bdy)
 	}
+
+	open override func makeFunctionHeader() -> String {
+		let paramstr = argumentsToString(arguments: self.arguments)
+		let functype = AMBFunction.encode(type: self.functionType)
+		return functype + "(\(paramstr)) %{"
+	}
+
+	private func argumentsToString(arguments args: Array<AMBArgument>) -> String {
+		var line: String = ""
+		var is1st = true
+		for arg in args {
+			if is1st { is1st = false} else { line += ", " }
+			line += argumentToString(argument: arg)
+		}
+		return line
+	}
+
+	private func argumentToString(argument arg: AMBArgument) -> String {
+		return "\(arg.name): \(arg.type.name())"
+	}
 }
+
 
 

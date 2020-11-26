@@ -3,7 +3,7 @@
 ![Amber Icon](https://github.com/steelwheels/Amber/blob/master/Document/resource/amber-icon-128x128.png)
 
 ## Introduction
-The Amber programming language consists　of hierarchical structure of _frames_. The frame is used to design the component such as GUI parts. The structure and property of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
+The Amber programming language consists of hierarchical structure of _frames_. The frame is used to declare the component such as GUI parts, thread interface. The structure and property of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
 
 This is a sample Amber script:
 ````
@@ -24,19 +24,38 @@ The frame contains multiple members such as properties, functions and child fram
 
 ````
 identifier : class-name {
-    name : type value
+    name : type expression
     ....
 }
 ````
 
-The kind of members are categorized by the type. Here is the sample of items.
+Following sections describe about the kind of members.
 
 ### Property member
-The named variable to store value. See [Type](#Type) section.
+The named variable to get/set value. Sometimes, the value is mapped on to the component attribute such as color of button.  
+The following example has constant value to initialize the variable.
+See [Type](#Type) section for the data types (such as `Int`).
 ````
 {
     property_a : Int        0
     property_b : Float      12.3
+}
+````
+
+The next example has listner expression. 
+The word `Listner` is reserved word.
+The listner function is _reactive_.
+When the property `self.a` or `self.b` is updated,
+The value of `property_a` is automatically updated by the return value of the function. 
+You can read the property value. But you can not write it.
+
+The `self` is the owner frame of the property. Fore more details, see [self object](#PathExpression).
+
+````
+{
+    property_a : Int Listner(a: self.a. b: selfb) %{
+                    return a + b ;
+                 %}
 }
 ````
 
@@ -50,124 +69,30 @@ The frame can contain child frame. See [Class](#Class) section.
 }
 ````
 
+### Event member
+The event function is called by the component object.
+For example, the button component call the `pressed` event
+when it is clicked by user.
+The return value of this function is *ignored*.
+And you can't read the value of property.
+
+Now you can't define the calle of this function.
+They are implemented as built-in function.
+
+````
+{
+    pressed : Event() %{ count = count + 1 ; %}
+}
+````
+
 ### Function member
-Multiple kind of functions are supported. See [Function](#Function) section.
+The procedural function is also supported.
+This is called in the statement on the other function and expression.
+You can not read and write the property.
 ````
 {
-    func_a: func(a:Int, b:Int) -> Int %{ return a + b ; %}
+    add: Int Func(a, b) %{ return a + b ; %}
 }
-````
-
-Here is the syntax of the frame:
-````
-frame           := '{' frame_items_opt '}'
-frame_items_opt := /* empty */
-                |  frame_items
-                ;
-frame_items     := frame_item
-                |  frame_items ',' frame_item
-                ;
-frame_item      := name ':' type_and_value
-                ;
-name            := IDENTIFIER
-type_and_value  := 'Bool'       bool_expression
-                |  'Int'        number_expression
-                |  'Float'      number_expression
-                |  'String'     string_expression
-                |  <See Function Section>
-                |  frame
-                ;
-bool_expression := reactive_expression
-                |  BOOL_VALUE
-                ;
-number_expression := reactive_expression
-                |  NUMBER_VALUE
-                ;
-strings_expression := reactive_expression
-                |  STRING_VALUE
-                ;
-reactive_expression := <See Reactive Function Section>
-                ;
-````
-
-## Function
-### Procedural function
-````
-{
-    func_name: Func(a:Int, b:Int) -> Int %{ return a + b ; %}
-}
-````
-This function is used as normal function (method) of the object. It is called by the statement in the other function.
-
-Here is the syntax of the procedural function:
-````
-procedural_function
-            := 'Func' '(' arguments ')' '->' argument_type   
-               function_body
-            ;
-````
-
-### Reactive function
-The reactive function is executed when it's argument value is updated. The argument value is presented by  _path expression_ (See [Path Expression](#PathExpression)). The path expression points the object in other frame.
-
-In the following example, the method "func_name" is called when the property "self.a" or "self.b" is updated. The variable "self.sum" is updated after executing function. 
-````
-{
-    func_name: Listen(a: self.a, b: self.b) %{
-        self.sum = a + b ;
-    %}
-}
-````
-
-The reactive function can not be called by the statement. And the return value will be *ignored*.
-
-````
-listner_function
-            := 'Listner' '(' path_arguments ')'   
-               function_body
-            ;
-path_arguments
-            := path_argument
-            |  path_arguments ',' path_argument
-            ;
-````
-
-### Event function
-````
-{
-    event_name : Event() %{ count = count + 1 ; %}
-}
-````
-This function will be called when some events are occurred. In usually, the event occured by the user action (such as click, drag and key typing). The event is received by system software. The software selects the event function to call and call it with some parameters.
-
-The event function has pre-defined kind of arguments (or no arguments) and the return value will be *ignored*. 
-
-````
-event_function := 'Event' '(' arguments ')' function_body
-````
-
-### Function arguments
-These arguments are treated as the parameter of the function definition.
-```
-arguments       := /* empty */
-                | argument_list
-                ;
-argument_list   := argument
-                |  argument_list ',' argument
-                :
-argument        := IDENTIFIER ':' argument_type
-                ;
-argument_type   := 'Bool'
-                |  'Int'
-                |  'Float'
-                |  'String'
-                ;
-```
-
-### Function body
-The function body is declared by JavaScript. It is NOT parsed by Amber compiler. It will be parsed by JavaScript compiler.
-````
-function_body := '%{' ANY-TEXT '%}'
 ````
 
 ## Expression
@@ -191,53 +116,114 @@ In the "Listner" function, the path expression "a.b.c.d0" is binded to argument 
 a: Object {
     b: Object { 
         c: Object {
-            d0: Int 100                 // pointed object 0
-            d1: Int 200                 // pointed object 1
+            d0: Int 100     // pointed object 0
+            d1: Int 200     // pointed object 1
             d2: Int 300
-        },
-        adder: Listner(a0: a.b.c.d0,    // path expression 0
-                       a1: self.c.d1    // path expression 1
-                       ) {
+        }
+        sum: Int Listner(
+            a0: a.b.c.d0,   // path expression 0
+            a1: self.c.d1   // path expression 1
+        ) {
             self.d2 = a0 + a1 ;
+            return self.d2 ;
         }
     }
 }
 ````
-Here is the syntax of path expression:
-````
-path_expression := root_element '.' path_sub_expression
-
-root_element    := instance
-                |  'self'
-                ;
-path_sub_expression := instance
-                | path_sub_expression '.' instance
-                ;
-instance        := IDENTIFIER
-````
 
 ## Type
-|Category   |Type   |Description    |
-|:--        |:--    |:--            |
-|Property   |Bool   |Boolean variable which has `true` or `false` |
-|           |Int    |Signed integer value (32bit)   |
-|           |Float  |Floating point value           |
-|           |String |Strint value                   |
-|Function   |Procedural function |The normal function which is called by the other function and returns the result. |
-|           |Reactive function | The function which is called when at least one value of input parameter is updated. |
-|           |Event function |The function which is called when some event is occured. In usually, the trigger of the event is user action such as click, drag and key press. |
-|Frame      |Class-name  |Nested frame                   |
+Here is the primitive data types:
+|Type   |Description    |
+|:--    |:--            |
+|Bool   |Boolean variable which has `true` or `false` |
+|Int    |Signed integer value (32bit)   |
+|Float  |Floating point value           |
+|String |Strint value                   |
 
-## Class
-aaa
+## Syntax
+This is BNF of this language:
+````
+frame           := property_name ':' class '{' 
+                        frame_members_opt
+                   '}'
+                ;
+class           := IDENTIFIER
+                ;
+frame_members_opt
+                := /* empty */
+                |  frame_members
+                ;
+frame_members   := frame_member
+                |  frame_members ',' frame_member
+                ;
+frame_member    := property_name ':' expression
+                |  frame
+                ;
+property_name   := IDENTIFIER
+expression      := type typed_expression
+                |  event_function
+                |  frame
+                ;
+type            := 'Bool'
+                |  'Int'
+                |  'Float'
+                |  'String'
+                ;
+typed_expression
+                := constant_expression
+                |  listner_expression
+                |  function_definition
+                ;
+event_function  := 'Event' '(' function_parameters_opt ')'
+                   function_body
+                ;
+constant_expression  
+                := CONSTANT_VALUE
+                ;
+listner_expression
+                := 'Listner' '(' listner_parameters_opt ')'
+                   function_body
+                ;
+listner_parameters_opt
+                := /* empty */
+                |  listner_parameters
+                ;
+listner_parameters
+                := listner_parameter
+                |  listner_parameters ',' listner_parameter
+                ;
+listner_parameter
+                := parameter ':' path_expression
+                ;
+function_definition
+                := 'Func' '(' function_parameters_opt ')'
+                   function_body
+                ;
+function_parameters_opt
+                := /* empty */
+                |  function_parameters
+                ;
+function_parameters
+                := parameter
+                |  parameters ',' parameter
+                ;
+parameter       := IDENTIFIER
+                ;
+path_expression := parameter
+                |  path_expression '.' parameter
+                ;
+function_body   := '%{' ... any test ... '%}'
+                ;
+````
 
-
-## Reserved values
+## Reserved words
 There is reserved word for Amber programming language. They are case sensitive.
 * `Bool`
+* `Event`
 * `false`
 * `Float`
 * `Int`
+* `Listner`
 * `self`
 * `String`
 * `true`

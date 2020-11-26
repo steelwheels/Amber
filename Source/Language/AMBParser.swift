@@ -90,9 +90,11 @@ public class AMBParser
 		} else if let code = AMBFunction.decodeType(typestr) {
 			let result: AMBFrame.Member
 			switch code {
-			case .procedure: result = try parseProceduralFunc(frame: frm, identifier: ident, stream: strm)
-			case .listner:	 result = try parseListnerFunc(frame: frm, identifier: ident, stream: strm)
-			case .event:	 result = try parseEventFunc(frame: frm, identifier: ident, stream: strm)
+			case .procedure: throw requireDeclarationError(declaration: "No return type for Function")
+			case .listner:	 throw requireDeclarationError(declaration: "No return type for Listner")
+			case .event:
+				let efunc = try parseEventFunc(frame: frm, identifier: ident, stream: strm)
+				result = .eventFunction(efunc)
 			}
 			return result
 		} else {
@@ -102,47 +104,66 @@ public class AMBParser
 	}
 
 	private func parseProperty(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBFrame.Member {
-		let value:	CNNativeValue
-		switch typ {
-		case .booleanType:
-			if let val = strm.getBool() {
-				value = .numberValue(NSNumber(booleanLiteral: val))
-			} else {
-				throw requireDeclarationError(declaration: "Boolean value")
-			}
-		case .intType:
-			if let val = strm.getAnyInt() {
-				value = .numberValue(NSNumber(integerLiteral: val))
-			} else {
-				throw requireDeclarationError(declaration: "Integer value")
-			}
-		case .floatType:
-			if let val = strm.getAnyDouble() {
-				value = .numberValue(NSNumber(floatLiteral: val))
-			} else {
-				throw requireDeclarationError(declaration: "Float value")
-			}
-		case .stringType:
-			if let val = strm.getString() {
-				value = .stringValue(val)
-			} else {
-				throw requireDeclarationError(declaration: "String value")
-			}
-		case .enumType(let etype):
-			if let val = strm.getIdentifier() {
-				if let ival = etype.search(byMemberName: val) {
-					value = .numberValue(NSNumber(integerLiteral: Int(ival)))
-				} else {
-					throw requireDeclarationError(declaration: "Unknown member of Enum \"\(etype.typeName)\" value")
+		if let functype = strm.getIdentifier() {
+			if let code = AMBFunction.decodeType(functype) {
+				switch code {
+				case .procedure:
+					let pfunc = try parseProceduralFunc(frame: frm, identifier: ident, type: typ, stream: strm)
+					return .property(AMBProperty(name: ident, type: typ, procedureFunction: pfunc))
+				case .listner:
+					let lfunc = try parseListnerFunc(frame: frm, identifier: ident, type: typ, stream: strm)
+					return .property(AMBProperty(name: ident, type: typ, listnerFunction: lfunc))
+				case .event:
+					throw NSError.parseError(message: "Event function does not have return type")
 				}
 			} else {
-				throw requireDeclarationError(declaration: "Enum \"\(etype.typeName)\" value")
+				throw NSError.parseError(message: "Unexpected identifier: \(ident)")
 			}
+		} else {
+			let _ = strm.unget() // reduce the stream
+
+			let value:	CNNativeValue
+			switch typ {
+			case .booleanType:
+				if let val = strm.getBool() {
+					value = .numberValue(NSNumber(booleanLiteral: val))
+				} else {
+					throw requireDeclarationError(declaration: "Boolean value")
+				}
+			case .intType:
+				if let val = strm.getAnyInt() {
+					value = .numberValue(NSNumber(integerLiteral: val))
+				} else {
+					throw requireDeclarationError(declaration: "Integer value")
+				}
+			case .floatType:
+				if let val = strm.getAnyDouble() {
+					value = .numberValue(NSNumber(floatLiteral: val))
+				} else {
+					throw requireDeclarationError(declaration: "Float value")
+				}
+			case .stringType:
+				if let val = strm.getString() {
+					value = .stringValue(val)
+				} else {
+					throw requireDeclarationError(declaration: "String value")
+				}
+			case .enumType(let etype):
+				if let val = strm.getIdentifier() {
+					if let ival = etype.search(byMemberName: val) {
+						value = .numberValue(NSNumber(integerLiteral: Int(ival)))
+					} else {
+						throw requireDeclarationError(declaration: "Unknown member of Enum \"\(etype.typeName)\" value")
+					}
+				} else {
+					throw requireDeclarationError(declaration: "Enum \"\(etype.typeName)\" value")
+				}
+			}
+			return .property(AMBProperty(name: ident, type: typ, nativeValue: value))
 		}
-		return .property(AMBProperty(name: ident, type: typ, value: value))
 	}
 
-	private func parseProceduralFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+	private func parseProceduralFunc(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBProcedureFunction {
 		var args: Array<AMBArgument> = []
 		guard strm.requireSymbol(symbol: "(") else {
 			throw requireSymbolError(symbol: "(")
@@ -161,26 +182,13 @@ public class AMBParser
 				finished = strm.requireSymbol(symbol: ")")	// get next for future unget
 			}
 		}
-		guard strm.requireSymbol(symbol: "-") else {
-			throw requireSymbolError(symbol: "->")
-		}
-		guard strm.requireSymbol(symbol: ">") else {
-			throw requireSymbolError(symbol: "->")
-		}
-		guard let typestr = strm.getIdentifier() else {
-			throw requireDeclarationError(declaration: "Type")
-		}
-		guard let rettype = AMBType.decode(typestr) else {
-			throw NSError.parseError(message: "Unknown type: \(typestr)")
-		}
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Procedure function body")
 		}
-		let proc = AMBProcedureFunction(name: ident, arguments: args, returnType: rettype, body: text)
-		return .procedureFunction(proc)
+		return AMBProcedureFunction(name: ident, arguments: args, returnType: typ, body: text)
 	}
 
-	private func parseListnerFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+	private func parseListnerFunc(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBListnerFunction {
 		var args: Array<AMBPathArgument> = []
 		guard strm.requireSymbol(symbol: "(") else {
 			throw requireSymbolError(symbol: "(")
@@ -204,11 +212,10 @@ public class AMBParser
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Listner function body")
 		}
-		let listner = AMBListnerFunction(name: ident, arguments: args, body: text)
-		return .listnerFunction(listner)
+		return AMBListnerFunction(name: ident, arguments: args, returnType: typ, body: text)
 	}
 
-	private func parseEventFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+	private func parseEventFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBEventFunction {
 		guard strm.requireSymbol(symbol: "(") else {
 			throw requireSymbolError(symbol: "(")
 		}
@@ -218,8 +225,7 @@ public class AMBParser
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Event function body")
 		}
-		let event = AMBEventFunction(name: ident, body: text)
-		return .eventFunction(event)
+		return AMBEventFunction(name: ident, arguments: [], body: text)
 	}
 
 	private func parseArgument(stream strm: CNTokenStream) throws -> AMBArgument {

@@ -22,12 +22,8 @@ public class AMBDumper
 			switch member {
 			case .property(let prop):
 				membtxt = propertyToText(prop)
-			case .procedureFunction(let pfunc):
-				membtxt = procedureFunctionToText(pfunc)
-			case .listnerFunction(let lfunc):
-				membtxt = listnerFunctionToText(lfunc)
 			case .eventFunction(let efunc):
-				membtxt = eventFunctionToText(efunc)
+				membtxt = efunc.toText()
 			case .frame(let child):
 				membtxt = dumpToText(frame: child)
 			}
@@ -36,82 +32,25 @@ public class AMBDumper
 		return frmtxt
 	}
 
-	private func propertyToText(_ prop: AMBProperty) -> CNTextLine {
-		let valtxt = prop.value.toText().toStrings(terminal: "").joined()
-		let line   = "\(prop.name): \(prop.type.name()) \(valtxt)"
-		return CNTextLine(string: line)
-	}
-
-	private func procedureFunctionToText(_ pfunc: AMBProcedureFunction) -> CNTextSection {
-		let functxt     = CNTextSection()
-		let paramstr    = argumentsToString(arguments: pfunc.arguments)
-		functxt.header  = makeFunctionHeader(function: pfunc, parameterString: paramstr, returnType: pfunc.returnType)
-		functxt.footer	= makeFunctionFooter()
-		let body = CNTextLine(string: pfunc.functionBody)
-		functxt.add(text: body)
-		return functxt
-	}
-
-	private func listnerFunctionToText(_ lfunc: AMBListnerFunction) -> CNTextSection {
-		let functxt     = CNTextSection()
-		let paramstr	= pathArgumentsToString(pathArguments: lfunc.arguments)
-		functxt.header  = makeFunctionHeader(function: lfunc, parameterString: paramstr, returnType: nil)
-		functxt.footer	= makeFunctionFooter()
-		let body = CNTextLine(string: lfunc.functionBody)
-		functxt.add(text: body)
-		return functxt
-	}
-
-	private func eventFunctionToText(_ efunc: AMBEventFunction) -> CNTextSection {
-		let functxt     = CNTextSection()
-		functxt.header	= makeFunctionHeader(function: efunc, parameterString: "", returnType: nil)
-		functxt.footer	= makeFunctionFooter()
-		let body = CNTextLine(string: efunc.functionBody)
-		functxt.add(text: body)
-		return functxt
-	}
-
-	private func makeFunctionHeader(function afunc: AMBFunction, parameterString paramstr: String, returnType rettype: AMBType?) -> String {
-		let functype = AMBFunction.encode(type: afunc.functionType)
-		var line     = afunc.functionName + " : " + functype + "(\(paramstr)) "
-		if let type = rettype {
-			let typestr = type.name()
-			line += "-> \(typestr) "
+	private func propertyToText(_ prop: AMBProperty) -> CNText {
+		let result: CNText
+		switch prop.value {
+		case .nativeValue(let val):
+			let namestr = prop.name
+			let typestr = prop.type.name()
+			let valstr  = val.toText().toStrings(terminal: "").joined()
+			let resstr  = namestr + " : " + typestr + " " + valstr
+			result = CNTextLine(string: resstr)
+		case .listnerFunction(let lfunc):
+			let txt = lfunc.toText()
+			txt.header = prop.name + " : " + txt.header
+			result = txt
+		case .procedureFunction(let pfunc):
+			let txt = pfunc.toText()
+			txt.header = prop.name + " : " + txt.header
+			result = txt
 		}
-		line += "%{"
-		return line
-	}
-
-	private func makeFunctionFooter() -> String {
-		return "%}"
-	}
-
-	private func argumentsToString(arguments args: Array<AMBArgument>) -> String {
-		var line: String = ""
-		var is1st = true
-		for arg in args {
-			if is1st { is1st = false} else { line += ", " }
-			line += argumentToString(argument: arg)
-		}
-		return line
-	}
-
-	private func pathArgumentsToString(pathArguments pargs: Array<AMBPathArgument>) -> String {
-		var line: String = ""
-		var is1st = true
-		for parg in pargs {
-			if is1st { is1st = false} else { line += ", " }
-			line += pathArgumentToString(pathArgument: parg)
-		}
-		return line
-	}
-
-	private func argumentToString(argument arg: AMBArgument) -> String {
-		return "\(arg.name): \(arg.type.name())"
-	}
-
-	private func pathArgumentToString(pathArgument arg: AMBPathArgument) -> String {
-		return "\(arg.name): \(arg.expression.toString())"
+		return result
 	}
 }
 
