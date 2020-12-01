@@ -31,7 +31,7 @@ public class AMBThread: CNThread
 
 	open override func main(argument arg: CNNativeValue) -> Int32 {
 		guard let pmgr = self.processManager else {
-			console.error(string: "No process manager is ready")
+			console.error(string: "No process manager is ready\n")
 			return -1
 		}
 
@@ -65,11 +65,11 @@ public class AMBThread: CNThread
 		let config   = KEConfig(applicationType: .terminal, doStrict: true, logLevel: .defaultLevel)
 		let libcompiler = KLCompiler()
 		guard libcompiler.compileBase(context: mContext, terminalInfo: terminfo, environment: self.environment, console: self.console, config: config) else {
-			console.error(string: "Failed to compile base")
+			console.error(string: "Failed to compile base\n")
 			return -1
 		}
 		guard libcompiler.compileLibrary(context: mContext, resource: resource, processManager: pmgr, environment: self.environment, console: self.console, config: config) else {
-			console.error(string: "Failed to compile library")
+			console.error(string: "Failed to compile library\n")
 			return -1
 		}
 
@@ -80,7 +80,7 @@ public class AMBThread: CNThread
 		case .ok(let frm):
 			frame = frm
 		case .error(let err):
-			console.error(string: "Parse error: \(err.toString())")
+			console.error(string: "Parse error: \(err.toString())\n")
 			return -1
 		}
 
@@ -91,7 +91,7 @@ public class AMBThread: CNThread
 		case .ok(let comp):
 			rootcomp = comp
 		case .error(let err):
-			console.error(string: "Error: \(err.toString())")
+			console.error(string: "Error: \(err.toString())\n")
 			return -1
 		}
 
@@ -101,7 +101,7 @@ public class AMBThread: CNThread
 		/* Compile library for component*/
 		let alibcompiler = AMBLibraryCompiler()
 		if let err = alibcompiler.compile(context: mContext, semaphore: semaphore, console: console) {
-			console.error(string: "Error: \(err.toString())")
+			console.error(string: "Error: \(err.toString())\n")
 			return -1
 		}
 
