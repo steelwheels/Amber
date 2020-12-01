@@ -35,7 +35,10 @@ public func sampleScripts() -> Array<String> {
 	let src8   =   "rootObj: Object {\n"
 		     + "  f: Event() %{ console.log(\"pressed\\n\") ; %} "
 		     + "}\n"
-	let srcs   = [src0, src1, src2, src3, src4, src5, src6, src7, src8]
+	let src9   =   "rootObj: Object {\n"
+		     + "  i: Init %{ console.log(\"ok\\n\") ; %}\n"
+		     + "}"
+	let srcs   = [src0, src1, src2, src3, src4, src5, src6, src7, src8, src9]
 	return srcs
 }
 
@@ -62,7 +65,7 @@ private func testParser(source src: String, console cons: CNConsole) -> Bool {
 	switch parser.parse(source: src) {
 	case .ok(let frame):
 		cons.print(string: "--- Print Frame\n")
-		let dumper = AMBDumper()
+		let dumper = AMBFrameDumper()
 		let text   = dumper.dumpToText(frame: frame)
 		text.print(console: cons, terminal: "")
 		cons.print(string: "Result ... OK\n")

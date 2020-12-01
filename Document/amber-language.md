@@ -95,6 +95,16 @@ You can not read and write the property.
 }
 ````
 
+### Init member
+The `Init` function will be called after all components are allocated. The init function of child frame is called before parent frame of them. The multiple init function can be defined. But the execution order of them is *NOT* define.
+````
+{
+    init: Init() {
+        console.log("Initialized\n") ;
+    }
+}
+````
+
 ## Expression
 ### Path Expression
 The path expression is used to point the object in the hierarchical frames. It is presented as multi instance names separated by '`.`'.
@@ -162,6 +172,7 @@ frame_member    := property_name ':' expression
 property_name   := IDENTIFIER
 expression      := type typed_expression
                 |  event_function
+                |  init_function
                 |  frame
                 ;
 type            := 'Bool'
@@ -171,16 +182,19 @@ type            := 'Bool'
                 ;
 typed_expression
                 := constant_expression
-                |  listner_expression
-                |  function_definition
+                |  listner_function
+                |  procedural_function
                 ;
 event_function  := 'Event' '(' function_parameters_opt ')'
+                   function_body
+                ;
+init_function   := 'Init'
                    function_body
                 ;
 constant_expression  
                 := CONSTANT_VALUE
                 ;
-listner_expression
+listner_function
                 := 'Listner' '(' listner_parameters_opt ')'
                    function_body
                 ;
@@ -195,7 +209,7 @@ listner_parameters
 listner_parameter
                 := parameter ':' path_expression
                 ;
-function_definition
+procedural_function
                 := 'Func' '(' function_parameters_opt ')'
                    function_body
                 ;

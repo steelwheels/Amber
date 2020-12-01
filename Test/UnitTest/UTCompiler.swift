@@ -22,9 +22,10 @@ public func UTCompiler(console cons: CNConsole) -> Bool
 	let procmgr  = CNProcessManager()
 	let env      = CNEnvironment()
 	let context  = KEContext(virtualMachine: vm)
+	let conf     = KEConfig(applicationType: .terminal, doStrict: true, logLevel: .debug)
 
 	for src in sampleScripts() {
-		if !testCompiler(source: src, context: context, processManager: procmgr, environment: env, console: cons) {
+		if !testCompiler(source: src, context: context, processManager: procmgr, environment: env, config: conf, console: cons) {
 			result = false
 		}
 	}
@@ -36,22 +37,24 @@ public func UTCompiler(console cons: CNConsole) -> Bool
 	return result
 }
 
-private func testCompiler(source src: String, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment, console cons: CNConsole) -> Bool {
+private func testCompiler(source src: String, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> Bool {
 	let result: Bool
 	cons.print(string: "SOURCE: \(src)\n")
 	let parser = AMBParser()
 	switch parser.parse(source: src) {
 	case .ok(let frame):
 		cons.print(string: "--- Print Frame\n")
-		let dumper = AMBDumper()
+		let dumper = AMBFrameDumper()
 		let text   = dumper.dumpToText(frame: frame)
 		text.print(console: cons, terminal: "")
 		/* compile */
-		let compiler = AMBCompiler()
-		switch compiler.compile(frame: frame, context: ctxt, processManager: pmgr, environment: env) {
+		let compiler = AMBFrameCompiler()
+		switch compiler.compile(frame: frame, context: ctxt, processManager: pmgr, environment: env, config: conf, console: cons) {
 		case .ok(let comp):
 			cons.print(string: "--- Print component\n")
-			comp.toText().print(console: cons, terminal: "")
+			let cdumper = AMBComponentDumper()
+			let txt     = cdumper.dumpToText(component: comp)
+			txt.print(console: cons, terminal: "")
 			cons.print(string: "Result ... OK\n")
 			result = true
 		case .error(let err):

@@ -95,6 +95,9 @@ public class AMBParser
 			case .event:
 				let efunc = try parseEventFunc(frame: frm, identifier: ident, stream: strm)
 				result = .eventFunction(efunc)
+			case .initialize:
+				let ifunc = try parseInitFunc(frame: frm, identifier: ident, stream: strm)
+				result = .initFunction(ifunc)
 			}
 			return result
 		} else {
@@ -113,8 +116,8 @@ public class AMBParser
 				case .listner:
 					let lfunc = try parseListnerFunc(frame: frm, identifier: ident, type: typ, stream: strm)
 					return .property(AMBProperty(name: ident, type: typ, listnerFunction: lfunc))
-				case .event:
-					throw NSError.parseError(message: "Event function does not have return type")
+				case .event, .initialize:
+					throw NSError.parseError(message: "Event/Init function does not have return type")
 				}
 			} else {
 				throw NSError.parseError(message: "Unexpected identifier: \(ident)")
@@ -189,10 +192,10 @@ public class AMBParser
 	}
 
 	private func parseListnerFunc(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBListnerFunction {
-		var args: Array<AMBPathArgument> = []
 		guard strm.requireSymbol(symbol: "(") else {
 			throw requireSymbolError(symbol: "(")
 		}
+		var args: Array<AMBPathArgument> = []
 		var finished = strm.requireSymbol(symbol: ")")
 		while !finished {
 			let _    = strm.unget()
@@ -219,13 +222,32 @@ public class AMBParser
 		guard strm.requireSymbol(symbol: "(") else {
 			throw requireSymbolError(symbol: "(")
 		}
-		guard strm.requireSymbol(symbol: ")") else {
-			throw requireSymbolError(symbol: ")")
+		var args: Array<AMBArgument> = []
+		var finished = strm.requireSymbol(symbol: ")")
+		while !finished {
+			let _    = strm.unget()
+			let arg  = try parseArgument(stream: strm)
+			args.append(arg)
+			finished = strm.requireSymbol(symbol: ")")
+			if !finished {
+				let _ = strm.unget()
+				guard strm.requireSymbol(symbol: ",") else {
+					throw requireSymbolError(symbol: ",")
+				}
+				finished = strm.requireSymbol(symbol: ")")	// get next for future unget
+			}
 		}
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Event function body")
 		}
-		return AMBEventFunction(name: ident, arguments: [], body: text)
+		return AMBEventFunction(name: ident, arguments: args, body: text)
+	}
+
+	private func parseInitFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBInitFunction {
+		guard let text = strm.getText() else {
+			throw requireDeclarationError(declaration: "Init function body")
+		}
+		return AMBInitFunction(name: ident, body: text)
 	}
 
 	private func parseArgument(stream strm: CNTokenStream) throws -> AMBArgument {

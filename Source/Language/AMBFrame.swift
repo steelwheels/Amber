@@ -1,6 +1,6 @@
 /**
- * @file	AMIR.swift
- * @brief	Define Amber IR data structure
+ * @file	AMBFrame.swift
+ * @brief	Define AMBFrame data structure
  * @par Copyright
  *   Copyright (C) 2020 Steel Wheels Project
  */
@@ -9,11 +9,22 @@ import KiwiEngine
 import CoconutData
 import Foundation
 
-public struct AMBFrame {
+public struct AMBFrame
+{
 	public enum Member {
 		case	property(AMBProperty)
 		case	eventFunction(AMBEventFunction)
+		case	initFunction(AMBInitFunction)
 		case	frame(AMBFrame)
+	}
+
+	public enum MemberKind {
+		case	nativeValue
+		case	frame
+		case	listnerFunction
+		case 	procedureFunction
+		case	eventFunction
+		case	initFunction
 	}
 
 	public var 	className:	String
@@ -25,6 +36,59 @@ public struct AMBFrame {
 		instanceName	= iname
 		members 	= []
 	}
+
+	public static func name(of memb: Member) -> String {
+		let result: String
+		switch memb {
+		case .property(let prop):
+			result = prop.name
+		case .eventFunction(let efunc):
+			result = efunc.functionName
+		case .initFunction(let ifunc):
+			result = ifunc.functionName
+		case .frame(let frm):
+			result = frm.instanceName
+		}
+		return result
+	}
+
+	public static func kind(of memb: Member) -> MemberKind {
+		let result: MemberKind
+		switch memb {
+		case .property(let prop):
+			switch prop.value {
+			case .nativeValue(_):
+				result = .nativeValue
+			case .listnerFunction(_):
+				result = .listnerFunction
+			case .procedureFunction(_):
+				result = .procedureFunction
+			}
+		case .eventFunction(_):
+			result = .eventFunction
+		case .initFunction(_):
+			result = .initFunction
+		case .frame(_):
+			result = .frame
+		}
+		return result
+	}
+
+	public static func typeName(of memb: Member) -> String {
+		let result: String
+		switch memb {
+		case .property(let prop):
+			result = prop.type.name()
+		case .eventFunction(_):
+			result = "Event"
+		case .initFunction(_):
+			result = "Init"
+		case .frame(let frm):
+			result = frm.instanceName
+		}
+		return result
+	}
+
 }
 
 public enum AMBType {
@@ -154,6 +218,7 @@ open class AMBFunction
 		case procedure
 		case listner
 		case event
+		case initialize
 	}
 
 	public var 	functionType	: FunctionType
@@ -185,6 +250,7 @@ open class AMBFunction
 		case "Func":	result = .procedure
 		case "Listner":	result = .listner
 		case "Event":	result = .event
+		case "Init":	result = .initialize
 		default:	result = nil
 		}
 		return result
@@ -196,6 +262,7 @@ open class AMBFunction
 		case .procedure:	result = "Func"
 		case .listner:		result = "Listner"
 		case .event:		result = "Event"
+		case .initialize:	result = "Init"
 		}
 		return result
 	}
@@ -295,6 +362,18 @@ public class AMBEventFunction: AMBFunction
 
 	private func argumentToString(argument arg: AMBArgument) -> String {
 		return "\(arg.name): \(arg.type.name())"
+	}
+}
+
+public class AMBInitFunction: AMBFunction
+{
+	public init(name nm: String, body bdy: String) {
+		super.init(type: .initialize, name: nm, body: bdy)
+	}
+
+	open override func makeFunctionHeader() -> String {
+		let functype = AMBFunction.encode(type: self.functionType)
+		return functype + "%{"
 	}
 }
 

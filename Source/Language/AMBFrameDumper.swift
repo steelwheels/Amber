@@ -1,6 +1,6 @@
 /**
- * @file	AMBDumper.swift
- * @brief	Define AMBDumper class
+ * @file	AMBFrameDumper.swift
+ * @brief	Define AMBFrameDumper class
  * @par Copyright
  *   Copyright (C) 2020 Steel Wheels Project
  */
@@ -8,7 +8,7 @@
 import CoconutData
 import Foundation
 
-public class AMBDumper
+public class AMBFrameDumper
 {
 	public init() {
 		
@@ -16,7 +16,8 @@ public class AMBDumper
 
 	public func dumpToText(frame frm: AMBFrame) -> CNTextSection {
 		let frmtxt = CNTextSection()
-		frmtxt.header = "\(frm.instanceName): \(frm.className) {" ; frmtxt.footer = "}"
+		frmtxt.header = "\(frm.instanceName): \(frm.className) {"
+		frmtxt.footer = "}"
 		for member in frm.members {
 			let membtxt: CNText
 			switch member {
@@ -24,6 +25,8 @@ public class AMBDumper
 				membtxt = propertyToText(prop)
 			case .eventFunction(let efunc):
 				membtxt = efunc.toText()
+			case .initFunction(let ifunc):
+				membtxt = ifunc.toText()
 			case .frame(let child):
 				membtxt = dumpToText(frame: child)
 			}
@@ -42,12 +45,16 @@ public class AMBDumper
 			let resstr  = namestr + " : " + typestr + " " + valstr
 			result = CNTextLine(string: resstr)
 		case .listnerFunction(let lfunc):
-			let txt = lfunc.toText()
-			txt.header = prop.name + " : " + txt.header
+			let txt     = lfunc.toText()
+			let namestr = prop.name
+			let typestr = prop.type.name()
+			txt.header = namestr + " : " + typestr + " " + txt.header
 			result = txt
 		case .procedureFunction(let pfunc):
-			let txt = pfunc.toText()
-			txt.header = prop.name + " : " + txt.header
+			let txt     = pfunc.toText()
+			let namestr = prop.name
+			let typestr = prop.type.name()
+			txt.header  = namestr + " : " + typestr + " " + txt.header
 			result = txt
 		}
 		return result
