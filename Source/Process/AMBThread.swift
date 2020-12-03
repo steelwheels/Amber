@@ -15,14 +15,16 @@ public class AMBThread: CNThread
 {
 	private var mSource:		KLSource
 	private var mContext:		KEContext
+	private var mConfig:		KEConfig
 	private var mReturnValue:	CNNativeValue
 
-	public init(source src: KLSource, processManager mgr: CNProcessManager, input instrm: CNFileStream, output outstrm: CNFileStream, error errstrm: CNFileStream, environment env: CNEnvironment) {
+	public init(source src: KLSource, processManager mgr: CNProcessManager, input instrm: CNFileStream, output outstrm: CNFileStream, error errstrm: CNFileStream, environment env: CNEnvironment, config conf: KEConfig) {
 		guard let vm = JSVirtualMachine() else {
 			fatalError("Failed to allocate VM")
 		}
 		mSource		= src
 		mContext	= KEContext(virtualMachine: vm)
+		mConfig		= conf
 		mReturnValue	= .nullValue
 		super.init(processManager: mgr, input: instrm, output: outstrm, error: errstrm, environment: env)
 	}
@@ -84,6 +86,13 @@ public class AMBThread: CNThread
 			return -1
 		}
 
+		if doVerbose() {
+			console.print(string: "[Frame dump]\n")
+			let dumper = AMBFrameDumper()
+			let txt = dumper.dumpToText(frame: frame)
+			txt.print(console: console, terminal: "")
+		}
+
 		/* Allocate the component */
 		let ambcompiler = AMBFrameCompiler()
 		let rootcomp: AMBComponent
@@ -93,6 +102,13 @@ public class AMBThread: CNThread
 		case .error(let err):
 			console.error(string: "Error: \(err.toString())\n")
 			return -1
+		}
+
+		if doVerbose() {
+			console.print(string: "[Component dump]\n")
+			let dumper = AMBComponentDumper()
+			let txt = dumper.dumpToText(component: rootcomp)
+			txt.print(console: console, terminal: "")
 		}
 
 		/* Allocate semaphore to wait thread finish */
@@ -112,5 +128,13 @@ public class AMBThread: CNThread
 		/* Wait until execution finished */
 		mReturnValue = semaphore.wait()
 		return 0
+	}
+
+	private func doVerbose() -> Bool {
+		if mConfig.logLevel.isIncluded(in: .detail) {
+			return true
+		} else {
+			return false
+		}
 	}
 }

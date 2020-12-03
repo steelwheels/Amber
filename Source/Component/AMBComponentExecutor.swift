@@ -30,7 +30,7 @@ public class AMBComponentExecutor
 			case .initFunction(let ifunc):
 				if let fval = robj.immediateValue(forProperty: ifunc.functionName) {
 					/* Execute "Init" function */
-					fval.call(withArguments: [])
+					fval.call(withArguments: [robj])		// insert self
 				}
 			default:
 				break

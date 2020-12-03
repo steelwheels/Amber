@@ -66,7 +66,6 @@ public class AMBParser
 
 		var finished = strm.requireSymbol(symbol: "}")
 		while !finished {
-			let _ = strm.unget()
 			let memb = try parseMember(frame: newframe, stream: strm)
 			newframe.members.append(memb)
 			finished = strm.requireSymbol(symbol: "}")
@@ -173,16 +172,14 @@ public class AMBParser
 		}
 		var finished = strm.requireSymbol(symbol: ")")
 		while !finished {
-			let _    = strm.unget()
 			let arg  = try parseArgument(stream: strm)
 			args.append(arg)
 			finished = strm.requireSymbol(symbol: ")")
 			if !finished {
-				let _ = strm.unget()
 				guard strm.requireSymbol(symbol: ",") else {
 					throw requireSymbolError(symbol: ",", stream: strm)
 				}
-				finished = strm.requireSymbol(symbol: ")")	// get next for future unget
+				finished = strm.requireSymbol(symbol: ")")
 			}
 		}
 		guard let text = strm.getText() else {
@@ -198,19 +195,15 @@ public class AMBParser
 		var args: Array<AMBPathArgument> = []
 		var finished = strm.requireSymbol(symbol: ")")
 		while !finished {
-			let _    = strm.unget()
 			let arg  = try parsePathArgument(stream: strm)
 			args.append(arg)
-			//dumpStream(title: "pLF0", stream: strm)
 			finished = strm.requireSymbol(symbol: ")")
 			if !finished {
-				let _ = strm.unget()
 				guard strm.requireSymbol(symbol: ",") else {
 					throw requireSymbolError(symbol: ",", stream: strm)
 				}
-				finished = strm.requireSymbol(symbol: ")")	// get next for future unget
+				finished = strm.requireSymbol(symbol: ")")
 			}
-			//dumpStream(title: "pL1F", stream: strm)
 		}
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Listner function body", stream: strm)
@@ -225,16 +218,14 @@ public class AMBParser
 		var args: Array<AMBArgument> = []
 		var finished = strm.requireSymbol(symbol: ")")
 		while !finished {
-			let _    = strm.unget()
 			let arg  = try parseArgument(stream: strm)
 			args.append(arg)
 			finished = strm.requireSymbol(symbol: ")")
 			if !finished {
-				let _ = strm.unget()
 				guard strm.requireSymbol(symbol: ",") else {
 					throw requireSymbolError(symbol: ",", stream: strm)
 				}
-				finished = strm.requireSymbol(symbol: ")")	// get next for future unget
+				finished = strm.requireSymbol(symbol: ")")
 			}
 		}
 		guard let text = strm.getText() else {
@@ -292,8 +283,6 @@ public class AMBParser
 			result.elements.append(ident)
 			hasnext = strm.requireSymbol(symbol: ".")
 		}
-		let _ = strm.unget()
-		//dumpStream(title: "pPE", stream: strm)
 
 		return result
 	}
