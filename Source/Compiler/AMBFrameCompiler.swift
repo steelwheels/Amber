@@ -22,12 +22,12 @@ open class AMBFrameCompiler
 	public init() {
 	}
 
-	public func compile(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> CompileResult {
+	public func compile(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> CompileResult {
 		do {
 			/* Allocate allocator defined in the super class */
 			addAllocators()
 			/* Allocate frames */
-			let rootobj = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, environment: env, config: conf, console: cons)
+			let rootobj = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
 			/* Setup listner function */
 			try allocateListnerCallers(rootObject: rootobj, console: cons)
 			/* Initialize property values */
@@ -56,8 +56,8 @@ open class AMBFrameCompiler
 		})
 	}
 
-	private func compileFrame(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) throws -> AMBReactObject {
-		let newobj = AMBReactObject(frame: frm, context: ctxt, processManager: pmgr, environment: env)
+	private func compileFrame(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) throws -> AMBReactObject {
+		let newobj = AMBReactObject(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env)
 		for member in frm.members {
 			switch member {
 			case .property(let prop):
@@ -79,7 +79,7 @@ open class AMBFrameCompiler
 				let funcval = try compileFunction(reactObject: newobj, function: ifunc, context: ctxt, config: conf, console: cons)
 				newobj.setImmediateValue(value: funcval, forProperty: ifunc.functionName)
 			case .frame(let frm):
-				let frmval = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, environment: env, config: conf, console: cons)
+				let frmval = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
 				newobj.setChildFrame(forProperty: frm.instanceName, frame: frmval)
 			}
 		}

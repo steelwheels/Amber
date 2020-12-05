@@ -96,7 +96,7 @@ public class AMBThread: CNThread
 		/* Allocate the component */
 		let ambcompiler = AMBFrameCompiler()
 		let rootcomp: AMBComponent
-		switch ambcompiler.compile(frame: frame, context: mContext, processManager: pmgr, environment: self.environment, config: config, console: console) {
+		switch ambcompiler.compile(frame: frame, context: mContext, processManager: pmgr, resource: resource, environment: self.environment, config: config, console: console) {
 		case .ok(let comp):
 			rootcomp = comp
 		case .error(let err):

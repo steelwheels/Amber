@@ -21,6 +21,7 @@ public protocol AMBObjectInterface: JSExport {
 	private var mFrame:			AMBFrame
 	private var mContext:			KEContext
 	private var mProcessManager:		CNProcessManager
+	private var mResource:			KEResource
 	private var mEnvironment:		CNEnvironment
 	private var mPropertyValues:		CNObservedValueTable
 	private var mPropertyNames:		Array<String>
@@ -28,13 +29,15 @@ public protocol AMBObjectInterface: JSExport {
 	public var frame:		AMBFrame 		{ get { return mFrame }}
 	public var context:		KEContext 		{ get { return mContext }}
 	public var processManager:	CNProcessManager	{ get { return mProcessManager }}
+	public var resource:		KEResource		{ get { return mResource }}
 	public var environment:		CNEnvironment		{ get { return mEnvironment }}
 	public var propertyNames:	Array<String>		{ get { return mPropertyNames }}
 
-	public init(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment) {
+	public init(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment) {
 		mFrame		= frm
 		mContext	= ctxt
 		mProcessManager	= pmgr
+		mResource	= res
 		mEnvironment	= env
 		mPropertyValues	= CNObservedValueTable()
 		mPropertyNames	= []
