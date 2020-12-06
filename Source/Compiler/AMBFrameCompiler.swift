@@ -33,7 +33,7 @@ open class AMBFrameCompiler
 			/* Initialize property values */
 			try initPropertyValues(rootObject: rootobj, console: cons)
 			/* Allocate components by frame */
-			let rootcomp = try allocateComponents(reactObject: rootobj)
+			let rootcomp = try allocateComponents(reactObject: rootobj, console: cons)
 			return .ok(rootcomp)
 		} catch let err as NSError {
 			return .error(err)
@@ -46,9 +46,9 @@ open class AMBFrameCompiler
 	open func addAllocators() {
 		let manager = AMBComponentManager.shared
 		manager.addAllocator(className: "Object", allocatorFunc: {
-			(_ robj: AMBReactObject) -> AllocationResult in
+			(_ robj: AMBReactObject, _ cons: CNConsole) -> AllocationResult in
 			let newcomp = AMBComponentObject()
-			if let err = newcomp.setup(reactObject: robj) {
+			if let err = newcomp.setup(reactObject: robj, console: cons) {
 				return .error(err)
 			} else {
 				return .ok(newcomp)
@@ -342,9 +342,9 @@ open class AMBFrameCompiler
 		}
 	}
 
-	private func allocateComponents(reactObject obj: AMBReactObject) throws -> AMBComponent {
+	private func allocateComponents(reactObject obj: AMBReactObject, console cons: CNConsole) throws -> AMBComponent {
 		let curcomp: AMBComponent
-		switch AMBComponentManager.shared.allocate(reactObject: obj) {
+		switch AMBComponentManager.shared.allocate(reactObject: obj, console: cons) {
 		case .ok(let comp):
 			curcomp = comp
 		case .error(let err):
@@ -354,7 +354,7 @@ open class AMBFrameCompiler
 		/* Allocate children */
 		for key in obj.propertyNames {
 			if let childobj = obj.childFrame(forProperty: key) {
-				let childcomp = try allocateComponents(reactObject: childobj)
+				let childcomp = try allocateComponents(reactObject: childobj, console: cons)
 				curcomp.addChild(component: childcomp)
 			}
 		}

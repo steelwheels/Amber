@@ -14,7 +14,7 @@ public protocol AMBComponent
 {
 	var reactObject: AMBReactObject { get }
 
-	func setup(reactObject robj: AMBReactObject) -> NSError?
+	func setup(reactObject robj: AMBReactObject, console cons: CNConsole) -> NSError?
 
 	var children: Array<AMBComponent> { get }
 	func addChild(component comp: AMBComponent)
@@ -52,7 +52,7 @@ public extension AMBComponent
 		super.init()
 	}
 
-	public func setup(reactObject robj: AMBReactObject) -> NSError? {
+	public func setup(reactObject robj: AMBReactObject, console cons: CNConsole) -> NSError? {
 		mReactObject		= robj
 		return nil
 	}

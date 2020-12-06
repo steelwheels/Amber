@@ -16,7 +16,7 @@ public class AMBComponentManager
 		case error(NSError)
 	}
 
-	public typealias ComponentAllocatorFunc = (_ robj: AMBReactObject) -> AllocationResult
+	public typealias ComponentAllocatorFunc = (_ robj: AMBReactObject, _ cons: CNConsole) -> AllocationResult
 
 	private static var mComponentManager: AMBComponentManager? = nil
 
@@ -37,9 +37,9 @@ public class AMBComponentManager
 	public init(){
 		let allocfuncs: Dictionary<String, ComponentAllocatorFunc> = [
 			"Object": {
-				(_ robj: AMBReactObject) -> AllocationResult in
+				(_ robj: AMBReactObject, _ cons: CNConsole) -> AllocationResult in
 				let newcomp = AMBComponentObject()
-				if let err = newcomp.setup(reactObject: robj) {
+				if let err = newcomp.setup(reactObject: robj, console: cons) {
 					return .error(err)
 				} else {
 					return .ok(newcomp)
@@ -49,9 +49,9 @@ public class AMBComponentManager
 		mAllocators = allocfuncs
 	}
 
-	public func allocate(reactObject robj: AMBReactObject) -> AllocationResult {
+	public func allocate(reactObject robj: AMBReactObject, console cons: CNConsole) -> AllocationResult {
 		if let allocfunc = mAllocators[robj.frame.className] {
-			return allocfunc(robj)
+			return allocfunc(robj, cons)
 		} else {
 			let clsname = robj.frame.className
 			return .error(NSError.parseError(message: "Failed to allocate unknown class object: \(clsname)"))
