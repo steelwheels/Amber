@@ -72,22 +72,30 @@ open class AMBFrameCompiler
 					let funcval = try compileFunction(reactObject: newobj, function: lfunc, context: ctxt, config: conf, console: cons)
 					newobj.setListnerFunctionValue(value: funcval, forProperty: prop.name)
 				}
-				newobj.addPropertyName(name: prop.name)
+				try addPropertyName(object: newobj, propertyName: prop.name)
 			case .eventFunction(let efunc):
 				let funcval = try compileFunction(reactObject: newobj, function: efunc, context: ctxt, config: conf, console: cons)
 				newobj.setImmediateValue(value: funcval, forProperty: efunc.functionName)
-				newobj.addPropertyName(name: efunc.functionName)
+				try addPropertyName(object: newobj, propertyName: efunc.functionName)
 			case .initFunction(let ifunc):
 				let funcval = try compileFunction(reactObject: newobj, function: ifunc, context: ctxt, config: conf, console: cons)
 				newobj.setImmediateValue(value: funcval, forProperty: ifunc.functionName)
-				newobj.addPropertyName(name: ifunc.functionName)
+				try addPropertyName(object: newobj, propertyName: ifunc.functionName)
 			case .frame(let frm):
 				let frmval = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
 				newobj.setChildFrame(forProperty: frm.instanceName, frame: frmval)
-				newobj.addPropertyName(name: frm.instanceName)
+				try addPropertyName(object: newobj, propertyName: frm.instanceName)
 			}
 		}
 		return newobj
+	}
+
+	private func addPropertyName(object robj: AMBReactObject, propertyName pname: String) throws {
+		if robj.propertyNames.contains(pname) {
+			throw NSError.parseError(message: "Multi defined property names: \(pname)")
+		} else {
+			robj.addPropertyName(name: pname)
+		}
 	}
 
 	private func compileNativeValueProperty(nativeValue nval: CNNativeValue, context ctxt: KEContext) throws -> JSValue {
