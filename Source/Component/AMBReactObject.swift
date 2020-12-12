@@ -43,6 +43,10 @@ public protocol AMBObjectInterface: JSExport {
 		mPropertyNames	= []
 	}
 
+	public func addPropertyName(name nm: String) {
+		mPropertyNames.append(nm)
+	}
+
 	public func get(_ name: JSValue) -> JSValue {
 		if name.isString {
 			if let namestr = name.toString() {
@@ -73,7 +77,6 @@ public protocol AMBObjectInterface: JSExport {
 
 	public func setImmediateValue(value val: JSValue, forProperty prop: String) {
 		mPropertyValues.setValue(val, forKey: prop)
-		mPropertyNames.append(prop)
 	}
 
 	public func numberValue(forProperty prop: String) -> NSNumber? {
@@ -122,7 +125,6 @@ public protocol AMBObjectInterface: JSExport {
 	
 	public func setChildFrame(forProperty prop: String, frame frm: AMBReactObject) {
 		mPropertyValues.setValue(frm, forKey: prop)
-		mPropertyNames.append(prop)
 	}
 
 	public func setListnerFunctionValue(value fval: JSValue, forProperty prop: String) {

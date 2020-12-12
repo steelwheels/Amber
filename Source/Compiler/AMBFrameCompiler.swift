@@ -72,15 +72,19 @@ open class AMBFrameCompiler
 					let funcval = try compileFunction(reactObject: newobj, function: lfunc, context: ctxt, config: conf, console: cons)
 					newobj.setListnerFunctionValue(value: funcval, forProperty: prop.name)
 				}
+				newobj.addPropertyName(name: prop.name)
 			case .eventFunction(let efunc):
 				let funcval = try compileFunction(reactObject: newobj, function: efunc, context: ctxt, config: conf, console: cons)
 				newobj.setImmediateValue(value: funcval, forProperty: efunc.functionName)
+				newobj.addPropertyName(name: efunc.functionName)
 			case .initFunction(let ifunc):
 				let funcval = try compileFunction(reactObject: newobj, function: ifunc, context: ctxt, config: conf, console: cons)
 				newobj.setImmediateValue(value: funcval, forProperty: ifunc.functionName)
+				newobj.addPropertyName(name: ifunc.functionName)
 			case .frame(let frm):
 				let frmval = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
 				newobj.setChildFrame(forProperty: frm.instanceName, frame: frmval)
+				newobj.addPropertyName(name: frm.instanceName)
 			}
 		}
 		return newobj
