@@ -150,6 +150,18 @@ Here is the primitive data types:
 |Float  |Floating point value           |
 |String |Strint value                   |
 
+## Immediate Value
+### String value
+The continuous strings are concatenated into a single string.
+In the following example, the property `name` has "a,b,c".
+````
+{
+    name: String "a,"
+                 "b,"
+                 "c"
+}
+````
+
 ## Syntax
 This is BNF of this language:
 ````

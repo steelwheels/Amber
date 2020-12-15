@@ -146,7 +146,18 @@ public class AMBParser
 				}
 			case .stringType:
 				if let val = strm.getString() {
-					value = .stringValue(val)
+					var str = val
+					/* Parse next string */
+					var docont = true
+					while docont {
+						if let next = strm.getString() {
+							str += next
+						} else {
+							let _ = strm.unget()
+							docont = false
+						}
+					}
+					value = .stringValue(str)
 				} else {
 					throw requireDeclarationError(declaration: "String value", stream: strm)
 				}
