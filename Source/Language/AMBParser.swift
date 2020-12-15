@@ -157,7 +157,7 @@ public class AMBParser
 							docont = false
 						}
 					}
-					value = .stringValue(str)
+					value = .stringValue(decode(string: str))
 				} else {
 					throw requireDeclarationError(declaration: "String value", stream: strm)
 				}
@@ -175,6 +175,13 @@ public class AMBParser
 			return .property(AMBProperty(name: ident, type: typ, nativeValue: value))
 		}
 	}
+
+	private func decode(string src: String) -> String {
+		let src1 = src.replacingOccurrences(of: "\\n", with: "\n")
+		let src2 = src1.replacingOccurrences(of: "\\t", with: "\t")
+		return src2
+	}
+
 
 	private func parseProceduralFunc(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBProcedureFunction {
 		var args: Array<AMBArgument> = []

@@ -1,0 +1,3 @@
+dyld: Library not loaded: @rpath/CoconutData.framework/Versions/A/CoconutData
+  Referenced from: /Users/tomoo/build/DerivedData/Amber-ffntqmviruaunwgrxgamtnogswka/Build/Products/Debug/UnitTest
+  Reason: image not found

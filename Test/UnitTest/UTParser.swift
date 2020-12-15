@@ -38,7 +38,7 @@ public func sampleScripts() -> Array<String> {
 	let src9   =   "rootObj: Object {\n"
 		     + "  i: Init %{ console.log(\"ok\\n\") ; %}\n"
 		     + "}"
-	let src10  =   "rootObject: Object { str: String \"a,\" \"b,\" \"c\" }\n"
+	let src10  =   "rootObject: Object { str: String \"a,\" \"b,\" \"\\n\" \"c\" }\n"
 	let srcs   = [src0, src1, src2, src3, src4, src5, src6, src7, src8, src9, src10]
 	return srcs
 }
