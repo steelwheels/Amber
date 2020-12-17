@@ -45,6 +45,8 @@ public func sampleScripts() -> Array<String> {
 
 public func UTParser(console cons: CNConsole) -> Bool
 {
+	cons.print(string: "===== UTParser\n")
+
 	var result = true
 	for src in sampleScripts() {
 		if !testParser(source: src, console: cons) {

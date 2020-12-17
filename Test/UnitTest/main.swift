@@ -11,9 +11,11 @@ import Foundation
 print("Hello, World!")
 
 let cons = CNFileConsole()
+CNPreference.shared.systemPreference.logLevel = .detail
+
 //let res0 = UTParser(console: cons)
 let res1 = UTCompiler(console: cons)
-let res2 = UTAllocator(console: cons)
+let res2 = UTComponent(console: cons)
 
 let result = res1 && res2 // && res0
 if result {

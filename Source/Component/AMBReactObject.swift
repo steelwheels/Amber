@@ -11,7 +11,7 @@ import KiwiLibrary
 import CoconutData
 import JavaScriptCore
 
-public protocol AMBObjectInterface: JSExport {
+@objc public protocol AMBObjectInterface: JSExport {
 	func get(_ name: JSValue) -> JSValue
 	func set(_ name: JSValue, _ val: JSValue) -> JSValue // return: bool
 }
@@ -41,6 +41,17 @@ public protocol AMBObjectInterface: JSExport {
 		mEnvironment	= env
 		mPropertyValues	= CNObservedValueTable()
 		mPropertyNames	= []
+		super.init()
+
+		/* Set default properties */
+		if let inststr = JSValue(object: frame.instanceName, in: ctxt) {
+			mPropertyValues.setValue(inststr, forKey: "instanceName")
+			mPropertyNames.append("instanceName")
+		}
+		if let clsstr = JSValue(object: frame.className, in: ctxt) {
+			mPropertyValues.setValue(clsstr, forKey: "className")
+			mPropertyNames.append("className")
+		}
 	}
 
 	public func addPropertyName(name nm: String) {

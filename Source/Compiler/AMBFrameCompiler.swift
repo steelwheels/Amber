@@ -14,6 +14,8 @@ open class AMBFrameCompiler
 {
 	public typealias AllocationResult = AMBComponentManager.AllocationResult
 
+	let TEMPORARY_VARIABLE_NAME = "_amber_temp_var"
+	
 	public enum CompileResult {
 	case ok(AMBComponent)
 	case error(NSError)
@@ -34,6 +36,10 @@ open class AMBFrameCompiler
 			try initPropertyValues(rootObject: rootobj, console: cons)
 			/* Allocate components by frame */
 			let rootcomp = try allocateComponents(reactObject: rootobj, console: cons)
+			/* Add setter/getter */
+			defineProperties(component: rootcomp, context: ctxt, console: cons)
+			/* Define top object */
+			defineTopObject(component: rootcomp, context: ctxt, console: cons)
 			return .ok(rootcomp)
 		} catch let err as NSError {
 			return .error(err)
@@ -103,8 +109,6 @@ open class AMBFrameCompiler
 	}
 
 	private func compileFunction(reactObject dst: AMBReactObject, function afunc: AMBFunction, context ctxt: KEContext, config conf: KEConfig, console cons: CNConsole) throws -> JSValue {
-		let TEMPORARY_VARIABLE_NAME = "_amber_temp_var"
-
 		/* Make JavaScript function */
 		let varname = TEMPORARY_VARIABLE_NAME + afunc.functionName
 		let script = functionToScript(function: afunc, context: ctxt)
@@ -371,5 +375,41 @@ open class AMBFrameCompiler
 			}
 		}
 		return curcomp
+	}
+
+	private func defineProperties(component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
+		/* Visit children */
+		for child in comp.children {
+			defineProperties(component: child, context: ctxt, console: cons)
+		}
+		/* Define the object instance */
+		let robj = comp.reactObject
+		ctxt.set(name: TEMPORARY_VARIABLE_NAME, object: robj)
+		/* Allocate property for this component */
+		for name in robj.propertyNames {
+			defineProperty(context: ctxt, propertyName: name, console: cons)
+		}
+	}
+
+	private func defineProperty(context ctxt: KEContext, propertyName name: String, console cons: CNConsole) {
+		let script =   "Object.defineProperty(\(TEMPORARY_VARIABLE_NAME), '\(name)',{ \n"
+			     + "  get()    { return this.get(\"\(name)\") ; }, \n"
+			     + "  set(val) { return this.set(\"\(name)\", val) ; }, \n"
+			     + "}) ;\n"
+		log(level: .detail, message: script, console: cons)
+		ctxt.evaluateScript(script)
+	}
+
+	private func defineTopObject(component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
+		let robj = comp.reactObject
+		let name = robj.frame.instanceName
+		log(level: .detail, message: "Define top component: \(name)\n", console: cons)
+		ctxt.set(name: name, object: robj)
+	}
+
+	private func log(level lvl: CNConfig.LogLevel, message msg: String, console cons: CNConsole) {
+		if CNPreference.shared.systemPreference.logLevel.isIncluded(in: lvl) {
+			cons.print(string: msg)
+		}
 	}
 }

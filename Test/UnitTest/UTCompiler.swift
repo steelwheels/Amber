@@ -13,6 +13,8 @@ import Foundation
 
 public func UTCompiler(console cons: CNConsole) -> Bool
 {
+	cons.print(string: "===== UTCompiler\n")
+	
 	var result = true
 
 	guard let vm = JSVirtualMachine() else {
@@ -53,6 +55,8 @@ private func testCompiler(source src: String, context ctxt: KEContext, processMa
 		switch compiler.compile(frame: frame, context: ctxt, processManager: pmgr, resource: resource, environment: env, config: conf, console: cons) {
 		case .ok(let comp):
 			cons.print(string: "--- Print component\n")
+			printProperty(object: comp.reactObject, propertyName: "instanceName", context: ctxt, console: cons)
+			printProperty(object: comp.reactObject, propertyName: "className", context: ctxt, console: cons)
 			let cdumper = AMBComponentDumper()
 			let txt     = cdumper.dumpToText(component: comp)
 			txt.print(console: cons, terminal: "")
@@ -69,4 +73,17 @@ private func testCompiler(source src: String, context ctxt: KEContext, processMa
 		result = false
 	}
 	return result
+}
+
+private func printProperty(object obj: AMBReactObject, propertyName name: String, context ctxt: KEContext, console cons: CNConsole) {
+	if let nameval = JSValue(object: name, in: ctxt) {
+		let propval = obj.get(nameval)
+		if let propstr = propval.toString() {
+			cons.print(string: "property: \(name) -> value: \(propstr)\n")
+		} else {
+			cons.print(string: "property: \(name) -> value: <none>\n")
+		}
+	} else {
+		cons.print(string: "[Error] Internal error")
+	}
 }

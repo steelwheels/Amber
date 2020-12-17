@@ -39,7 +39,7 @@
 		05D6D9B42529EAC800930E48 /* AMBComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9B22529EAC800930E48 /* AMBComponent.swift */; };
 		05D6D9B82529FD5A00930E48 /* AMBComponentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9B72529FD5A00930E48 /* AMBComponentManager.swift */; };
 		05D6D9B92529FD5A00930E48 /* AMBComponentManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9B72529FD5A00930E48 /* AMBComponentManager.swift */; };
-		05D6D9BC252A12A100930E48 /* UTAllocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9BB252A12A100930E48 /* UTAllocator.swift */; };
+		05D6D9BC252A12A100930E48 /* UTComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9BB252A12A100930E48 /* UTComponent.swift */; };
 		05ED776E25204BD3000EC3FC /* Amber_macOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 05ED776C25204BD3000EC3FC /* Amber_macOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05ED777C25204BF9000EC3FC /* Amber_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 05ED777A25204BF9000EC3FC /* Amber_iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05ED778525204CE3000EC3FC /* AMBFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ED778425204CE3000EC3FC /* AMBFrame.swift */; };
@@ -135,7 +135,7 @@
 		05A3926B252378A500A1A37A /* AMBFrameCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBFrameCompiler.swift; sourceTree = "<group>"; };
 		05D6D9B22529EAC800930E48 /* AMBComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBComponent.swift; sourceTree = "<group>"; };
 		05D6D9B72529FD5A00930E48 /* AMBComponentManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBComponentManager.swift; sourceTree = "<group>"; };
-		05D6D9BB252A12A100930E48 /* UTAllocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTAllocator.swift; sourceTree = "<group>"; };
+		05D6D9BB252A12A100930E48 /* UTComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTComponent.swift; sourceTree = "<group>"; };
 		05ED776925204BD3000EC3FC /* Amber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05ED776C25204BD3000EC3FC /* Amber_macOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Amber_macOS.h; sourceTree = "<group>"; };
 		05ED776D25204BD3000EC3FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -209,9 +209,9 @@
 			isa = PBXGroup;
 			children = (
 				0535C1A22520B1F4002A9172 /* main.swift */,
-				0535C1B62520B4F4002A9172 /* UTParser.swift */,
 				0589BCB82524C5990077892D /* UTCompiler.swift */,
-				05D6D9BB252A12A100930E48 /* UTAllocator.swift */,
+				05D6D9BB252A12A100930E48 /* UTComponent.swift */,
+				0535C1B62520B4F4002A9172 /* UTParser.swift */,
 			);
 			path = UnitTest;
 			sourceTree = "<group>";
@@ -546,7 +546,7 @@
 			files = (
 				0535C1A32520B1F4002A9172 /* main.swift in Sources */,
 				0589BCB92524C5990077892D /* UTCompiler.swift in Sources */,
-				05D6D9BC252A12A100930E48 /* UTAllocator.swift in Sources */,
+				05D6D9BC252A12A100930E48 /* UTComponent.swift in Sources */,
 				0535C1B72520B4F4002A9172 /* UTParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
