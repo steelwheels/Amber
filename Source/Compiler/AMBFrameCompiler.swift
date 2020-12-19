@@ -38,8 +38,6 @@ open class AMBFrameCompiler
 			let rootcomp = try allocateComponents(reactObject: rootobj, console: cons)
 			/* Add setter/getter */
 			defineProperties(component: rootcomp, context: ctxt, console: cons)
-			/* Define top object */
-			defineTopObject(component: rootcomp, context: ctxt, console: cons)
 			return .ok(rootcomp)
 		} catch let err as NSError {
 			return .error(err)
@@ -111,11 +109,13 @@ open class AMBFrameCompiler
 	private func compileFunction(reactObject dst: AMBReactObject, function afunc: AMBFunction, context ctxt: KEContext, config conf: KEConfig, console cons: CNConsole) throws -> JSValue {
 		/* Make JavaScript function */
 		let varname = TEMPORARY_VARIABLE_NAME + afunc.functionName
-		let script = functionToScript(function: afunc, context: ctxt)
+		let funcscr = functionToScript(function: afunc, context: ctxt)
+		let script  = varname + " = " + funcscr
 		/* Evaluate the function */
-		let _ = ctxt.evaluateScript(varname + " = " + script)
+		let _ = ctxt.evaluateScript(script)
 		if ctxt.errorCount != 0 {
-			throw NSError.parseError(message: "Failed to compile function: \(afunc.functionName)")
+			ctxt.resetErrorCount()
+			throw NSError.parseError(message: "Failed to compile function: \(afunc.functionName)\n\(script)")
 		}
 		if let val = ctxt.objectForKeyedSubscript(varname) {
 			return val
@@ -378,33 +378,38 @@ open class AMBFrameCompiler
 	}
 
 	private func defineProperties(component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
-		/* Visit children */
-		for child in comp.children {
-			defineProperties(component: child, context: ctxt, console: cons)
+		/* Define root object */
+		let robj     = comp.reactObject
+		let rootname = robj.frame.instanceName
+		log(level: .debug, message: "Define root component: \(rootname)\n", console: cons)
+		ctxt.set(name: rootname, object: robj)
+
+		defineProperties(pathExpression: [rootname], component: comp, context: ctxt, console: cons)
+	}
+
+	private func defineProperties(pathExpression path: Array<String>, component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
+		/* Define setter/getter */
+		for pname in comp.reactObject.propertyNames {
+			defineProperty(context: ctxt, pathExpression: path, propertyName: pname, console: cons)
 		}
-		/* Define the object instance */
-		let robj = comp.reactObject
-		ctxt.set(name: TEMPORARY_VARIABLE_NAME, object: robj)
-		/* Allocate property for this component */
-		for name in robj.propertyNames {
-			defineProperty(context: ctxt, propertyName: name, console: cons)
+
+		/* Define child objects */
+		for child in comp.children {
+			var childpath = path ; childpath.append(child.reactObject.frame.instanceName)
+			defineProperties(pathExpression: childpath, component: child, context: ctxt, console: cons)
 		}
 	}
 
-	private func defineProperty(context ctxt: KEContext, propertyName name: String, console cons: CNConsole) {
-		let script =   "Object.defineProperty(\(TEMPORARY_VARIABLE_NAME), '\(name)',{ \n"
-			     + "  get()    { return this.get(\"\(name)\") ; }, \n"
-			     + "  set(val) { return this.set(\"\(name)\", val) ; }, \n"
+	private func defineProperty(context ctxt: KEContext, pathExpression path: Array<String>, propertyName pname: String, console cons: CNConsole) {
+		let obj  = "_" + path.joined(separator: "_") + "_" + pname
+		let path = path.joined(separator: ".")
+		let script =   "let  \(obj) = \(path) ;\n"
+			     + "Object.defineProperty(\(obj), '\(pname)',{ \n"
+			     + "  get()    { return this.get(\"\(pname)\") ; }, \n"
+			     + "  set(val) { return this.set(\"\(pname)\", val) ; }, \n"
 			     + "}) ;\n"
 		log(level: .detail, message: script, console: cons)
 		ctxt.evaluateScript(script)
-	}
-
-	private func defineTopObject(component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
-		let robj = comp.reactObject
-		let name = robj.frame.instanceName
-		log(level: .detail, message: "Define top component: \(name)\n", console: cons)
-		ctxt.set(name: name, object: robj)
 	}
 
 	private func log(level lvl: CNConfig.LogLevel, message msg: String, console cons: CNConsole) {

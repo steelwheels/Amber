@@ -24,6 +24,7 @@ import JavaScriptCore
 	private var mResource:			KEResource
 	private var mEnvironment:		CNEnvironment
 	private var mPropertyValues:		CNObservedValueTable
+	private var mListerFuncPointers:	Dictionary<String, Array<AMBObjectPointer>>
 	private var mPropertyNames:		Array<String>
 
 	public var frame:		AMBFrame 		{ get { return mFrame }}
@@ -40,7 +41,8 @@ import JavaScriptCore
 		mResource	= res
 		mEnvironment	= env
 		mPropertyValues	= CNObservedValueTable()
-		mPropertyNames	= []
+		mListerFuncPointers	= [:]
+		mPropertyNames		= []
 		super.init()
 
 		/* Set default properties */
@@ -73,6 +75,7 @@ import JavaScriptCore
 		if name.isString {
 			if let namestr = name.toString() {
 				mPropertyValues.setValue(val, forKey: namestr)
+				return JSValue(bool: true, in: mContext)
 			}
 		}
 		return JSValue(bool: false, in: mContext)
@@ -127,15 +130,18 @@ import JavaScriptCore
 	}
 
 	public func childFrame(forProperty prop: String) -> AMBReactObject? {
-		if let robj = mPropertyValues.value(forKey: prop) as? AMBReactObject {
-			return robj
-		} else {
-			return nil
+		if let imm = immediateValue(forProperty: prop) {
+			if imm.isObject {
+				if let obj = imm.toObject() as? AMBReactObject {
+					return obj
+				}
+			}
 		}
+		return nil
 	}
 	
 	public func setChildFrame(forProperty prop: String, frame frm: AMBReactObject) {
-		mPropertyValues.setValue(frm, forKey: prop)
+		setImmediateValue(value: JSValue(object: frm, in: mContext), forProperty: prop)
 	}
 
 	public func setListnerFunctionValue(value fval: JSValue, forProperty prop: String) {
@@ -158,12 +164,12 @@ import JavaScriptCore
 
 	public func setListnerFuncPointers(pointers ptrs: Array<AMBObjectPointer>, forProperty prop: String) {
 		let lname = propertyToListnerFuncParameterName(prop)
-		mPropertyValues.setValue(ptrs, forKey: lname)
+		mListerFuncPointers[lname] = ptrs
 	}
 
 	public func listnerFuncPointers(forProperty prop: String) -> Array<AMBObjectPointer>? {
 		let lname = propertyToListnerFuncParameterName(prop)
-		if let params = mPropertyValues.value(forKey: lname) as? Array<AMBObjectPointer> {
+		if let params = mListerFuncPointers[lname] {
 			return params
 		} else {
 			return nil

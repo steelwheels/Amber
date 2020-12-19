@@ -14,8 +14,8 @@ public func sampleScripts() -> Array<String> {
 	let src1   = "object: Object { a: Int 0 } "
 	let src2   = "object: Object { f: Int Func(a:Int, b:Float) %{ return a+b ; %} }"
 	let src3   = "object: Object { f: Event() %{ console.log(\"a\") ; %} }"
-	let src4   = "object: Object { f: Int Listner(a: self.a) %{ console.log(a) ; %} }"
-	let src5   = "object: Object { f: Int Listner(a: self.a, b:self.b) %{ console.log(a+b) ; %} }"
+	let src4   = "object: Object { a: Int 0 f: Int Listner(a: self.a) %{ console.log(a) ; %} }"
+	let src5   = "object: Object { a: Int 0 b: Int 1 f: Int Listner(a: self.a, b:self.b) %{ console.log(a+b) ; %} }"
 	let src6   =   "rootobj: Object {"
 		     + "  a: Int 0 \n"
 		     + "  subobj: Object {\n"
@@ -71,11 +71,11 @@ private func testParser(source src: String, console cons: CNConsole) -> Bool {
 		let dumper = AMBFrameDumper()
 		let text   = dumper.dumpToText(frame: frame)
 		text.print(console: cons, terminal: "")
-		cons.print(string: "Result ... OK\n")
+		cons.print(string: "Parse result ... OK\n")
 		result = true
 	case .error(let error):
 		cons.print(string: "[Error] \(error.toString())\n")
-		cons.print(string: "Result ... NG\n")
+		cons.print(string: "Parse result ... NG\n")
 		result = false
 	}
 	return result

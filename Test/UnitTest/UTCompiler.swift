@@ -23,11 +23,10 @@ public func UTCompiler(console cons: CNConsole) -> Bool
 	}
 	let procmgr  = CNProcessManager()
 	let env      = CNEnvironment()
-	let context  = KEContext(virtualMachine: vm)
 	let conf     = KEConfig(applicationType: .terminal, doStrict: true, logLevel: .debug)
 
 	for src in sampleScripts() {
-		if !testCompiler(source: src, context: context, processManager: procmgr, environment: env, config: conf, console: cons) {
+		if !testCompiler(source: src, virtualMachie: vm, processManager: procmgr, environment: env, config: conf, console: cons) {
 			result = false
 		}
 	}
@@ -39,7 +38,8 @@ public func UTCompiler(console cons: CNConsole) -> Bool
 	return result
 }
 
-private func testCompiler(source src: String, context ctxt: KEContext, processManager pmgr: CNProcessManager, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> Bool {
+private func testCompiler(source src: String, virtualMachie vm: JSVirtualMachine, processManager pmgr: CNProcessManager, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> Bool {
+	let ctxt = KEContext(virtualMachine: vm)
 	let result: Bool
 	cons.print(string: "SOURCE: \(src)\n")
 	let parser = AMBParser()
@@ -60,16 +60,16 @@ private func testCompiler(source src: String, context ctxt: KEContext, processMa
 			let cdumper = AMBComponentDumper()
 			let txt     = cdumper.dumpToText(component: comp)
 			txt.print(console: cons, terminal: "")
-			cons.print(string: "Result ... OK\n")
+			cons.print(string: "Compile Result ... OK\n")
 			result = true
 		case .error(let err):
-			cons.print(string: "Result ... NG\n")
-			cons.print(string: "[Error] \(err.toString())")
+			cons.print(string: "Compile Result ... NG\n")
+			cons.print(string: "[Error] \(err.toString())\n")
 			result = false
 		}
 	case .error(let error):
 		cons.print(string: "[Error] \(error.toString())\n")
-		cons.print(string: "Result ... NG\n")
+		cons.print(string: "Parse Result ... NG\n")
 		result = false
 	}
 	return result
