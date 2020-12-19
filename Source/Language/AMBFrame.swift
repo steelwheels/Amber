@@ -96,6 +96,7 @@ public enum AMBType {
 	case	intType
 	case	floatType
 	case	stringType
+	case 	urlType
 	case	enumType(KEEnumType)
 
 	public func name() -> String {
@@ -105,6 +106,7 @@ public enum AMBType {
 		case .intType:			result = "Int"
 		case .floatType:		result = "Float"
 		case .stringType:		result = "String"
+		case .urlType:			result = "URL"
 		case .enumType(let etype):	result = etype.typeName
 		}
 		return result
@@ -117,6 +119,7 @@ public enum AMBType {
 		case "Int":	result = .intType
 		case "Float":	result = .floatType
 		case "String":	result = .stringType
+		case "URL":	result = .urlType
 		default:
 			let etable = KEEnumTable.shared
 			if let etype = etable.search(by: str) {

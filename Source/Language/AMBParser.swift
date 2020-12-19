@@ -159,7 +159,21 @@ public class AMBParser
 					}
 					value = .stringValue(decode(string: str))
 				} else {
-					throw requireDeclarationError(declaration: "String value", stream: strm)
+					throw requireDeclarationError(declaration: "String value is expected", stream: strm)
+				}
+			case .urlType:
+				if let val = strm.getString() {
+					if val == "" {
+						value = .URLValue(URL(fileURLWithPath: "/dev/null"))
+					} else {
+						if let url = URL(string: val) {
+							value = .URLValue(url)
+						} else {
+							throw requireDeclarationError(declaration: "Invalid URL value: \"\(val)\"", stream: strm)
+						}
+					}
+				} else {
+					throw requireDeclarationError(declaration: "URL value is expected", stream: strm)
 				}
 			case .enumType(let etype):
 				if let val = strm.getIdentifier() {

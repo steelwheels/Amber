@@ -149,6 +149,7 @@ Here is the primitive data types:
 |Int    |Signed integer value (32bit)   |
 |Float  |Floating point value           |
 |String |Strint value                   |
+|URL    |URL object. It is an instance of [URL](https://github.com/steelwheels/KiwiScript/blob/master/KiwiLibrary/Document/Class/URL.md) class|
 
 ## Immediate Value
 ### String value
@@ -159,6 +160,15 @@ In the following example, the property `name` has "a,b,c".
     name: String "a,"
                  "b,"
                  "c"
+}
+````
+
+### URL value
+The instance of [URL](https://github.com/steelwheels/KiwiScript/blob/master/KiwiLibrary/Document/Class/URL.md). If you want to define *none URL*, give "" empty string.
+
+````
+{
+    homeDirectory: URL ""   // Presents no URL
 }
 ````
 
