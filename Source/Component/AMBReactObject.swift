@@ -93,22 +93,37 @@ import JavaScriptCore
 		mPropertyValues.setValue(val, forKey: prop)
 	}
 
-	public func numberValue(forProperty prop: String) -> NSNumber? {
+	public func boolValue(forProperty prop: String) -> Bool? {
 		if let imm = immediateValue(forProperty: prop) {
-			if imm.isObject {
-				if let num = imm.toObject() as? NSNumber {
-					return num
-				}
+			if imm.isBoolean {
+				return imm.toBool()
 			}
 		}
 		return nil
 	}
 
-	public func setNumberValue(number val: NSNumber, forProperty prop: String) {
-		if let val = JSValue(object: val, in: self.context) {
+	public func setBoolValue(value val: Bool, forProperty prop: String) {
+		if let val = JSValue(bool: val, in: self.context) {
 			setImmediateValue(value: val, forProperty: prop)
 		} else {
-			NSLog("Failed to allocate string value")
+			NSLog("Failed to allocate bool value")
+		}
+	}
+
+	public func int32Value(forProperty prop: String) -> Int32? {
+		if let imm = immediateValue(forProperty: prop) {
+			if imm.isNumber {
+				return imm.toInt32()
+			}
+		}
+		return nil
+	}
+
+	public func setInt32Value(value val: Int32, forProperty prop: String) {
+		if let val = JSValue(int32: val , in: self.context) {
+			setImmediateValue(value: val, forProperty: prop)
+		} else {
+			NSLog("Failed to allocate int32 value")
 		}
 	}
 
