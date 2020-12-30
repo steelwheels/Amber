@@ -108,86 +108,90 @@ public class AMBParser
 	private func parseProperty(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBFrame.Member {
 		if let functype = strm.getIdentifier() {
 			if let code = AMBFunction.decodeType(functype) {
-				switch code {
-				case .procedure:
-					let pfunc = try parseProceduralFunc(frame: frm, identifier: ident, type: typ, stream: strm)
-					return .property(AMBProperty(name: ident, type: typ, procedureFunction: pfunc))
-				case .listner:
-					let lfunc = try parseListnerFunc(frame: frm, identifier: ident, type: typ, stream: strm)
-					return .property(AMBProperty(name: ident, type: typ, listnerFunction: lfunc))
-				case .event, .initialize:
-					throw makeParseError(message: "Event/Init function does not have return type", stream: strm)
+				return try parseFunctionProperty(frame: frm, functionType: code, identifier: ident, type: typ, stream: strm)
+			}
+		}
+		let _ = strm.unget() // reduce the stream
+		return try parseExpressionProperty(frame: frm, identifier: ident, type: typ, stream: strm)
+	}
+
+	private func parseFunctionProperty(frame frm: AMBFrame, functionType ftype: AMBFunction.FunctionType, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+		switch ftype {
+		case .procedure:
+			let pfunc = try parseProceduralFunc(frame: frm, identifier: ident, type: typ, stream: strm)
+			return .property(AMBProperty(name: ident, type: typ, procedureFunction: pfunc))
+		case .listner:
+			let lfunc = try parseListnerFunc(frame: frm, identifier: ident, type: typ, stream: strm)
+			return .property(AMBProperty(name: ident, type: typ, listnerFunction: lfunc))
+		case .event, .initialize:
+			throw makeParseError(message: "Event/Init function does not have return type", stream: strm)
+		}
+	}
+
+	private func parseExpressionProperty(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+		let value:	CNNativeValue
+		switch typ {
+		case .booleanType:
+			if let val = strm.getBool() {
+				value = .numberValue(NSNumber(booleanLiteral: val))
+			} else {
+				throw requireDeclarationError(declaration: "Boolean value", stream: strm)
+			}
+		case .intType:
+			if let val = strm.getAnyInt() {
+				value = .numberValue(NSNumber(integerLiteral: val))
+			} else {
+				throw requireDeclarationError(declaration: "Integer value", stream: strm)
+			}
+		case .floatType:
+			if let val = strm.getAnyDouble() {
+				value = .numberValue(NSNumber(floatLiteral: val))
+			} else {
+				throw requireDeclarationError(declaration: "Float value", stream: strm)
+			}
+		case .stringType:
+			if let val = strm.getString() {
+				var str = val
+				/* Parse next string */
+				var docont = true
+				while docont {
+					if let next = strm.getString() {
+						str += next
+					} else {
+						let _ = strm.unget()
+						docont = false
+					}
+				}
+				value = .stringValue(decode(string: str))
+			} else {
+				throw requireDeclarationError(declaration: "String value is expected", stream: strm)
+			}
+		case .urlType:
+			if let val = strm.getString() {
+				if val == "" {
+					value = .URLValue(URL(fileURLWithPath: "/dev/null"))
+				} else {
+					if let url = URL(string: val) {
+						value = .URLValue(url)
+					} else {
+						throw requireDeclarationError(declaration: "Invalid URL value: \"\(val)\"", stream: strm)
+					}
 				}
 			} else {
-				throw makeParseError(message: "Unexpected identifier: \(ident)", stream: strm)
+				throw requireDeclarationError(declaration: "URL value is expected", stream: strm)
 			}
-		} else {
-			let _ = strm.unget() // reduce the stream
-
-			let value:	CNNativeValue
-			switch typ {
-			case .booleanType:
-				if let val = strm.getBool() {
-					value = .numberValue(NSNumber(booleanLiteral: val))
+		case .enumType(let etype):
+			if let val = strm.getIdentifier() {
+				if let ival = etype.search(byMemberName: val) {
+					value = .numberValue(NSNumber(integerLiteral: Int(ival)))
 				} else {
-					throw requireDeclarationError(declaration: "Boolean value", stream: strm)
+					throw requireDeclarationError(declaration: "Unknown member of Enum \"\(etype.typeName)\" value", stream: strm)
 				}
-			case .intType:
-				if let val = strm.getAnyInt() {
-					value = .numberValue(NSNumber(integerLiteral: val))
-				} else {
-					throw requireDeclarationError(declaration: "Integer value", stream: strm)
-				}
-			case .floatType:
-				if let val = strm.getAnyDouble() {
-					value = .numberValue(NSNumber(floatLiteral: val))
-				} else {
-					throw requireDeclarationError(declaration: "Float value", stream: strm)
-				}
-			case .stringType:
-				if let val = strm.getString() {
-					var str = val
-					/* Parse next string */
-					var docont = true
-					while docont {
-						if let next = strm.getString() {
-							str += next
-						} else {
-							let _ = strm.unget()
-							docont = false
-						}
-					}
-					value = .stringValue(decode(string: str))
-				} else {
-					throw requireDeclarationError(declaration: "String value is expected", stream: strm)
-				}
-			case .urlType:
-				if let val = strm.getString() {
-					if val == "" {
-						value = .URLValue(URL(fileURLWithPath: "/dev/null"))
-					} else {
-						if let url = URL(string: val) {
-							value = .URLValue(url)
-						} else {
-							throw requireDeclarationError(declaration: "Invalid URL value: \"\(val)\"", stream: strm)
-						}
-					}
-				} else {
-					throw requireDeclarationError(declaration: "URL value is expected", stream: strm)
-				}
-			case .enumType(let etype):
-				if let val = strm.getIdentifier() {
-					if let ival = etype.search(byMemberName: val) {
-						value = .numberValue(NSNumber(integerLiteral: Int(ival)))
-					} else {
-						throw requireDeclarationError(declaration: "Unknown member of Enum \"\(etype.typeName)\" value", stream: strm)
-					}
-				} else {
-					throw requireDeclarationError(declaration: "Enum \"\(etype.typeName)\" value", stream: strm)
-				}
+			} else {
+				throw requireDeclarationError(declaration: "Enum \"\(etype.typeName)\" value", stream: strm)
 			}
-			return .property(AMBProperty(name: ident, type: typ, nativeValue: value))
 		}
+		return .property(AMBProperty(name: ident, type: typ, nativeValue: value))
 	}
 
 	private func decode(string src: String) -> String {
@@ -338,7 +342,7 @@ public class AMBParser
 		var lineinfo: String = ""
 		if let stm = strm {
 			if let lineno = stm.lineNo {
-				lineinfo = "at line \(lineno)"
+				lineinfo = " at line \(lineno)"
 			}
 		}
 		return lineinfo
