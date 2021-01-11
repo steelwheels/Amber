@@ -95,10 +95,10 @@ open class AMBFrameCompiler
 	}
 
 	private func addPropertyName(object robj: AMBReactObject, propertyName pname: String) throws {
-		if robj.propertyNames.contains(pname) {
+		if robj.scriptedPropertyNames.contains(pname) {
 			throw NSError.parseError(message: "Multi defined property names: \(pname)")
 		} else {
-			robj.addPropertyName(name: pname)
+			robj.addScriptedPropertyName(name: pname)
 		}
 	}
 
@@ -184,7 +184,7 @@ open class AMBFrameCompiler
 			newpath = objname
 		}
 		var result: Dictionary<String, AMBReactObject> = [newpath: obj]
-		for key in obj.propertyNames {
+		for key in obj.scriptedPropertyNames {
 			if let robj = obj.childFrame(forProperty: key) {
 				let subres = makeObjectMap(pathString: newpath, object: robj)
 				for (subkey, subval) in subres {
@@ -204,7 +204,7 @@ open class AMBFrameCompiler
 			newpath = objname
 		}
 		try makeObjectPointer(pathString: newpath, objectMap: omap, reactObject: obj)
-		for key in obj.propertyNames {
+		for key in obj.scriptedPropertyNames {
 			if let child = obj.childFrame(forProperty: key) {
 				try makeObjectPointers(pathString: newpath, objectMap: omap, reactObject: child)
 			}
@@ -270,7 +270,7 @@ open class AMBFrameCompiler
 
 	private func linkListnerFunctions(reactObject obj: AMBReactObject, console cons: CNConsole) throws {
 		/* Visit children first */
-		for key in obj.propertyNames {
+		for key in obj.scriptedPropertyNames {
 			if let child = obj.childFrame(forProperty: key) {
 				/* Visit child frame */
 				try linkListnerFunctions(reactObject: child, console: cons)
@@ -368,7 +368,7 @@ open class AMBFrameCompiler
 		}
 
 		/* Allocate children */
-		for key in obj.propertyNames {
+		for key in obj.scriptedPropertyNames {
 			if let childobj = obj.childFrame(forProperty: key) {
 				let childcomp = try allocateComponents(reactObject: childobj, console: cons)
 				curcomp.addChild(component: childcomp)
@@ -389,7 +389,7 @@ open class AMBFrameCompiler
 
 	private func defineProperties(pathExpression path: Array<String>, component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
 		/* Define setter/getter */
-		for pname in comp.reactObject.propertyNames {
+		for pname in comp.reactObject.scriptedPropertyNames {
 			defineProperty(context: ctxt, pathExpression: path, propertyName: pname, console: cons)
 		}
 

@@ -26,12 +26,19 @@ public class AMBComponentDumper
 		newsec.header = "\(robj.frame.instanceName): \(robj.frame.className) {"
 		newsec.footer = "}"
 
-		var pnames = "propertyName: ["
-		for pname in robj.propertyNames {
+		var pnames = "scriptedPropertyName: ["
+		for pname in robj.scriptedPropertyNames {
 			pnames.append(pname + " ")
 		}
 		pnames.append("]")
 		newsec.add(string: pnames)
+
+		var anames = "allPropertyName: ["
+		for aname in robj.allPropertyNames {
+			anames.append(aname + " ")
+		}
+		anames.append("]")
+		newsec.add(string: anames)
 
 		for memb in frame.members {
 			let name     = AMBFrame.name(of: memb)

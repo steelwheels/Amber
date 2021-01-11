@@ -25,45 +25,44 @@ import JavaScriptCore
 	private var mEnvironment:		CNEnvironment
 	private var mPropertyValues:		CNObservedValueTable
 	private var mListerFuncPointers:	Dictionary<String, Array<AMBObjectPointer>>
-	private var mPropertyNames:		Array<String>
+	private var mScriptedPropertyNames:	Array<String>
 
-	public var frame:		AMBFrame 		{ get { return mFrame }}
-	public var context:		KEContext 		{ get { return mContext }}
-	public var processManager:	CNProcessManager	{ get { return mProcessManager }}
-	public var resource:		KEResource		{ get { return mResource }}
-	public var environment:		CNEnvironment		{ get { return mEnvironment }}
-	public var propertyNames:	Array<String>		{ get { return mPropertyNames }}
-
+	public var frame:			AMBFrame 		{ get { return mFrame }}
+	public var context:			KEContext 		{ get { return mContext }}
+	public var processManager:		CNProcessManager	{ get { return mProcessManager }}
+	public var resource:			KEResource		{ get { return mResource }}
+	public var environment:			CNEnvironment		{ get { return mEnvironment }}
+	public var scriptedPropertyNames:	Array<String>		{ get { return mScriptedPropertyNames }}
+	public var allPropertyNames:		Array<String> 		{ get { return mPropertyValues.keys }}
+	
 	public init(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment) {
-		mFrame		= frm
-		mContext	= ctxt
-		mProcessManager	= pmgr
-		mResource	= res
-		mEnvironment	= env
-		mPropertyValues	= CNObservedValueTable()
+		mFrame			= frm
+		mContext		= ctxt
+		mProcessManager		= pmgr
+		mResource		= res
+		mEnvironment		= env
+		mPropertyValues		= CNObservedValueTable()
 		mListerFuncPointers	= [:]
-		mPropertyNames		= []
+		mScriptedPropertyNames	= []
 		super.init()
 
 		/* Set default properties */
 		if let inststr = JSValue(object: frame.instanceName, in: ctxt) {
-			mPropertyValues.setValue(inststr, forKey: "instanceName")
-			mPropertyNames.append("instanceName")
+			setImmediateValue(value: inststr, forProperty: "instanceName")
 		}
 		if let clsstr = JSValue(object: frame.className, in: ctxt) {
-			mPropertyValues.setValue(clsstr, forKey: "className")
-			mPropertyNames.append("className")
+			setImmediateValue(value: clsstr, forProperty: "className")
 		}
 	}
 
-	public func addPropertyName(name nm: String) {
-		mPropertyNames.append(nm)
+	public func addScriptedPropertyName(name nm: String) {
+		mScriptedPropertyNames.append(nm)
 	}
 
 	public func get(_ name: JSValue) -> JSValue {
 		if name.isString {
 			if let namestr = name.toString() {
-				if let val = mPropertyValues.value(forKey: namestr) as? JSValue {
+				if let val = immediateValue(forProperty: namestr) {
 					return val
 				}
 			}
@@ -74,7 +73,7 @@ import JavaScriptCore
 	public func set(_ name: JSValue, _ val: JSValue) -> JSValue {
 		if name.isString {
 			if let namestr = name.toString() {
-				mPropertyValues.setValue(val, forKey: namestr)
+				setImmediateValue(value: val, forProperty: namestr)
 				return JSValue(bool: true, in: mContext)
 			}
 		}
@@ -161,12 +160,12 @@ import JavaScriptCore
 
 	public func setListnerFunctionValue(value fval: JSValue, forProperty prop: String) {
 		let fname = propertyToListnerFuncName(prop)
-		mPropertyValues.setValue(fval, forKey: fname)
+		setImmediateValue(value: fval, forProperty: fname)
 	}
 
 	public func listnerFuntionValue(forProperty prop: String) -> JSValue? {
 		let fname = propertyToListnerFuncName(prop)
-		if let obj = mPropertyValues.value(forKey: fname) as? JSValue {
+		if let obj = immediateValue(forProperty: fname) {
 			return obj
 		} else {
 			return nil
