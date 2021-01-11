@@ -136,7 +136,7 @@ import JavaScriptCore
 		return nil
 	}
 
-	public func setStringValue(string str: String, forProperty prop: String) {
+	public func setStringValue(value str: String, forProperty prop: String) {
 		if let val = JSValue(object: str, in: self.context) {
 			setImmediateValue(value: val, forProperty: prop)
 		} else {
