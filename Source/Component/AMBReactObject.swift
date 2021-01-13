@@ -126,6 +126,23 @@ import JavaScriptCore
 		}
 	}
 
+	public func floatValue(forProperty prop: String) -> Double? {
+		if let imm = immediateValue(forProperty: prop) {
+			if imm.isNumber {
+				return imm.toDouble()
+			}
+		}
+		return nil
+	}
+
+	public func setFloatValue(value val: Double, forProperty prop: String) {
+		if let val = JSValue(double: val, in: self.context) {
+			setImmediateValue(value: val, forProperty: prop)
+		} else {
+			NSLog("Failed to allocate int32 value")
+		}
+	}
+
 	public func stringValue(forProperty prop: String) -> String? {
 		if let imm = immediateValue(forProperty: prop) {
 			if imm.isString {
