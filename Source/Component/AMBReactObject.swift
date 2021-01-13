@@ -14,6 +14,8 @@ import JavaScriptCore
 @objc public protocol AMBObjectInterface: JSExport {
 	func get(_ name: JSValue) -> JSValue
 	func set(_ name: JSValue, _ val: JSValue) -> JSValue // return: bool
+
+	var description: String { get }
 }
 
 @objc public class AMBReactObject: NSObject, AMBObjectInterface
@@ -78,6 +80,15 @@ import JavaScriptCore
 			}
 		}
 		return JSValue(bool: false, in: mContext)
+	}
+
+	public override var description: String {
+		get {
+			let clsname = mFrame.className
+			let insname = mFrame.instanceName
+			let desc    = "component: { class:\(clsname), instance=\(insname) }"
+			return desc
+		}
 	}
 
 	public func immediateValue(forProperty prop: String) -> JSValue? {
