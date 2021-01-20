@@ -171,6 +171,23 @@ import JavaScriptCore
 		}
 	}
 
+	public func objectValue(forProperty prop: String) -> NSObject? {
+		if let imm = immediateValue(forProperty: prop) {
+			if imm.isObject {
+				return imm.toObject() as? NSObject
+			}
+		}
+		return nil
+	}
+
+	public func setObjectValue(value obj: NSObject, forProperty prop: String) {
+		if let val = JSValue(object: obj, in: self.context) {
+			setImmediateValue(value: val, forProperty: prop)
+		} else {
+			NSLog("Failed to allocate object value")
+		}
+	}
+
 	public func childFrame(forProperty prop: String) -> AMBReactObject? {
 		if let imm = immediateValue(forProperty: prop) {
 			if imm.isObject {
