@@ -12,7 +12,7 @@ import Foundation
 
 open class AMBFrameCompiler
 {
-	public typealias AllocationResult = AMBComponentManager.AllocationResult
+	public typealias AllocationResult = AMBComponentMapper.MapResult
 
 	let TEMPORARY_VARIABLE_NAME = "_amber_temp_var"
 	
@@ -24,10 +24,8 @@ open class AMBFrameCompiler
 	public init() {
 	}
 
-	public func compile(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> CompileResult {
+	public func compile(frame frm: AMBFrame, mapper cmapper: AMBComponentMapper, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> CompileResult {
 		do {
-			/* Allocate allocator defined in the super class */
-			addAllocators()
 			/* Allocate frames */
 			let rootobj = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
 			/* Setup listner function */
@@ -35,7 +33,7 @@ open class AMBFrameCompiler
 			/* Initialize property values */
 			try initPropertyValues(rootObject: rootobj, console: cons)
 			/* Allocate components by frame */
-			let rootcomp = try allocateComponents(reactObject: rootobj, console: cons)
+			let rootcomp = try allocateComponents(reactObject: rootobj, mapper: cmapper, console: cons)
 			/* Add setter/getter */
 			defineProperties(component: rootcomp, context: ctxt, console: cons)
 			return .ok(rootcomp)
@@ -45,19 +43,6 @@ open class AMBFrameCompiler
 			let err = NSError.parseError(message: "Unknown error")
 			return .error(err)
 		}
-	}
-
-	open func addAllocators() {
-		let manager = AMBComponentManager.shared
-		manager.addAllocator(className: "Object", allocatorFunc: {
-			(_ robj: AMBReactObject, _ cons: CNConsole) -> AllocationResult in
-			let newcomp = AMBComponentObject()
-			if let err = newcomp.setup(reactObject: robj, console: cons) {
-				return .error(err)
-			} else {
-				return .ok(newcomp)
-			}
-		})
 	}
 
 	private func compileFrame(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) throws -> AMBReactObject {
@@ -358,23 +343,13 @@ open class AMBFrameCompiler
 		}
 	}
 
-	private func allocateComponents(reactObject obj: AMBReactObject, console cons: CNConsole) throws -> AMBComponent {
-		let curcomp: AMBComponent
-		switch AMBComponentManager.shared.allocate(reactObject: obj, console: cons) {
+	private func allocateComponents(reactObject obj: AMBReactObject, mapper cmapper: AMBComponentMapper, console cons: CNConsole) throws -> AMBComponent {
+		switch cmapper.map(object: obj, console: cons) {
 		case .ok(let comp):
-			curcomp = comp
+			return comp
 		case .error(let err):
 			throw err
 		}
-
-		/* Allocate children */
-		for key in obj.scriptedPropertyNames {
-			if let childobj = obj.childFrame(forProperty: key) {
-				let childcomp = try allocateComponents(reactObject: childobj, console: cons)
-				curcomp.addChild(component: childcomp)
-			}
-		}
-		return curcomp
 	}
 
 	private func defineProperties(component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {

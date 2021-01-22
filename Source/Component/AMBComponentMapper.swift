@@ -1,20 +1,67 @@
 /**
- * @file	AMBComponentManager.swift
- * @brief	Define AMBComponentManager class
+ * @file	AMBComponentMapper.swift
+ * @brief	Define AMBComponentMapper class
  * @par Copyright
- *   Copyright (C) 2020 Steel Wheels Project
+ *   Copyright (C) 2021 Steel Wheels Project
  */
 
 import KiwiEngine
 import CoconutData
 import Foundation
 
-public class AMBComponentManager
+open class AMBComponentMapper
 {
-	public enum AllocationResult {
+	public enum MapResult {
 		case ok(AMBComponent)
 		case error(NSError)
 	}
+
+	public init() {
+
+	}
+
+	open func map(object robj: AMBReactObject, console cons: CNConsole) -> MapResult {
+		return mapObject(object: robj, console: cons)
+	}
+
+	public func mapObject(object robj: AMBReactObject, console cons: CNConsole) -> MapResult {
+		if robj.frame.className != "Object" {
+			CNLog(logLevel: .error, message: "Unknown component name: \(robj.frame.className)")
+		}
+		let result: MapResult
+		let newcomp = AMBComponentObject()
+		if let err = newcomp.setup(reactObject: robj, console: cons) {
+			result = .error(err)
+		} else {
+			if let err = mapChildObjects(component: newcomp, console: cons) {
+				result = .error(err)
+			} else {
+				result = .ok(newcomp)
+			}
+		}
+		return result
+	}
+
+	public func mapChildObjects(component comp: AMBComponent, console cons: CNConsole) -> NSError? {
+		let robj = comp.reactObject
+		for prop in robj.scriptedPropertyNames {
+			if let child = robj.childFrame(forProperty: prop) {
+				switch mapObject(object: child, console: cons) {
+				case .ok(let childcomp):
+					comp.addChild(component: childcomp)
+				case .error(let err):
+					return err
+				}
+			}
+		}
+		return nil
+	}
+}
+
+/*
+public class AMBComponentManager
+{
+
 
 	public typealias ComponentAllocatorFunc = (_ robj: AMBReactObject, _ cons: CNConsole) -> AllocationResult
 
@@ -70,3 +117,5 @@ public class AMBComponentManager
 		mAllocators[cname] = afunc
 	}
 }
+*/
+
