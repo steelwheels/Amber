@@ -28,22 +28,17 @@ open class AMBComponentMapper
 		if robj.frame.className != "Object" {
 			CNLog(logLevel: .error, message: "Unknown component name: \(robj.frame.className)")
 		}
-		let result: MapResult
 		let newcomp = AMBComponentObject()
-		if let err = newcomp.setup(reactObject: robj, console: cons) {
-			result = .error(err)
-		} else {
-			if let err = mapChildObjects(component: newcomp, console: cons) {
-				result = .error(err)
-			} else {
-				result = .ok(newcomp)
-			}
+		if let err = mapChildObjects(component: newcomp, reactObject: robj, console: cons) {
+			return .error(err)
 		}
-		return result
+		if let err = newcomp.setup(reactObject: robj, console: cons) {
+			return .error(err)
+		}
+		return .ok(newcomp)
 	}
 
-	public func mapChildObjects(component comp: AMBComponent, console cons: CNConsole) -> NSError? {
-		let robj = comp.reactObject
+	public func mapChildObjects(component comp: AMBComponent, reactObject robj: AMBReactObject, console cons: CNConsole) -> NSError? {
 		for prop in robj.scriptedPropertyNames {
 			if let child = robj.childFrame(forProperty: prop) {
 				switch mapObject(object: child, console: cons) {
@@ -57,65 +52,4 @@ open class AMBComponentMapper
 		return nil
 	}
 }
-
-/*
-public class AMBComponentManager
-{
-
-
-	public typealias ComponentAllocatorFunc = (_ robj: AMBReactObject, _ cons: CNConsole) -> AllocationResult
-
-	private static var mComponentManager: AMBComponentManager? = nil
-
-	private var mAllocators	: Dictionary<String, ComponentAllocatorFunc> 	// ClassName, Func to allocate AMBComponent class
-
-	public static var shared: AMBComponentManager {
-		get {
-			if let manager = AMBComponentManager.mComponentManager {
-				return manager
-			} else {
-				let newmgr = AMBComponentManager()
-				AMBComponentManager.mComponentManager = newmgr
-				return newmgr
-			}
-		}
-	}
-
-	public init(){
-		let allocfuncs: Dictionary<String, ComponentAllocatorFunc> = [
-			"Object": {
-				(_ robj: AMBReactObject, _ cons: CNConsole) -> AllocationResult in
-				let newcomp = AMBComponentObject()
-				if let err = newcomp.setup(reactObject: robj, console: cons) {
-					return .error(err)
-				} else {
-					return .ok(newcomp)
-				}
-			}
-		]
-		mAllocators = allocfuncs
-	}
-
-	public func allocate(reactObject robj: AMBReactObject, console cons: CNConsole) -> AllocationResult {
-		if let allocfunc = mAllocators[robj.frame.className] {
-			return allocfunc(robj, cons)
-		} else {
-			let clsname = robj.frame.className
-			return .error(NSError.parseError(message: "Failed to allocate unknown class object: \(clsname)"))
-		}
-	}
-
-	public func hasAllocator(named nm: String) -> Bool {
-		if let _ = mAllocators[nm] {
-			return true
-		} else {
-			return false
-		}
-	}
-
-	public func addAllocator(className cname: String, allocatorFunc afunc: @escaping ComponentAllocatorFunc) {
-		mAllocators[cname] = afunc
-	}
-}
-*/
 
