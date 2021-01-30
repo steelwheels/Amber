@@ -34,36 +34,6 @@ function main(args)
 }
 ````
 
-Here is the example of view transition:
-![View transition](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Images/view-transition.png)
-
-## Amber Script
-Here is the contents of `buttons.amb`. The file is pointer as "buttons" in the `manifest.json` file.
-
-The [VBox](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Components/box.md) contains multiple components in it vertically. In this example, the box contains [Label](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Components/label.md) and [Button](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Components/button.md)s. 
-````
-top: VBox {
-    alignment: Alignment leading
-    label_a: Label {
-        text: String "Hello"
-    }
-    ok_button: Button {
-        title:  String "OK"
-        pressed: Event() %{
-		console.log("pressed: OK") ;
-	    	leaveView(1) ;
-        %}
-    }
-    cancel_button: Button {
-        title:  String "Cancel"
-        pressed: Event() %{
-		console.log("pressed: Cancel") ;
-		leaveView(0) ;
-        %}
-    }
-}
-````
-
 ## Related links
 * [JavaScript package](https://github.com/steelwheels/JSTools/blob/master/Document/jspkg.md): Application file package
 
