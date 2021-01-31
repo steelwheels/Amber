@@ -102,10 +102,10 @@ open class AMBFrameCompiler
 			ctxt.resetErrorCount()
 			throw NSError.parseError(message: "Failed to compile function: \(afunc.functionName)\n\(script)")
 		}
-		if let val = ctxt.objectForKeyedSubscript(varname) {
+		if let val = ctxt.getValue(name: varname) {
 			return val
 		} else {
-			throw NSError.parseError(message: "No compile resule for function: \(afunc.functionName)")
+			throw NSError.parseError(message: "No compile result for function: \(afunc.functionName)")
 		}
 	}
 
