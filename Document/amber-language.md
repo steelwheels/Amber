@@ -7,7 +7,7 @@ The Amber programming language consists of hierarchical structure of _frames_. T
 
 This is a sample Amber script:
 ````
-window_a: Window {
+top_view: VBox {
     button_a: Button {
         isEnabled:  Bool     true
         title:      String  "OK"
@@ -73,15 +73,14 @@ The frame can contain child frame. See [Class](#Class) section.
 The event function is called by the component object.
 For example, the button component call the `pressed` event
 when it is clicked by user.
-The return value of this function is *ignored*.
-And you can't read the value of property.
+The parameter is passed by event caller.
 
 Now you can't define the calle of this function.
 They are implemented as built-in function.
 
 ````
 {
-    pressed : Event() %{ count = count + 1 ; %}
+    pressed : Event(p0, p1) %{ count = count + 1 ; %}
 }
 ````
 
@@ -96,7 +95,7 @@ You can not read and write the property.
 ````
 
 ### Init member
-The `Init` function will be called after all components are allocated. The init function of child frame is called before parent frame of them. The multiple init function can be defined. But the execution order of them is *NOT* define.
+The `Init` function will be called after all components are allocated. It has no parameters and the return value is ignored. The init function of child frame is called before parent frame of them. The multiple init function can be defined. But the execution order of them is *NOT* define.
 ````
 {
     init: Init() {
@@ -258,6 +257,7 @@ There is reserved word for Amber programming language. They are case sensitive.
 * `Event`
 * `false`
 * `Float`
+* `Func`
 * `Int`
 * `Listner`
 * `self`

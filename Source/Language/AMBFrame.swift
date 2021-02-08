@@ -153,11 +153,8 @@ public struct AMBPathExpression
 
 public struct AMBArgument {
 	public var	name	: String
-	public var	type	: AMBType
-
-	public init(name nm: String, type tp: AMBType) {
+	public init(name nm: String) {
 		name	= nm
-		type	= tp
 	}
 }
 
@@ -300,7 +297,7 @@ public class AMBProcedureFunction: AMBFunction
 	}
 
 	private func argumentToString(argument arg: AMBArgument) -> String {
-		return "\(arg.name): \(arg.type.name())"
+		return arg.name
 	}
 }
 
@@ -364,7 +361,7 @@ public class AMBEventFunction: AMBFunction
 	}
 
 	private func argumentToString(argument arg: AMBArgument) -> String {
-		return "\(arg.name): \(arg.type.name())"
+		return arg.name
 	}
 }
 

@@ -52,7 +52,8 @@ private func testCompiler(source src: String, virtualMachie vm: JSVirtualMachine
 		/* compile */
 		let compiler = AMBFrameCompiler()
 		let resource = KEResource(baseURL: URL(fileURLWithPath: "/tmp/a"))
-		switch compiler.compile(frame: frame, context: ctxt, processManager: pmgr, resource: resource, environment: env, config: conf, console: cons) {
+		let mapper   = AMBComponentMapper()
+		switch compiler.compile(frame: frame, mapper: mapper, context: ctxt, processManager: pmgr, resource: resource, environment: env, config: conf, console: cons) {
 		case .ok(let comp):
 			cons.print(string: "--- Print component\n")
 			printProperty(object: comp.reactObject, propertyName: "instanceName", context: ctxt, console: cons)

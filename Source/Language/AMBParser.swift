@@ -281,16 +281,7 @@ public class AMBParser
 		guard let ident = strm.getIdentifier() else {
 			throw requireDeclarationError(declaration: "Argument name", stream: strm)
 		}
-		guard strm.requireSymbol(symbol: ":") else {
-			throw requireSymbolError(symbol: ":", stream: strm)
-		}
-		guard let typestr = strm.getIdentifier() else {
-			throw requireDeclarationError(declaration: "Type", stream: strm)
-		}
-		guard let type = AMBType.decode(typestr) else {
-			throw makeParseError(message: "Unknown type: \(typestr)", stream: strm)
-		}
-		return AMBArgument(name: ident, type: type)
+		return AMBArgument(name: ident)
 	}
 
 	private func parsePathArgument(stream strm: CNTokenStream) throws -> AMBPathArgument {
