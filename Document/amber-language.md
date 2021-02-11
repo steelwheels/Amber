@@ -98,7 +98,7 @@ You can not read and write the property.
 The `Init` function will be called after all components are allocated. It has no parameters and the return value is ignored. The init function of child frame is called before parent frame of them. The multiple init function can be defined. But the execution order of them is *NOT* define.
 ````
 {
-    init: Init() {
+    init: Init {
         console.log("Initialized\n") ;
     }
 }
