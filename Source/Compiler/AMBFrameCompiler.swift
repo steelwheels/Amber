@@ -280,7 +280,7 @@ open class AMBFrameCompiler
 				if let pval = holder.immediateValue(forProperty: prop) {
 					args.append(pval)
 				} else {
-					cons.error(string: "Failed to get argument at \(#file)")
+					cons.error(string: "Failed to get argument for callback: \(prop) at \(#file)")
 				}
 			}
 			/* call the target function */
@@ -316,7 +316,7 @@ open class AMBFrameCompiler
 							if let pval = holder.immediateValue(forProperty: prop) {
 								args.append(pval)
 							} else {
-								cons.error(string: "Failed to get argument at \(#file)")
+								cons.error(string: "Failed to get argument for init: \(prop) at \(#file)")
 							}
 						}
 						/* call the target function */
