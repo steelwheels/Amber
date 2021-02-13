@@ -39,23 +39,7 @@ See [Type](#Type) section for the data types (such as `Int`).
 {
     property_a : Int        0
     property_b : Float      12.3
-}
-````
-
-The next example has listner expression. 
-The word `Listner` is reserved word.
-The listner function is _reactive_.
-When the property `self.a` or `self.b` is updated,
-The value of `property_a` is automatically updated by the return value of the function. 
-You can read the property value. But you can not write it.
-
-The `self` is the owner frame of the property. Fore more details, see [self object](#PathExpression).
-
-````
-{
-    property_a : Int Listner(a: self.a. b: selfb) %{
-                    return a + b ;
-                 %}
+    property_c : String     ["a", "b", "c"]
 }
 ````
 
@@ -66,6 +50,21 @@ The frame can contain child frame. See [Class](#Class) section.
     object: Object {
         ...
     }
+}
+````
+
+### Listner member
+The listner function is _reactive_.
+In the next example, when the property `self.a` or `self.b` is updated, The value of `property_a` is automatically updated by the return value of the function. 
+You can read the property value. But you can not write it.
+
+The `self` is the owner frame of the property. Fore more details, see [self object](#PathExpression).
+
+````
+{
+    property_a : Int Listner(a: self.a. b: selfb) %{
+                    return a + b ;
+                 %}
 }
 ````
 
@@ -80,7 +79,9 @@ They are implemented as built-in function.
 
 ````
 {
-    pressed : Event(p0, p1) %{ count = count + 1 ; %}
+    pressed : Event(p0, p1) %{
+        count = count + 1 ;
+    %}
 }
 ````
 
@@ -203,6 +204,7 @@ type            := 'Bool'
                 ;
 typed_expression
                 := constant_expression
+                |  array_expression
                 |  listner_function
                 |  procedural_function
                 ;
@@ -214,6 +216,17 @@ init_function   := 'Init'
                 ;
 constant_expression  
                 := CONSTANT_VALUE
+                ;
+array_expression
+                : '[' array_elements ']'
+                ;
+array_elements:
+                := array_element
+                |  array_elements ',' array_element
+                ;
+array_element:
+                := constant_expression
+                |  array_expression
                 ;
 listner_function
                 := 'Listner' '(' listner_parameters_opt ')'

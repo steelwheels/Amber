@@ -112,7 +112,8 @@ public class AMBParser
 			}
 		}
 		let _ = strm.unget() // reduce the stream
-		return try parseExpressionProperty(frame: frm, identifier: ident, type: typ, stream: strm)
+		let value = try parseExpressionProperty(type: typ, stream: strm)
+		return .property(AMBProperty(name: ident, type: typ, nativeValue: value))
 	}
 
 	private func parseFunctionProperty(frame frm: AMBFrame, functionType ftype: AMBFunction.FunctionType, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBFrame.Member {
@@ -128,7 +129,34 @@ public class AMBParser
 		}
 	}
 
-	private func parseExpressionProperty(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBFrame.Member {
+	private func parseExpressionProperty(type typ: AMBType, stream strm: CNTokenStream) throws -> CNNativeValue {
+		if let sym = strm.getSymbol() {
+			switch sym {
+			case "[":
+				var elements: Array<CNNativeValue> = []
+				while true {
+					if strm.requireSymbol(symbol: "]") {
+						break
+					}
+					if elements.count > 0 {
+						if !strm.requireSymbol(symbol: ",") {
+							throw makeParseError(message: "\",\" is required between array elements", stream: strm)
+						}
+					}
+					let value = try parseExpressionProperty(type: typ, stream: strm)
+					elements.append(value)
+				}
+				return .arrayValue(elements)
+			default:
+				throw makeParseError(message: "Unexpected symbol \"\(sym)\" for expression declaration", stream: strm)
+			}
+		} else {
+			let _ = strm.unget()
+			return try parseScalarExpressionProperty(type: typ, stream: strm)
+		}
+	}
+
+	private func parseScalarExpressionProperty(type typ: AMBType, stream strm: CNTokenStream) throws -> CNNativeValue {
 		let value:	CNNativeValue
 		switch typ {
 		case .booleanType:
@@ -191,7 +219,7 @@ public class AMBParser
 				throw requireDeclarationError(declaration: "Enum \"\(etype.typeName)\" value", stream: strm)
 			}
 		}
-		return .property(AMBProperty(name: ident, type: typ, nativeValue: value))
+		return value
 	}
 
 	private func decode(string src: String) -> String {
@@ -199,7 +227,6 @@ public class AMBParser
 		let src2 = src1.replacingOccurrences(of: "\\t", with: "\t")
 		return src2
 	}
-
 
 	private func parseProceduralFunc(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBProcedureFunction {
 		var args: Array<AMBArgument> = []

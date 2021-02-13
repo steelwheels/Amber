@@ -1,3 +1,394 @@
-dyld: Library not loaded: @rpath/CoconutData.framework/Versions/A/CoconutData
-  Referenced from: /Users/tomoo/build/DerivedData/Amber-ffntqmviruaunwgrxgamtnogswka/Build/Products/Debug/UnitTest
-  Reason: image not found
+===== UTCompiler
+SOURCE: object: Object { }
+--- Print Frame
+object: Object {
+}
+Define root component: object
+--- Print component
+property: instanceName -> value: object
+property: className -> value: Object
+object: Object {
+  scriptedPropertyName: []
+  allPropertyName: [className instanceName ]
+}
+Compile Result ... OK
+SOURCE: object: Object { a: Int 0 } 
+--- Print Frame
+object: Object {
+  a : Int 0
+}
+Define root component: object
+let  _object_a = object ;
+Object.defineProperty(_object_a, 'a',{ 
+  get()    { return this.get("a") ; }, 
+  set(val) { return this.set("a", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: object
+property: className -> value: Object
+object: Object {
+  scriptedPropertyName: [a ]
+  allPropertyName: [className instanceName a ]
+  a: Int 0
+}
+Compile Result ... OK
+SOURCE: object: Object { f: Int Func(a, b) %{ return a+b ; %} }
+--- Print Frame
+object: Object {
+  f : Int Int Func(a, b) %{
+     return a+b ; 
+  %}
+}
+Define root component: object
+let  _object_f = object ;
+Object.defineProperty(_object_f, 'f',{ 
+  get()    { return this.get("f") ; }, 
+  set(val) { return this.set("f", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: object
+property: className -> value: Object
+object: Object {
+  scriptedPropertyName: [f ]
+  allPropertyName: [f className instanceName ]
+  f: Int function (self, a, b) {
+ return a+b ; 
+}
+}
+Compile Result ... OK
+SOURCE: object: Object { f: Event() %{ console.log("a") ; %} }
+--- Print Frame
+object: Object {
+  Event() %{
+     console.log("a") ; 
+  %}
+}
+Define root component: object
+let  _object_f = object ;
+Object.defineProperty(_object_f, 'f',{ 
+  get()    { return this.get("f") ; }, 
+  set(val) { return this.set("f", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: object
+property: className -> value: Object
+object: Object {
+  scriptedPropertyName: [f ]
+  allPropertyName: [f className instanceName ]
+  f: Event function (self) {
+ console.log("a") ; 
+}
+}
+Compile Result ... OK
+SOURCE: object: Object { a: Int 0 f: Int Listner(a: self.a) %{ console.log(a) ; %} }
+--- Print Frame
+object: Object {
+  a : Int 0
+  f : Int Int Listner(a: self.a) %{
+     console.log(a) ; 
+  %}
+}
+Define root component: object
+let  _object_a = object ;
+Object.defineProperty(_object_a, 'a',{ 
+  get()    { return this.get("a") ; }, 
+  set(val) { return this.set("a", val) ; }, 
+}) ;
+let  _object_f = object ;
+Object.defineProperty(_object_f, 'f',{ 
+  get()    { return this.get("f") ; }, 
+  set(val) { return this.set("f", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: object
+property: className -> value: Object
+object: Object {
+  scriptedPropertyName: [a f ]
+  allPropertyName: [f className _lfunc_f instanceName a ]
+  a: Int 0
+  f: Int function (self, a) {
+ console.log(a) ; 
+}
+}
+Compile Result ... OK
+SOURCE: object: Object { a: Int 0 b: Int 1 f: Int Listner(a: self.a, b:self.b) %{ console.log(a+b) ; %} }
+--- Print Frame
+object: Object {
+  a : Int 0
+  b : Int 1
+  f : Int Int Listner(a: self.a, b: self.b) %{
+     console.log(a+b) ; 
+  %}
+}
+Define root component: object
+let  _object_a = object ;
+Object.defineProperty(_object_a, 'a',{ 
+  get()    { return this.get("a") ; }, 
+  set(val) { return this.set("a", val) ; }, 
+}) ;
+let  _object_b = object ;
+Object.defineProperty(_object_b, 'b',{ 
+  get()    { return this.get("b") ; }, 
+  set(val) { return this.set("b", val) ; }, 
+}) ;
+let  _object_f = object ;
+Object.defineProperty(_object_f, 'f',{ 
+  get()    { return this.get("f") ; }, 
+  set(val) { return this.set("f", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: object
+property: className -> value: Object
+object: Object {
+  scriptedPropertyName: [a b f ]
+  allPropertyName: [f className _lfunc_f instanceName a b ]
+  a: Int 0
+  b: Int 1
+  f: Int function (self, a, b) {
+ console.log(a+b) ; 
+}
+}
+Compile Result ... OK
+SOURCE: rootobj: Object {  a: Int 0 
+  subobj: Object {
+    b: Int 1
+  }
+  f: Int Listner(a: self.a, b:rootobj.subobj.b) %{         return a + b ;
+     %}
+}
+
+--- Print Frame
+rootobj: Object {
+  a : Int 0
+  subobj: Object {
+    b : Int 1
+  }
+  f : Int Int Listner(a: self.a, b: rootobj.subobj.b) %{
+             return a + b ;
+     
+  %}
+}
+Define root component: rootobj
+let  _rootobj_a = rootobj ;
+Object.defineProperty(_rootobj_a, 'a',{ 
+  get()    { return this.get("a") ; }, 
+  set(val) { return this.set("a", val) ; }, 
+}) ;
+let  _rootobj_subobj = rootobj ;
+Object.defineProperty(_rootobj_subobj, 'subobj',{ 
+  get()    { return this.get("subobj") ; }, 
+  set(val) { return this.set("subobj", val) ; }, 
+}) ;
+let  _rootobj_f = rootobj ;
+Object.defineProperty(_rootobj_f, 'f',{ 
+  get()    { return this.get("f") ; }, 
+  set(val) { return this.set("f", val) ; }, 
+}) ;
+let  _rootobj_subobj_b = rootobj.subobj ;
+Object.defineProperty(_rootobj_subobj_b, 'b',{ 
+  get()    { return this.get("b") ; }, 
+  set(val) { return this.set("b", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: rootobj
+property: className -> value: Object
+rootobj: Object {
+  scriptedPropertyName: [a subobj f ]
+  allPropertyName: [f className subobj _lfunc_f instanceName a ]
+  a: Int 0
+  subobj: Object {
+    scriptedPropertyName: [b ]
+    allPropertyName: [className instanceName b ]
+    b: Int 1
+  }
+  f: Int function (self, a, b) {
+         return a + b ;
+     
+}
+}
+Compile Result ... OK
+SOURCE: rootobj: Object {
+  a: Int 0 
+  b: Float 1.2 
+  f: Int Listner(a: self.a, b:rootobj.b) %{         return a + b ;
+     %}
+}
+
+--- Print Frame
+rootobj: Object {
+  a : Int 0
+  b : Float 1.2
+  f : Int Int Listner(a: self.a, b: rootobj.b) %{
+             return a + b ;
+     
+  %}
+}
+Define root component: rootobj
+let  _rootobj_a = rootobj ;
+Object.defineProperty(_rootobj_a, 'a',{ 
+  get()    { return this.get("a") ; }, 
+  set(val) { return this.set("a", val) ; }, 
+}) ;
+let  _rootobj_b = rootobj ;
+Object.defineProperty(_rootobj_b, 'b',{ 
+  get()    { return this.get("b") ; }, 
+  set(val) { return this.set("b", val) ; }, 
+}) ;
+let  _rootobj_f = rootobj ;
+Object.defineProperty(_rootobj_f, 'f',{ 
+  get()    { return this.get("f") ; }, 
+  set(val) { return this.set("f", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: rootobj
+property: className -> value: Object
+rootobj: Object {
+  scriptedPropertyName: [a b f ]
+  allPropertyName: [f className _lfunc_f instanceName a b ]
+  a: Int 0
+  b: Float 1.2
+  f: Int function (self, a, b) {
+         return a + b ;
+     
+}
+}
+Compile Result ... OK
+SOURCE: rootObj: Object {
+  f: Event() %{ console.log("pressed\n") ; %} }
+
+--- Print Frame
+rootObj: Object {
+  Event() %{
+     console.log("pressed\n") ; 
+  %}
+}
+Define root component: rootObj
+let  _rootObj_f = rootObj ;
+Object.defineProperty(_rootObj_f, 'f',{ 
+  get()    { return this.get("f") ; }, 
+  set(val) { return this.set("f", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: rootObj
+property: className -> value: Object
+rootObj: Object {
+  scriptedPropertyName: [f ]
+  allPropertyName: [f className instanceName ]
+  f: Event function (self) {
+ console.log("pressed\n") ; 
+}
+}
+Compile Result ... OK
+SOURCE: rootObj: Object {
+  i: Init %{ console.log("ok\n") ; %}
+}
+--- Print Frame
+rootObj: Object {
+  Init%{
+     console.log("ok\n") ; 
+  %}
+}
+Define root component: rootObj
+let  _rootObj_i = rootObj ;
+Object.defineProperty(_rootObj_i, 'i',{ 
+  get()    { return this.get("i") ; }, 
+  set(val) { return this.set("i", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: rootObj
+property: className -> value: Object
+rootObj: Object {
+  scriptedPropertyName: [i ]
+  allPropertyName: [i className instanceName ]
+  i: Init function (self) {
+ console.log("ok\n") ; 
+}
+}
+Compile Result ... OK
+SOURCE: rootObject: Object { str: String "a," "b," "\n" "c" }
+
+--- Print Frame
+rootObject: Object {
+  str : String "a,b,
+c"
+}
+Define root component: rootObject
+let  _rootObject_str = rootObject ;
+Object.defineProperty(_rootObject_str, 'str',{ 
+  get()    { return this.get("str") ; }, 
+  set(val) { return this.set("str", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: rootObject
+property: className -> value: Object
+rootObject: Object {
+  scriptedPropertyName: [str ]
+  allPropertyName: [str className instanceName ]
+  str: String a,b,
+c
+}
+Compile Result ... OK
+SOURCE: rootObject: Object { empty: URL "" tmp: URL "/tmp/a"}
+
+--- Print Frame
+rootObject: Object {
+  empty : URL file:///dev/null
+  tmp : URL /tmp/a
+}
+Define root component: rootObject
+let  _rootObject_empty = rootObject ;
+Object.defineProperty(_rootObject_empty, 'empty',{ 
+  get()    { return this.get("empty") ; }, 
+  set(val) { return this.set("empty", val) ; }, 
+}) ;
+let  _rootObject_tmp = rootObject ;
+Object.defineProperty(_rootObject_tmp, 'tmp',{ 
+  get()    { return this.get("tmp") ; }, 
+  set(val) { return this.set("tmp", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: rootObject
+property: className -> value: Object
+rootObject: Object {
+  scriptedPropertyName: [empty tmp ]
+  allPropertyName: [empty tmp className instanceName ]
+  empty: URL [object KiwiLibrary.KLURL]
+  tmp: URL [object KiwiLibrary.KLURL]
+}
+Compile Result ... OK
+SOURCE: rootObject: Object { array: Int [1, 2, 3, 4]}
+
+--- Print Frame
+rootObject: Object {
+  array : Int [  1  2  3  4]
+}
+Define root component: rootObject
+let  _rootObject_array = rootObject ;
+Object.defineProperty(_rootObject_array, 'array',{ 
+  get()    { return this.get("array") ; }, 
+  set(val) { return this.set("array", val) ; }, 
+}) ;
+--- Print component
+property: instanceName -> value: rootObject
+property: className -> value: Object
+rootObject: Object {
+  scriptedPropertyName: [array ]
+  allPropertyName: [array className instanceName ]
+  array: Int 1,2,3,4
+}
+Compile Result ... OK
+UTCompiler ... OK
+===== UTComponent
+obj.get("instanceName") ; => Object
+let _tmp = obj ;
+Object.defineProperty(_tmp, 'instanceName',{ 
+  get()    { return this.get("instanceName") ; }, 
+  set(val) { return this.set("instanceName", val) ; }, 
+}) ;
+ => Object
+===== UTDataReader
+[Frame] bitmap0: BitmapData {
+  data : Int [  [    0    1  ]  [    2    3  ]  [    4    5  ]]
+}
+SUMMARY: OK
+Hello, World!

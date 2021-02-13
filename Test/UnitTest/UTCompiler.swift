@@ -27,6 +27,7 @@ public func UTCompiler(console cons: CNConsole) -> Bool
 
 	for src in sampleScripts() {
 		if !testCompiler(source: src, virtualMachie: vm, processManager: procmgr, environment: env, config: conf, console: cons) {
+			cons.print(string: "********** testCompiler: NG\n")
 			result = false
 		}
 	}

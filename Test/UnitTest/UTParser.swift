@@ -12,7 +12,7 @@ import Foundation
 public func sampleScripts() -> Array<String> {
 	let src0   = "object: Object { }"
 	let src1   = "object: Object { a: Int 0 } "
-	let src2   = "object: Object { f: Int Func(a:Int, b:Float) %{ return a+b ; %} }"
+	let src2   = "object: Object { f: Int Func(a, b) %{ return a+b ; %} }"
 	let src3   = "object: Object { f: Event() %{ console.log(\"a\") ; %} }"
 	let src4   = "object: Object { a: Int 0 f: Int Listner(a: self.a) %{ console.log(a) ; %} }"
 	let src5   = "object: Object { a: Int 0 b: Int 1 f: Int Listner(a: self.a, b:self.b) %{ console.log(a+b) ; %} }"
@@ -40,7 +40,8 @@ public func sampleScripts() -> Array<String> {
 		     + "}"
 	let src10  =   "rootObject: Object { str: String \"a,\" \"b,\" \"\\n\" \"c\" }\n"
 	let src11  =   "rootObject: Object { empty: URL \"\" tmp: URL \"/tmp/a\"}\n"
-	let srcs   = [src0, src1, src2, src3, src4, src5, src6, src7, src8, src9, src10, src11]
+	let src12  =   "rootObject: Object { array: Int [1, 2, 3, 4]}\n"
+	let srcs   = [src0, src1, src2, src3, src4, src5, src6, src7, src8, src9, src10, src11, src12]
 	return srcs
 }
 
