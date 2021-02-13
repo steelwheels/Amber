@@ -31,6 +31,8 @@ public func UTDataReader(console cons: CNConsole) -> Bool
 }
 
 private func testReader(source src: String, console cons: CNConsole) -> Bool {
+	let ctxt = KEContext(virtualMachine: JSVirtualMachine())
+
 	let parser = AMBParser()
 	let result: Bool
 	switch parser.parse(source: src) {
@@ -38,6 +40,15 @@ private func testReader(source src: String, console cons: CNConsole) -> Bool {
 		let dumper = AMBFrameDumper()
 		let frmtxt = dumper.dumpToText(frame: frame).toStrings(terminal: "").joined(separator: "\n")
 		cons.print(string: "[Frame] \(frmtxt)\n")
+
+		let reader = AMBDataReader(context: ctxt, console: cons)
+		switch reader.readBitmapData(frame: frame) {
+		case .ok(let ident, let data):
+			cons.print(string: "[ReadResult] {identifier:\(ident) data:\(data)}\n")
+		case .error(let err):
+			cons.print(string: "[Error] \(err.toString())\n")
+		}
+
 		result = true
 	case .error(let err):
 		cons.print(string: "[Error] \(err.toString())")

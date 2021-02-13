@@ -73,17 +73,22 @@ public class AMBDataReader
 
 	private func valueToIntArray2D(value val: CNNativeValue) throws -> Array<Array<Int>> {
 		var result: Array<Array<Int>> = []
-		if let arr = val.toArray() {
-			var rows: Array<Int> = []
-			for elm in arr {
-				if let v = elm.toNumber() {
-					rows.append(v.intValue)
+		if let srcrows = val.toArray() {
+			for srcrow in srcrows {
+				if let srccols = srcrow.toArray() {
+					var dstcols: Array<Int> = []
+					for srcelm in srccols {
+						if let v = srcelm.toNumber() {
+							dstcols.append(v.intValue)
+						}
+					}
+					result.append(dstcols)
 				} else {
-					let elmdesc = elm.toText().toStrings(terminal: "").joined(separator: "\n")
-					throw NSError.parseError(message: "Unexpected array element: \(elmdesc)")
+					throw NSError.parseError(message: "Array variable is required (2)")
 				}
 			}
-			result.append(rows)
+		} else {
+			throw NSError.parseError(message: "Array variable is required (1)")
 		}
 		return result
 	}
