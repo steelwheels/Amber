@@ -13,37 +13,26 @@ import Foundation
 
 public class AMBDataReader
 {
+	public enum ReadResult {
+		case ok(JSValue)
+		case error(NSError)
+	}
+
+	private var mResource:		KEResource
 	private var mContext:		KEContext
 	private var mConsole:		CNConsole
 
-	public init(context ctxt: KEContext, console cons: CNConsole) {
-		mContext = ctxt
-		mConsole = cons
+	public init(resource res: KEResource, context ctxt: KEContext, console cons: CNConsole) {
+		mResource = res
+		mContext  = ctxt
+		mConsole  = cons
 	}
 
-	public enum BitmapDataResult {
-		case ok(String, KLBitmapData)	// identifier, bitmap-data
-		case error(NSError)
-	}
-
-	private enum ReadResult {
-		case ok(String, AnyObject)	// identifier, object
-		case error(NSError)
-	}
-
-	public func readBitmapData(frame frm: AMBFrame) -> BitmapDataResult {
-		switch readData(frame: frm) {
-		case .ok(let ident, let obj):
-			return .ok(ident, obj as! KLBitmapData)
-		case .error(let err):
-			return .error(err)
-		}
-	}
-
-	private func readData(frame frm: AMBFrame) -> ReadResult {
+	public func read(identifier ident: String) -> ReadResult {
 		let result: ReadResult
 		do {
-			result = try frameToData(frame: frm)
+			let value = try readData(identifier: ident)
+			result = .ok(value.toJSValue(context: mContext))
 		} catch let err as NSError {
 			result = .error(err)
 		} catch {
@@ -53,22 +42,58 @@ public class AMBDataReader
 		return result
 	}
 
-	private func frameToData(frame frm: AMBFrame) throws -> ReadResult {
-		switch frm.className {
-		case "BitmapData":
-			return try frameToBitmapData(frame: frm)
-		default:
-			throw NSError.parseError(message: "Unknown data class: \(frm.className)")
+	private func readData(identifier ident: String) throws -> CNNativeValue {
+		if let datastr = mResource.loadData(identifier: ident) {
+			let parser = AMBParser()
+			switch parser.parse(source: datastr) {
+			case .ok(let frame):
+				return try readData(frame: frame)
+			case .error(let err):
+				throw err
+			}
+		} else {
+			throw NSError.parseError(message: "Failed to load data named: \"\(ident)\"")
 		}
 	}
 
-	private func frameToBitmapData(frame frm: AMBFrame) throws -> ReadResult {
+	private func readData(frame frm: AMBFrame) throws -> CNNativeValue {
+		switch frm.className {
+		case "BitmapData":
+			return try frameToBitmapData(frame: frm)
+		case "Object":
+			return try frameToObject(frame: frm)
+		default:
+			throw NSError.parseError(message: "Failed to parse frame, unknown class \(frm.className)")
+		}
+	}
+
+	private func frameToObject(frame frm: AMBFrame) throws -> CNNativeValue {
+		var result: Dictionary<String, CNNativeValue> = [:]
+		for memb in frm.members {
+			switch memb {
+			case .property(let prop):
+				switch prop.value {
+				case .nativeValue(let val):
+					result[prop.name] = val
+				case .listnerFunction(_), .procedureFunction(_):
+					throw NSError.parseError(message: "Unsupported property member")
+				}
+			case .frame(let child):
+				result[child.instanceName] = try readData(frame: child)
+			case .eventFunction(_), .initFunction(_):
+				throw NSError.parseError(message: "Unsupported frame member")
+			}
+		}
+		return .dictionaryToValue(dictionary: result)
+	}
+
+	private func frameToBitmapData(frame frm: AMBFrame) throws -> CNNativeValue {
 		/* Collect integet values */
 		let data      = try searchProperty(named: "data", in: frm)
 		let pixels    = try valueToIntArray2D(value: data)
 		let newbitmap = CNBitmapData(intData: pixels)
 		let newobj    = KLBitmapData(bitmap: newbitmap, context: mContext, console: mConsole)
-		return .ok(frm.instanceName, newobj)
+		return .anyObjectValue(newobj)
 	}
 
 	private func valueToIntArray2D(value val: CNNativeValue) throws -> Array<Array<Int>> {
@@ -112,6 +137,6 @@ public class AMBDataReader
 		}
 		throw NSError.parseError(message: "Property \(name) is NOT found")
 	}
-
 }
+
 

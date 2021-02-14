@@ -19,39 +19,41 @@ private func sampleData() -> Array<String> {
 public func UTDataReader(console cons: CNConsole) -> Bool
 {
 	cons.print(string: "===== UTDataReader\n")
+	let resurl: URL
+	switch CNFilePath.URLForBundleFile(bundleName: "UnitTest", fileName: "data0", ofType: "amb") {
+	case .ok(let url):
+		resurl = url.deletingLastPathComponent()
+	case .error(let err):
+		cons.print(string: "[Error] Failed to get path of resource: \(err.toString())\n")
+		return false
+	@unknown default:
+		fatalError("Can not happen")
+	}
+	let res = KEResource(baseURL: resurl)
+	res.setData(identifier: "dat0", path: "data0.amb")
 
 	var result = true
 	let samples = sampleData()
 	for sample in samples {
-		if !testReader(source: sample, console: cons) {
+		if !testReader(source: sample, resource: res, console: cons) {
 			result = false
 		}
 	}
 	return result
 }
 
-private func testReader(source src: String, console cons: CNConsole) -> Bool {
-	let ctxt = KEContext(virtualMachine: JSVirtualMachine())
-
-	let parser = AMBParser()
+private func testReader(source src: String, resource res: KEResource, console cons: CNConsole) -> Bool {
 	let result: Bool
-	switch parser.parse(source: src) {
-	case .ok(let frame):
-		let dumper = AMBFrameDumper()
-		let frmtxt = dumper.dumpToText(frame: frame).toStrings(terminal: "").joined(separator: "\n")
-		cons.print(string: "[Frame] \(frmtxt)\n")
-
-		let reader = AMBDataReader(context: ctxt, console: cons)
-		switch reader.readBitmapData(frame: frame) {
-		case .ok(let ident, let data):
-			cons.print(string: "[ReadResult] {identifier:\(ident) data:\(data)}\n")
-		case .error(let err):
-			cons.print(string: "[Error] \(err.toString())\n")
-		}
-
+	let ctxt   = KEContext(virtualMachine: JSVirtualMachine())
+	let reader = AMBDataReader(resource: res, context: ctxt, console: cons)
+	let ident  = "dat0"
+	switch reader.read(identifier: ident) {
+	case .ok(let val):
+		cons.print(string: "[ReadResult]\n")
+		val.toText().print(console: cons, terminal: "")
 		result = true
 	case .error(let err):
-		cons.print(string: "[Error] \(err.toString())")
+		cons.print(string: "[Error] \(err.toString())\n")
 		result = false
 	}
 	return result
