@@ -171,6 +171,23 @@ import JavaScriptCore
 		}
 	}
 
+	public func arrayValue(forProperty prop: String) -> Array<Any>? {
+		if let imm = immediateValue(forProperty: prop) {
+			if imm.isArray {
+				return imm.toArray()
+			}
+		}
+		return nil
+	}
+
+	public func setArrayValue(value arr: Array<Any>, forProperty prop: String) {
+		if let val = JSValue(object: arr, in: self.context) {
+			setImmediateValue(value: val, forProperty: prop)
+		} else {
+			NSLog("Failed to allocate array value")
+		}
+	}
+
 	public func objectValue(forProperty prop: String) -> NSObject? {
 		if let imm = immediateValue(forProperty: prop) {
 			if imm.isObject {
