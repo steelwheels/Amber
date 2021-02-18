@@ -7,6 +7,7 @@ The Amber programming language consists of hierarchical structure of _frames_. T
 
 This is a sample Amber script:
 ````
+// The view which contains a button
 top_view: VBox {
     button_a: Button {
         isEnabled:  Bool     true
@@ -172,6 +173,15 @@ The instance of [URL](https://github.com/steelwheels/KiwiScript/blob/master/Kiwi
 }
 ````
 
+## Comment
+The `//` style comment can be used. 
+````
+// This is comment
+text: String %{
+    // This line will be remained as a part of string.
+%}
+````
+
 ## Syntax
 This is BNF of this language:
 ````
@@ -263,6 +273,8 @@ path_expression := parameter
 function_body   := '%{' ... any test ... '%}'
                 ;
 ````
+
+The comment will be removed before parsing.
 
 ## Reserved words
 There is reserved word for Amber programming language. They are case sensitive.
