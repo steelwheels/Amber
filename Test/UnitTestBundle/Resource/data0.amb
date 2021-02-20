@@ -1,5 +1,5 @@
 top: Object {
-	bitmap0: BitmapData {
+	bitmap0: MonoBitmap {
 		data: Int [[0,1], [2,3]]
 	}
 }

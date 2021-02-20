@@ -12,7 +12,7 @@ import JavaScriptCore
 import Foundation
 
 private func sampleData() -> Array<String> {
-	let dat0 = "bitmap0: BitmapData { data: Int [[0,1], [2,3], [4,5]] }"
+	let dat0 = "bitmap0: MonoBitmap { data: Int [[0,1], [2,3], [4,5]] }"
 	return [dat0]
 }
 
@@ -35,6 +35,7 @@ public func UTDataReader(console cons: CNConsole) -> Bool
 	var result = true
 	let samples = sampleData()
 	for sample in samples {
+		cons.print(string: "Source: \(sample)\n")
 		if !testReader(source: sample, resource: res, console: cons) {
 			result = false
 		}
@@ -44,8 +45,8 @@ public func UTDataReader(console cons: CNConsole) -> Bool
 
 private func testReader(source src: String, resource res: KEResource, console cons: CNConsole) -> Bool {
 	let result: Bool
-	let ctxt   = KEContext(virtualMachine: JSVirtualMachine())
-	let reader = AMBDataReader(resource: res, context: ctxt, console: cons)
+	//let ctxt   = KEContext(virtualMachine: JSVirtualMachine())
+	let reader = AMBDataReader(resource: res, console: cons)
 	let ident  = "dat0"
 	switch reader.read(identifier: ident) {
 	case .ok(let val):

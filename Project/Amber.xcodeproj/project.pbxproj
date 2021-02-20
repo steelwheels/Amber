@@ -56,6 +56,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		05072AE325DE926F00813E79 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 05B7616B25204B3700B6BF0B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 052F4548256A9D2B00CF8A99;
+			remoteInfo = UnitTestBundle;
+		};
 		052F4557256A9D3700CF8A99 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 05B7616B25204B3700B6BF0B /* Project object */;
@@ -384,6 +391,7 @@
 			buildToolPath = /usr/bin/make;
 			buildWorkingDirectory = "";
 			dependencies = (
+				05072AE425DE926F00813E79 /* PBXTargetDependency */,
 				054DA5D82588E0B90032FE91 /* PBXTargetDependency */,
 			);
 			name = Check;
@@ -624,6 +632,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		05072AE425DE926F00813E79 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 052F4548256A9D2B00CF8A99 /* UnitTestBundle */;
+			targetProxy = 05072AE325DE926F00813E79 /* PBXContainerItemProxy */;
+		};
 		052F4558256A9D3700CF8A99 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 05ED77A3252093C3000EC3FC /* Install */;

@@ -115,12 +115,17 @@ public class AMBThread: CNThread
 		/* Allocate semaphore to wait thread finish */
 		let semaphore = AMBSemaphore()
 
+		/* define exit function */
+		let exitfunc: @convention(block) (_ paramval: JSValue) -> JSValue = {
+			(_ paramval: JSValue) -> JSValue in
+			semaphore.signal(paramval)
+			return JSValue(bool: true, in: self.mContext)
+		}
+		mContext.set(name: "exit", function: exitfunc)
+
 		/* Compile library for component*/
 		let alibcompiler = AMBLibraryCompiler()
-		if let err = alibcompiler.compile(context: mContext, semaphore: semaphore, console: console) {
-			console.error(string: "Error: \(err.toString())\n")
-			return -1
-		}
+		alibcompiler.compile(context: mContext, resource: resource, console: console)
 
 		/* Execute the component */
 		let executor = AMBComponentExecutor(console: console)

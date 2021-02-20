@@ -14,17 +14,15 @@ import Foundation
 public class AMBDataReader
 {
 	public enum ReadResult {
-		case ok(JSValue)
+		case ok(CNNativeValue)
 		case error(NSError)
 	}
 
 	private var mResource:		KEResource
-	private var mContext:		KEContext
 	private var mConsole:		CNConsole
 
-	public init(resource res: KEResource, context ctxt: KEContext, console cons: CNConsole) {
+	public init(resource res: KEResource, console cons: CNConsole) {
 		mResource = res
-		mContext  = ctxt
 		mConsole  = cons
 	}
 
@@ -32,7 +30,7 @@ public class AMBDataReader
 		let result: ReadResult
 		do {
 			let value = try readData(identifier: ident)
-			result = .ok(value.toJSValue(context: mContext))
+			result = .ok(value)
 		} catch let err as NSError {
 			result = .error(err)
 		} catch {
@@ -47,7 +45,7 @@ public class AMBDataReader
 			let parser = AMBParser()
 			switch parser.parse(source: datastr) {
 			case .ok(let frame):
-				return try readData(frame: frame)
+				return try readData(frame: frame, className: frame.className)
 			case .error(let err):
 				throw err
 			}
@@ -56,19 +54,15 @@ public class AMBDataReader
 		}
 	}
 
-	private func readData(frame frm: AMBFrame) throws -> CNNativeValue {
-		switch frm.className {
-		case "BitmapData":
-			return try frameToBitmapData(frame: frm)
-		case "Object":
-			return try frameToObject(frame: frm)
-		default:
-			throw NSError.parseError(message: "Failed to parse frame, unknown class \(frm.className)")
-		}
-	}
+	private func readData(frame frm: AMBFrame, className cname: String?) throws -> CNNativeValue {
+		let dumper = AMBFrameDumper()
+		let txt    = dumper.dumpToText(frame: frm).toStrings(terminal: "").joined(separator: "\n")
+		NSLog("readData: \(txt)")
 
-	private func frameToObject(frame frm: AMBFrame) throws -> CNNativeValue {
 		var result: Dictionary<String, CNNativeValue> = [:]
+		if let name = cname {
+			result[JSValue.classPropertyName] = .stringValue(name)
+		}
 		for memb in frm.members {
 			switch memb {
 			case .property(let prop):
@@ -79,63 +73,13 @@ public class AMBDataReader
 					throw NSError.parseError(message: "Unsupported property member")
 				}
 			case .frame(let child):
-				result[child.instanceName] = try readData(frame: child)
+				result[child.instanceName] = try readData(frame: child, className: nil)
 			case .eventFunction(_), .initFunction(_):
 				throw NSError.parseError(message: "Unsupported frame member")
 			}
 		}
+		NSLog("result: \(result.description)")
 		return .dictionaryToValue(dictionary: result)
-	}
-
-	private func frameToBitmapData(frame frm: AMBFrame) throws -> CNNativeValue {
-		/* Collect integet values */
-		let data      = try searchProperty(named: "data", in: frm)
-		let pixels    = try valueToIntArray2D(value: data)
-		let newbitmap = CNBitmapData(intData: pixels)
-		let newobj    = KLBitmapData(bitmap: newbitmap, context: mContext, console: mConsole)
-		return .anyObjectValue(newobj)
-	}
-
-	private func valueToIntArray2D(value val: CNNativeValue) throws -> Array<Array<Int>> {
-		var result: Array<Array<Int>> = []
-		if let srcrows = val.toArray() {
-			for srcrow in srcrows {
-				if let srccols = srcrow.toArray() {
-					var dstcols: Array<Int> = []
-					for srcelm in srccols {
-						if let v = srcelm.toNumber() {
-							dstcols.append(v.intValue)
-						}
-					}
-					result.append(dstcols)
-				} else {
-					throw NSError.parseError(message: "Array variable is required (2)")
-				}
-			}
-		} else {
-			throw NSError.parseError(message: "Array variable is required (1)")
-		}
-		return result
-	}
-
-	private func searchProperty(named name: String, in frame: AMBFrame) throws -> CNNativeValue {
-		let members = frame.members
-		for memb in members {
-			switch memb {
-			case .property(let prop):
-				if prop.name == name {
-					switch prop.value {
-					case .nativeValue(let val):
-						return val
-					case .listnerFunction(_), .procedureFunction(_):
-						throw NSError.parseError(message: "Unexpected value of property \(name)")
-					}
-				}
-			default:
-				break
-			}
-		}
-		throw NSError.parseError(message: "Property \(name) is NOT found")
 	}
 }
 
