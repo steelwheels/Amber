@@ -45,7 +45,7 @@ public class AMBDataReader
 			let parser = AMBParser()
 			switch parser.parse(source: datastr) {
 			case .ok(let frame):
-				return try readData(frame: frame, className: frame.className)
+				return try readData(frame: frame)
 			case .error(let err):
 				throw err
 			}
@@ -54,15 +54,8 @@ public class AMBDataReader
 		}
 	}
 
-	private func readData(frame frm: AMBFrame, className cname: String?) throws -> CNNativeValue {
-		let dumper = AMBFrameDumper()
-		let txt    = dumper.dumpToText(frame: frm).toStrings(terminal: "").joined(separator: "\n")
-		NSLog("readData: \(txt)")
-
-		var result: Dictionary<String, CNNativeValue> = [:]
-		if let name = cname {
-			result[JSValue.classPropertyName] = .stringValue(name)
-		}
+	private func readData(frame frm: AMBFrame) throws -> CNNativeValue {
+		var result: Dictionary<String, CNNativeValue> = [JSValue.classPropertyName: .stringValue(frm.className)]
 		for memb in frm.members {
 			switch memb {
 			case .property(let prop):
@@ -73,12 +66,11 @@ public class AMBDataReader
 					throw NSError.parseError(message: "Unsupported property member")
 				}
 			case .frame(let child):
-				result[child.instanceName] = try readData(frame: child, className: nil)
+				result[child.instanceName] = try readData(frame: child)
 			case .eventFunction(_), .initFunction(_):
 				throw NSError.parseError(message: "Unsupported frame member")
 			}
 		}
-		NSLog("result: \(result.description)")
 		return .dictionaryToValue(dictionary: result)
 	}
 }
