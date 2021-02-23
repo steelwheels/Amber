@@ -114,9 +114,12 @@ open class AMBFrameCompiler
 		switch afunc.functionType {
 		case .procedure:
 			if let pfunc = afunc as? AMBProcedureFunction {
-				argstr = "self"					// insert self
+				argstr = ""					// do NOT insert self
 				for arg in pfunc.arguments {
-					argstr += ", " + arg.name
+					if argstr.count > 0 {
+						argstr += ", "
+					}
+					argstr += arg.name
 				}
 			} else {
 				fatalError("Failed to convert procedure function")

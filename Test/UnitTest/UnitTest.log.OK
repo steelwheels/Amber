@@ -387,8 +387,25 @@ Object.defineProperty(_tmp, 'instanceName',{
 }) ;
  => Object
 ===== UTDataReader
-[Frame] bitmap0: BitmapData {
-  data : Int [  [    0    1  ]  [    2    3  ]  [    4    5  ]]
+Source: bitmap0: MonoBitmap { data: Int [[0,1], [2,3], [4,5]] }
+[ReadResult]
+{
+  bitmap0: 
+  {
+    className: "BitmapValue"
+    data: 
+    [
+      [
+        0
+        1
+      ]
+      [
+        2
+        3
+      ]
+    ]
+  }
+  className: "Object"
 }
 SUMMARY: OK
 Hello, World!
