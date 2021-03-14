@@ -11,12 +11,17 @@ import CoconutData
 import JavaScriptCore
 import Foundation
 
-open class AMBLibraryCompiler
+open class AMBLibraryCompiler: KLLibraryCompiler
 {
-	public init(){
+	open override func compileThreadFunctions(context ctxt: KEContext, resource res: KEResource, processManager procmgr: CNProcessManager, environment env: CNEnvironment, console cons: CNConsole, config conf: KEConfig) -> Bool {
+		if super.compileThreadFunctions(context: ctxt, resource: res, processManager: procmgr, environment: env, console: cons, config: conf) {
+			return defineFunctions(context: ctxt, resource: res, console: cons)
+		} else {
+			return false
+		}
 	}
 
-	public func compile(context ctxt: KEContext, resource res: KEResource, console cons: CNConsole) {
+	private func defineFunctions(context ctxt: KEContext, resource res: KEResource, console cons: CNConsole) -> Bool {
 		/* readData function */
 		let readfunc: @convention(block) (_ nameval: JSValue) -> JSValue = {
 			(_ nameval: JSValue) -> JSValue in
@@ -30,6 +35,7 @@ open class AMBLibraryCompiler
 			return JSValue(nullIn: ctxt)
 		}
 		ctxt.set(name: "readData", function: readfunc)
+		return true
 	}
 
 	private func readData(dataName dname: String, context ctxt: KEContext, resource res: KEResource, console cons: CNConsole) -> CNNativeValue? {
@@ -45,4 +51,5 @@ open class AMBLibraryCompiler
 		return result
 	}
 }
+
 

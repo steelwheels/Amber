@@ -65,13 +65,8 @@ public class AMBThread: CNThread
 		let tpref    = CNPreference.shared.terminalPreference
 		let terminfo = CNTerminalInfo(width: tpref.width, height: tpref.height)
 		let config   = KEConfig(applicationType: .terminal, doStrict: true, logLevel: .defaultLevel)
-		let libcompiler = KLCompiler()
-		guard libcompiler.compileBase(context: mContext, terminalInfo: terminfo, environment: self.environment, console: self.console, config: config) else {
+		guard self.compile(context: mContext, resource: resource, processManager: pmgr, terminalInfo: terminfo, environment: environment, console: console, config: config) else {
 			console.error(string: "Failed to compile base\n")
-			return -1
-		}
-		guard libcompiler.compileLibrary(context: mContext, resource: resource, processManager: pmgr, environment: self.environment, console: self.console, config: config) else {
-			console.error(string: "Failed to compile library\n")
 			return -1
 		}
 
@@ -123,10 +118,6 @@ public class AMBThread: CNThread
 		}
 		mContext.set(name: "exit", function: exitfunc)
 
-		/* Compile library for component*/
-		let alibcompiler = AMBLibraryCompiler()
-		alibcompiler.compile(context: mContext, resource: resource, console: console)
-
 		/* Execute the component */
 		let executor = AMBComponentExecutor(console: console)
 		executor.exec(component: rootcomp)
@@ -134,6 +125,11 @@ public class AMBThread: CNThread
 		/* Wait until execution finished */
 		mReturnValue = semaphore.wait()
 		return 0
+	}
+
+	open func compile(context ctxt: KEContext, resource res: KEResource, processManager procmgr: CNProcessManager, terminalInfo terminfo: CNTerminalInfo, environment env: CNEnvironment, console cons: CNFileConsole, config conf: KEConfig) -> Bool {
+		let compiler = AMBLibraryCompiler()
+		return compiler.compile(context: ctxt, resource: res, processManager: procmgr, terminalInfo: terminfo, environment: env, console: cons, config: conf)
 	}
 
 	private func doVerbose() -> Bool {
