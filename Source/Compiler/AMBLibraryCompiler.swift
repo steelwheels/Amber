@@ -11,14 +11,13 @@ import CoconutData
 import JavaScriptCore
 import Foundation
 
-open class AMBLibraryCompiler: KLLibraryCompiler
+public class AMBLibraryCompiler
 {
-	open override func compileThreadFunctions(context ctxt: KEContext, resource res: KEResource, processManager procmgr: CNProcessManager, environment env: CNEnvironment, console cons: CNConsole, config conf: KEConfig) -> Bool {
-		if super.compileThreadFunctions(context: ctxt, resource: res, processManager: procmgr, environment: env, console: cons, config: conf) {
-			return defineFunctions(context: ctxt, resource: res, console: cons)
-		} else {
-			return false
-		}
+	public init() {
+	}
+
+	public func compile(context ctxt: KEContext, resource res: KEResource, processManager procmgr: CNProcessManager, environment env: CNEnvironment, console cons: CNConsole, config conf: KEConfig) -> Bool {
+		return defineFunctions(context: ctxt, resource: res, console: cons)
 	}
 
 	private func defineFunctions(context ctxt: KEContext, resource res: KEResource, console cons: CNConsole) -> Bool {

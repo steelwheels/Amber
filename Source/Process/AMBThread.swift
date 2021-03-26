@@ -128,8 +128,13 @@ public class AMBThread: CNThread
 	}
 
 	open func compile(context ctxt: KEContext, resource res: KEResource, processManager procmgr: CNProcessManager, terminalInfo terminfo: CNTerminalInfo, environment env: CNEnvironment, console cons: CNFileConsole, config conf: KEConfig) -> Bool {
-		let compiler = AMBLibraryCompiler()
-		return compiler.compile(context: ctxt, resource: res, processManager: procmgr, terminalInfo: terminfo, environment: env, console: cons, config: conf)
+		let libcompiler = KLLibraryCompiler()
+		if libcompiler.compile(context: ctxt, resource: res, processManager: procmgr, terminalInfo: terminfo, environment: env, console: cons, config: conf) {
+			let ambcompiler = AMBLibraryCompiler()
+			return ambcompiler.compile(context: ctxt, resource: res, processManager: procmgr, environment: env, console: cons, config: conf)
+		} else {
+			return false
+		}
 	}
 
 	private func doVerbose() -> Bool {
