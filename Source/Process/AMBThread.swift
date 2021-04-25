@@ -18,7 +18,7 @@ public class AMBThread: CNThread
 	private var mConfig:		KEConfig
 	private var mReturnValue:	CNNativeValue
 
-	public init(source src: KLSource, processManager mgr: CNProcessManager, input instrm: CNFileStream, output outstrm: CNFileStream, error errstrm: CNFileStream, environment env: CNEnvironment, config conf: KEConfig) {
+	public init(source src: KLSource, processManager mgr: CNProcessManager, input ifile: CNFile, output ofile: CNFile, error efile: CNFile, environment env: CNEnvironment, config conf: KEConfig) {
 		guard let vm = JSVirtualMachine() else {
 			fatalError("Failed to allocate VM")
 		}
@@ -26,7 +26,7 @@ public class AMBThread: CNThread
 		mContext	= KEContext(virtualMachine: vm)
 		mConfig		= conf
 		mReturnValue	= .nullValue
-		super.init(processManager: mgr, input: instrm, output: outstrm, error: errstrm, environment: env)
+		super.init(processManager: mgr, input: ifile, output: ofile, error: efile, environment: env)
 	}
 
 	public var returnValue: CNNativeValue { get { return mReturnValue }}
