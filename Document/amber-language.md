@@ -1,6 +1,6 @@
 # Amber Programming Language
 
-![Amber Icon](Resource/amber-icon-128x128.png)
+![Amber Icon 128x128](Resource/amber-icon-128x128.png)
 
 ## Introduction
 The Amber programming language consists of hierarchical structure of _frames_. The frame is used to declare the component such as GUI parts, thread interface. The structure and property of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
