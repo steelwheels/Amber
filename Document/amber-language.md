@@ -1,6 +1,6 @@
 # Amber Programming Language
 
-![Amber Icon](https://github.com/steelwheels/Amber/blob/master/Document/Resource/amber-icon-128x128.png)
+![Amber Icon](Resource/amber-icon-128x128.png)
 
 ## Introduction
 The Amber programming language consists of hierarchical structure of _frames_. The frame is used to declare the component such as GUI parts, thread interface. The structure and property of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
@@ -100,9 +100,9 @@ You can not read and write the property.
 The `Init` function will be called after all components are allocated. It has no parameters and the return value is ignored. The init function of child frame is called before parent frame of them. The multiple init function can be defined. But the execution order of them is *NOT* define.
 ````
 {
-    init: Init {
+    init: Init %{
         console.log("Initialized\n") ;
-    }
+    %}
 }
 ````
 
@@ -134,10 +134,10 @@ a: Object {
         sum: Int Listner(
             a0: a.b.c.d0,   // path expression 0
             a1: self.c.d1   // path expression 1
-        ) {
+        ) %{
             self.d2 = a0 + a1 ;
             return self.d2 ;
-        }
+        %}
     }
 }
 ````
