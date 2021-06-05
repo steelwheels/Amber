@@ -27,7 +27,7 @@ public class AMBLibraryCompiler
 			if let name = nameval.toString() {
 				if let retval = self.readData(dataName: name, context: ctxt, resource: res, console: cons) {
 					let val = retval.toJSValue(context: ctxt)
-					NSLog("readData(JS) = \(val.toText().toStrings(terminal: "").joined(separator: "\n"))")
+					//NSLog("readData(JS) = \(val.toText().toStrings().joined(separator: "\n"))")
 					return val
 				}
 			}

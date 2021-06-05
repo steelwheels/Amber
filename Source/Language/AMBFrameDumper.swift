@@ -41,7 +41,7 @@ public class AMBFrameDumper
 		case .nativeValue(let val):
 			let namestr = prop.name
 			let typestr = prop.type.name()
-			let valstr  = val.toText().toStrings(terminal: "").joined()
+			let valstr  = val.toText().toStrings().joined(separator: "\n")
 			let resstr  = namestr + " : " + typestr + " " + valstr
 			result = CNTextLine(string: resstr)
 		case .listnerFunction(let lfunc):

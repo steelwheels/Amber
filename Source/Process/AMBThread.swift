@@ -84,8 +84,8 @@ public class AMBThread: CNThread
 		if doVerbose() {
 			console.print(string: "[Frame dump]\n")
 			let dumper = AMBFrameDumper()
-			let txt = dumper.dumpToText(frame: frame)
-			txt.print(console: console, terminal: "")
+			let txt = dumper.dumpToText(frame: frame).toStrings().joined(separator: "\n")
+			console.print(string: txt + "\n")
 		}
 
 		/* Allocate the component */
@@ -103,8 +103,8 @@ public class AMBThread: CNThread
 		if doVerbose() {
 			console.print(string: "[Component dump]\n")
 			let dumper = AMBComponentDumper()
-			let txt = dumper.dumpToText(component: rootcomp)
-			txt.print(console: console, terminal: "")
+			let txt = dumper.dumpToText(component: rootcomp).toStrings().joined(separator: "\n")
+			console.print(string: txt + "\n")
 		}
 
 		/* Allocate semaphore to wait thread finish */

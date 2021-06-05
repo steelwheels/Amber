@@ -202,11 +202,11 @@ public class AMBProperty
 		let valstr: String
 		switch value {
 		case .nativeValue(let val):
-			valstr = "\(type.name()) " + val.toText().toStrings(terminal: "").joined()
+			valstr = "\(type.name()) " + val.toText().toStrings().joined(separator: "\n")
 		case .listnerFunction(let lfunc):
-			valstr = lfunc.toText().toStrings(terminal: "").joined()
+			valstr = lfunc.toText().toStrings().joined(separator: "\n")
 		case .procedureFunction(let pfunc):
-			valstr = pfunc.toText().toStrings(terminal: "").joined()
+			valstr = pfunc.toText().toStrings().joined(separator: "\n")
 		}
 		return "\(name): \(valstr)"
 	}

@@ -71,8 +71,8 @@ private func testParser(source src: String, console cons: CNConsole) -> Bool {
 	case .ok(let frame):
 		cons.print(string: "--- Print Frame\n")
 		let dumper = AMBFrameDumper()
-		let text   = dumper.dumpToText(frame: frame)
-		text.print(console: cons, terminal: "")
+		let text   = dumper.dumpToText(frame: frame).toStrings().joined(separator: "\n")
+		cons.print(string: text + "\n")
 		cons.print(string: "Parse result ... OK\n")
 		result = true
 	case .error(let error):

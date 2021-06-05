@@ -48,8 +48,8 @@ private func testCompiler(source src: String, virtualMachie vm: JSVirtualMachine
 	case .ok(let frame):
 		cons.print(string: "--- Print Frame\n")
 		let dumper = AMBFrameDumper()
-		let text   = dumper.dumpToText(frame: frame)
-		text.print(console: cons, terminal: "")
+		let text   = dumper.dumpToText(frame: frame).toStrings().joined(separator: "\n")
+		cons.print(string: text + "\n")
 		/* compile */
 		let compiler = AMBFrameCompiler()
 		let resource = KEResource(baseURL: URL(fileURLWithPath: "/tmp/a"))
@@ -60,8 +60,8 @@ private func testCompiler(source src: String, virtualMachie vm: JSVirtualMachine
 			printProperty(object: comp.reactObject, propertyName: "instanceName", context: ctxt, console: cons)
 			printProperty(object: comp.reactObject, propertyName: "className", context: ctxt, console: cons)
 			let cdumper = AMBComponentDumper()
-			let txt     = cdumper.dumpToText(component: comp)
-			txt.print(console: cons, terminal: "")
+			let txt     = cdumper.dumpToText(component: comp).toStrings().joined(separator: "\n")
+			cons.print(string: txt + "\n")
 			cons.print(string: "Compile Result ... OK\n")
 			result = true
 		case .error(let err):

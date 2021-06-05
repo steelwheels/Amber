@@ -8,7 +8,7 @@ Define root component: object
 property: instanceName -> value: object
 property: className -> value: Object
 object: Object {
-  scriptedPropertyName: []
+  scriptedPropertyName: [], 
   allPropertyName: [className instanceName ]
 }
 Compile Result ... OK
@@ -27,8 +27,8 @@ Object.defineProperty(_object_a, 'a',{
 property: instanceName -> value: object
 property: className -> value: Object
 object: Object {
-  scriptedPropertyName: [a ]
-  allPropertyName: [className instanceName a ]
+  scriptedPropertyName: [a ], 
+  allPropertyName: [className instanceName a ], 
   a: Int 0
 }
 Compile Result ... OK
@@ -49,8 +49,8 @@ Object.defineProperty(_object_f, 'f',{
 property: instanceName -> value: object
 property: className -> value: Object
 object: Object {
-  scriptedPropertyName: [f ]
-  allPropertyName: [f className instanceName ]
+  scriptedPropertyName: [f ], 
+  allPropertyName: [f className instanceName ], 
   f: Int function (a, b) {
  return a+b ; 
 }
@@ -73,8 +73,8 @@ Object.defineProperty(_object_f, 'f',{
 property: instanceName -> value: object
 property: className -> value: Object
 object: Object {
-  scriptedPropertyName: [f ]
-  allPropertyName: [f className instanceName ]
+  scriptedPropertyName: [f ], 
+  allPropertyName: [f className instanceName ], 
   f: Event function (self) {
  console.log("a") ; 
 }
@@ -83,7 +83,7 @@ Compile Result ... OK
 SOURCE: object: Object { a: Int 0 f: Int Listner(a: self.a) %{ console.log(a) ; %} }
 --- Print Frame
 object: Object {
-  a : Int 0
+  a : Int 0, 
   f : Int Int Listner(a: self.a) %{
      console.log(a) ; 
   %}
@@ -103,9 +103,9 @@ Object.defineProperty(_object_f, 'f',{
 property: instanceName -> value: object
 property: className -> value: Object
 object: Object {
-  scriptedPropertyName: [a f ]
-  allPropertyName: [f className _lfunc_f instanceName a ]
-  a: Int 0
+  scriptedPropertyName: [a f ], 
+  allPropertyName: [f className _lfunc_f instanceName a ], 
+  a: Int 0, 
   f: Int function (self, a) {
  console.log(a) ; 
 }
@@ -114,8 +114,8 @@ Compile Result ... OK
 SOURCE: object: Object { a: Int 0 b: Int 1 f: Int Listner(a: self.a, b:self.b) %{ console.log(a+b) ; %} }
 --- Print Frame
 object: Object {
-  a : Int 0
-  b : Int 1
+  a : Int 0, 
+  b : Int 1, 
   f : Int Int Listner(a: self.a, b: self.b) %{
      console.log(a+b) ; 
   %}
@@ -140,10 +140,10 @@ Object.defineProperty(_object_f, 'f',{
 property: instanceName -> value: object
 property: className -> value: Object
 object: Object {
-  scriptedPropertyName: [a b f ]
-  allPropertyName: [f className _lfunc_f instanceName a b ]
-  a: Int 0
-  b: Int 1
+  scriptedPropertyName: [a b f ], 
+  allPropertyName: [f className _lfunc_f instanceName a b ], 
+  a: Int 0, 
+  b: Int 1, 
   f: Int function (self, a, b) {
  console.log(a+b) ; 
 }
@@ -159,10 +159,10 @@ SOURCE: rootobj: Object {  a: Int 0
 
 --- Print Frame
 rootobj: Object {
-  a : Int 0
+  a : Int 0, 
   subobj: Object {
     b : Int 1
-  }
+  }, 
   f : Int Int Listner(a: self.a, b: rootobj.subobj.b) %{
              return a + b ;
      
@@ -193,14 +193,14 @@ Object.defineProperty(_rootobj_subobj_b, 'b',{
 property: instanceName -> value: rootobj
 property: className -> value: Object
 rootobj: Object {
-  scriptedPropertyName: [a subobj f ]
-  allPropertyName: [f className subobj _lfunc_f instanceName a ]
-  a: Int 0
+  scriptedPropertyName: [a subobj f ], 
+  allPropertyName: [f className subobj _lfunc_f instanceName a ], 
+  a: Int 0, 
   subobj: Object {
-    scriptedPropertyName: [b ]
-    allPropertyName: [className instanceName b ]
+    scriptedPropertyName: [b ], 
+    allPropertyName: [className instanceName b ], 
     b: Int 1
-  }
+  }, 
   f: Int function (self, a, b) {
          return a + b ;
      
@@ -216,8 +216,8 @@ SOURCE: rootobj: Object {
 
 --- Print Frame
 rootobj: Object {
-  a : Int 0
-  b : Float 1.2
+  a : Int 0, 
+  b : Float 1.2, 
   f : Int Int Listner(a: self.a, b: rootobj.b) %{
              return a + b ;
      
@@ -243,10 +243,10 @@ Object.defineProperty(_rootobj_f, 'f',{
 property: instanceName -> value: rootobj
 property: className -> value: Object
 rootobj: Object {
-  scriptedPropertyName: [a b f ]
-  allPropertyName: [f className _lfunc_f instanceName a b ]
-  a: Int 0
-  b: Float 1.2
+  scriptedPropertyName: [a b f ], 
+  allPropertyName: [f className _lfunc_f instanceName a b ], 
+  a: Int 0, 
+  b: Float 1.2, 
   f: Int function (self, a, b) {
          return a + b ;
      
@@ -272,8 +272,8 @@ Object.defineProperty(_rootObj_f, 'f',{
 property: instanceName -> value: rootObj
 property: className -> value: Object
 rootObj: Object {
-  scriptedPropertyName: [f ]
-  allPropertyName: [f className instanceName ]
+  scriptedPropertyName: [f ], 
+  allPropertyName: [f className instanceName ], 
   f: Event function (self) {
  console.log("pressed\n") ; 
 }
@@ -298,8 +298,8 @@ Object.defineProperty(_rootObj_i, 'i',{
 property: instanceName -> value: rootObj
 property: className -> value: Object
 rootObj: Object {
-  scriptedPropertyName: [i ]
-  allPropertyName: [i className instanceName ]
+  scriptedPropertyName: [i ], 
+  allPropertyName: [i className instanceName ], 
   i: Init function (self) {
  console.log("ok\n") ; 
 }
@@ -322,8 +322,8 @@ Object.defineProperty(_rootObject_str, 'str',{
 property: instanceName -> value: rootObject
 property: className -> value: Object
 rootObject: Object {
-  scriptedPropertyName: [str ]
-  allPropertyName: [str className instanceName ]
+  scriptedPropertyName: [str ], 
+  allPropertyName: [str className instanceName ], 
   str: String a,b,
 c
 }
@@ -332,7 +332,7 @@ SOURCE: rootObject: Object { empty: URL "" tmp: URL "/tmp/a"}
 
 --- Print Frame
 rootObject: Object {
-  empty : URL file:///dev/null
+  empty : URL file:///dev/null, 
   tmp : URL /tmp/a
 }
 Define root component: rootObject
@@ -350,9 +350,9 @@ Object.defineProperty(_rootObject_tmp, 'tmp',{
 property: instanceName -> value: rootObject
 property: className -> value: Object
 rootObject: Object {
-  scriptedPropertyName: [empty tmp ]
-  allPropertyName: [empty tmp className instanceName ]
-  empty: URL [object KiwiLibrary.KLURL]
+  scriptedPropertyName: [empty tmp ], 
+  allPropertyName: [empty tmp className instanceName ], 
+  empty: URL [object KiwiLibrary.KLURL], 
   tmp: URL [object KiwiLibrary.KLURL]
 }
 Compile Result ... OK
@@ -360,7 +360,12 @@ SOURCE: rootObject: Object { array: Int [1, 2, 3, 4]}
 
 --- Print Frame
 rootObject: Object {
-  array : Int [  1  2  3  4]
+  array : Int [
+  1, 
+  2, 
+  3, 
+  4
+]
 }
 Define root component: rootObject
 let  _rootObject_array = rootObject ;
@@ -372,8 +377,8 @@ Object.defineProperty(_rootObject_array, 'array',{
 property: instanceName -> value: rootObject
 property: className -> value: Object
 rootObject: Object {
-  scriptedPropertyName: [array ]
-  allPropertyName: [array className instanceName ]
+  scriptedPropertyName: [array ], 
+  allPropertyName: [array className instanceName ], 
   array: Int 1,2,3,4
 }
 Compile Result ... OK
@@ -390,21 +395,19 @@ Object.defineProperty(_tmp, 'instanceName',{
 Source: bitmap0: MonoBitmap { data: Int [[0,1], [2,3], [4,5]] }
 [ReadResult]
 {
-  bitmap0: 
-  {
-    className: "BitmapValue"
-    data: 
-    [
+  bitmap0: {
+    className: "BitmapValue", 
+    data: [
       [
-        0
+        0, 
         1
-      ]
+      ], 
       [
-        2
+        2, 
         3
       ]
     ]
-  }
+  }, 
   className: "Object"
 }
 SUMMARY: OK

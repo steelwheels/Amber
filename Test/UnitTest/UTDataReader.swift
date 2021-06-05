@@ -51,7 +51,8 @@ private func testReader(source src: String, resource res: KEResource, console co
 	switch reader.read(identifier: ident) {
 	case .ok(let val):
 		cons.print(string: "[ReadResult]\n")
-		val.toText().print(console: cons, terminal: "")
+		let txt = val.toText().toStrings().joined(separator: "\n")
+		cons.print(string: txt + "\n")
 		result = true
 	case .error(let err):
 		cons.print(string: "[Error] \(err.toString())\n")
