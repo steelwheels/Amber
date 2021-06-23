@@ -9,9 +9,6 @@
 /* Begin PBXBuildFile section */
 		052D3A742573E76100B8F95A /* AMBThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D3A732573E76100B8F95A /* AMBThread.swift */; };
 		052D3A752573E76100B8F95A /* AMBThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D3A732573E76100B8F95A /* AMBThread.swift */; };
-		052F458C256A9F1800CF8A99 /* KiwiLibrary.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 052F458A256A9F1800CF8A99 /* KiwiLibrary.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		052F458D256A9F1800CF8A99 /* KiwiEngine.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 052F458B256A9F1800CF8A99 /* KiwiEngine.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		052F458F256A9F2700CF8A99 /* Amber.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 052F458E256A9F2700CF8A99 /* Amber.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0535C1A32520B1F4002A9172 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1A22520B1F4002A9172 /* main.swift */; };
 		0535C1B72520B4F4002A9172 /* UTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1B62520B4F4002A9172 /* UTParser.swift */; };
 		0535C1BC2520B9D7002A9172 /* AMBFrameDumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1BB2520B9D7002A9172 /* AMBFrameDumper.swift */; };
@@ -53,6 +50,8 @@
 		05ED779A25208BCA000EC3FC /* AMBParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ED779825208BCA000EC3FC /* AMBParser.swift */; };
 		05ED77DD252098C0000EC3FC /* CoconutData.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05ED77DB2520987B000EC3FC /* CoconutData.xcframework */; };
 		05ED77E3252098CF000EC3FC /* CoconutData.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05ED77DB2520987B000EC3FC /* CoconutData.xcframework */; };
+		05FA2FEC2680CE8800B8242A /* CoconutDatabase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05FA2FEB2680CE8800B8242A /* CoconutDatabase.xcframework */; };
+		05FA2FF02680CE9900B8242A /* CoconutDatabase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05FA2FEB2680CE8800B8242A /* CoconutDatabase.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,9 +106,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				052F458F256A9F2700CF8A99 /* Amber.framework in CopyFiles */,
-				052F458C256A9F1800CF8A99 /* KiwiLibrary.framework in CopyFiles */,
-				052F458D256A9F1800CF8A99 /* KiwiEngine.framework in CopyFiles */,
 				053807C325D7CC480069F760 /* CoconutData.xcframework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -129,10 +125,6 @@
 		052D3A732573E76100B8F95A /* AMBThread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBThread.swift; sourceTree = "<group>"; };
 		052F4549256A9D2B00CF8A99 /* UnitTest.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTest.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		052F454B256A9D2B00CF8A99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		052F4580256A9EEE00CF8A99 /* CoconutData.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CoconutData.xcframework; path = ../../../Library/Frameworks/CoconutData.xcframework; sourceTree = "<group>"; };
-		052F458A256A9F1800CF8A99 /* KiwiLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KiwiLibrary.framework; path = ../../../local/Frameworks/macos/KiwiLibrary.framework; sourceTree = "<group>"; };
-		052F458B256A9F1800CF8A99 /* KiwiEngine.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = KiwiEngine.framework; path = ../../../local/Frameworks/macos/KiwiEngine.framework; sourceTree = "<group>"; };
-		052F458E256A9F2700CF8A99 /* Amber.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Amber.framework; path = ../../../local/Frameworks/macos/Amber.framework; sourceTree = "<group>"; };
 		0535C1A02520B1F3002A9172 /* UnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0535C1A22520B1F4002A9172 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		0535C1B62520B4F4002A9172 /* UTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTParser.swift; sourceTree = "<group>"; };
@@ -162,6 +154,7 @@
 		05ED779825208BCA000EC3FC /* AMBParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBParser.swift; sourceTree = "<group>"; };
 		05ED77DB2520987B000EC3FC /* CoconutData.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CoconutData.xcframework; path = ../../../Library/Frameworks/CoconutData.xcframework; sourceTree = "<group>"; };
 		05ED77DC252098B5000EC3FC /* Amber.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Amber.xcframework; path = ../../../Library/Frameworks/Amber.xcframework; sourceTree = "<group>"; };
+		05FA2FEB2680CE8800B8242A /* CoconutDatabase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CoconutDatabase.xcframework; path = ../../../Library/Frameworks/CoconutDatabase.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +178,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05FA2FEC2680CE8800B8242A /* CoconutDatabase.xcframework in Frameworks */,
 				055C9EA925236BED00E6B266 /* KiwiLibrary.xcframework in Frameworks */,
 				05ED77DD252098C0000EC3FC /* CoconutData.xcframework in Frameworks */,
 				055C9EA725236BED00E6B266 /* KiwiEngine.xcframework in Frameworks */,
@@ -195,6 +189,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				05FA2FF02680CE9900B8242A /* CoconutDatabase.xcframework in Frameworks */,
 				055C9EB025236C0100E6B266 /* KiwiLibrary.xcframework in Frameworks */,
 				05ED77E3252098CF000EC3FC /* CoconutData.xcframework in Frameworks */,
 				055C9EAE25236C0100E6B266 /* KiwiEngine.xcframework in Frameworks */,
@@ -275,10 +270,6 @@
 		05B7616A25204B3700B6BF0B = {
 			isa = PBXGroup;
 			children = (
-				052F458E256A9F2700CF8A99 /* Amber.framework */,
-				052F458B256A9F1800CF8A99 /* KiwiEngine.framework */,
-				052F458A256A9F1800CF8A99 /* KiwiLibrary.framework */,
-				052F4580256A9EEE00CF8A99 /* CoconutData.xcframework */,
 				05ED778225204C55000EC3FC /* Source */,
 				0535C1AA2520B207002A9172 /* Test */,
 				05ED776B25204BD3000EC3FC /* Amber_macOS */,
@@ -352,6 +343,7 @@
 		05ED778925207277000EC3FC /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				05FA2FEB2680CE8800B8242A /* CoconutDatabase.xcframework */,
 				055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */,
 				055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */,
 				05ED77DC252098B5000EC3FC /* Amber.xcframework */,
