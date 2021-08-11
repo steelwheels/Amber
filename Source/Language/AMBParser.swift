@@ -38,7 +38,7 @@ public class AMBParser
 			let stream = CNTokenStream(source: tokens)
 			return try parseFrame(stream: stream)
 		case .error(let err):
-			throw makeParseError(message: err.description(), stream: nil)
+			throw err
 		@unknown default:
 			throw makeParseError(message: "Unexpected tokenize result", stream: nil)
 		}
