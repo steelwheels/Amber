@@ -52,7 +52,7 @@ public extension AMBComponent
 		super.init()
 	}
 
-	public func setup(reactObject robj: AMBReactObject, console cons: CNConsole) -> NSError? {
+	open func setup(reactObject robj: AMBReactObject, console cons: CNConsole) -> NSError? {
 		mReactObject		= robj
 		return nil
 	}

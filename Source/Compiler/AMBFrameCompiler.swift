@@ -30,12 +30,15 @@ open class AMBFrameCompiler
 			let rootobj = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
 			/* Setup listner function */
 			try allocateListnerCallers(rootObject: rootobj, console: cons)
-			/* Initialize property values */
-			try initPropertyValues(rootObject: rootobj, console: cons)
 			/* Allocate components by frame */
 			let rootcomp = try allocateComponents(reactObject: rootobj, mapper: cmapper, console: cons)
+			/* Add root object in context */
+			defineRootProperty(component: rootcomp, context: ctxt, console: cons)
 			/* Add setter/getter */
-			defineProperties(component: rootcomp, context: ctxt, console: cons)
+			defineGetterAndSetters(component: rootcomp, context: ctxt, console: cons)
+
+			/* Initialize listner property values. This must be executed after "defineProperties" */
+			try initListnerValues(rootObject: rootobj, console: cons)
 			return .ok(rootcomp)
 		} catch let err as NSError {
 			return .error(err)
@@ -299,7 +302,55 @@ open class AMBFrameCompiler
 		}
 	}
 
-	private func initPropertyValues(rootObject obj: AMBReactObject, console cons: CNConsole) throws {
+	private func allocateComponents(reactObject obj: AMBReactObject, mapper cmapper: AMBComponentMapper, console cons: CNConsole) throws -> AMBComponent {
+		switch cmapper.map(object: obj, isEditable: false, console: cons) {
+		case .ok(let comp):
+			return comp
+		case .error(let err):
+			throw err
+		}
+	}
+
+	private func defineRootProperty(component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
+		/* Define root object */
+		let robj     = comp.reactObject
+		let rootname = robj.frame.instanceName
+		log(level: .debug, message: "Define root component: \(rootname)\n", console: cons)
+		ctxt.set(name: rootname, object: robj)
+	}
+
+	private func defineGetterAndSetters(component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
+		let robj     = comp.reactObject
+		let rootname = robj.frame.instanceName
+		defineGetterAndSetters(pathExpression: [rootname], component: comp, context: ctxt, console: cons)
+	}
+
+	private func defineGetterAndSetters(pathExpression path: Array<String>, component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
+		/* Define setter/getter */
+		for pname in comp.reactObject.scriptedPropertyNames {
+			defineGetterAndSetters(context: ctxt, pathExpression: path, propertyName: pname, console: cons)
+		}
+
+		/* Define child objects */
+		for child in comp.children {
+			var childpath = path ; childpath.append(child.reactObject.frame.instanceName)
+			defineGetterAndSetters(pathExpression: childpath, component: child, context: ctxt, console: cons)
+		}
+	}
+
+	private func defineGetterAndSetters(context ctxt: KEContext, pathExpression path: Array<String>, propertyName pname: String, console cons: CNConsole) {
+		let obj  = "_" + path.joined(separator: "_") + "_" + pname
+		let path = path.joined(separator: ".")
+		let script =   "let  \(obj) = \(path) ;\n"
+			     + "Object.defineProperty(\(obj), '\(pname)',{ \n"
+			     + "  get()    { return this.get(\"\(pname)\") ; }, \n"
+			     + "  set(val) { return this.set(\"\(pname)\", val) ; }, \n"
+			     + "}) ;\n"
+		log(level: .detail, message: script, console: cons)
+		ctxt.evaluateScript(script)
+	}
+
+	private func initListnerValues(rootObject obj: AMBReactObject, console cons: CNConsole) throws {
 		let frm = obj.frame
 		for member in frm.members {
 			switch member {
@@ -336,7 +387,7 @@ open class AMBFrameCompiler
 				}
 			case .frame(let cfrm):
 				if let cobj = obj.childFrame(forProperty: cfrm.instanceName) {
-					try initPropertyValues(rootObject: cobj, console: cons)
+					try initListnerValues(rootObject: cobj, console: cons)
 				} else {
 					throw NSError.parseError(message: "Internal error at \(#function) [1]")
 				}
@@ -344,50 +395,6 @@ open class AMBFrameCompiler
 				break
 			}
 		}
-	}
-
-	private func allocateComponents(reactObject obj: AMBReactObject, mapper cmapper: AMBComponentMapper, console cons: CNConsole) throws -> AMBComponent {
-		switch cmapper.map(object: obj, isEditable: false, console: cons) {
-		case .ok(let comp):
-			return comp
-		case .error(let err):
-			throw err
-		}
-	}
-
-	private func defineProperties(component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
-		/* Define root object */
-		let robj     = comp.reactObject
-		let rootname = robj.frame.instanceName
-		log(level: .debug, message: "Define root component: \(rootname)\n", console: cons)
-		ctxt.set(name: rootname, object: robj)
-
-		defineProperties(pathExpression: [rootname], component: comp, context: ctxt, console: cons)
-	}
-
-	private func defineProperties(pathExpression path: Array<String>, component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {
-		/* Define setter/getter */
-		for pname in comp.reactObject.scriptedPropertyNames {
-			defineProperty(context: ctxt, pathExpression: path, propertyName: pname, console: cons)
-		}
-
-		/* Define child objects */
-		for child in comp.children {
-			var childpath = path ; childpath.append(child.reactObject.frame.instanceName)
-			defineProperties(pathExpression: childpath, component: child, context: ctxt, console: cons)
-		}
-	}
-
-	private func defineProperty(context ctxt: KEContext, pathExpression path: Array<String>, propertyName pname: String, console cons: CNConsole) {
-		let obj  = "_" + path.joined(separator: "_") + "_" + pname
-		let path = path.joined(separator: ".")
-		let script =   "let  \(obj) = \(path) ;\n"
-			     + "Object.defineProperty(\(obj), '\(pname)',{ \n"
-			     + "  get()    { return this.get(\"\(pname)\") ; }, \n"
-			     + "  set(val) { return this.set(\"\(pname)\", val) ; }, \n"
-			     + "}) ;\n"
-		log(level: .detail, message: script, console: cons)
-		ctxt.evaluateScript(script)
 	}
 
 	private func log(level lvl: CNConfig.LogLevel, message msg: String, console cons: CNConsole) {
