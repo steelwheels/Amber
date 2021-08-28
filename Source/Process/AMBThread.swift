@@ -16,7 +16,7 @@ public class AMBThread: CNThread
 	private var mSource:		KLSource
 	private var mContext:		KEContext
 	private var mConfig:		KEConfig
-	private var mReturnValue:	CNNativeValue
+	private var mReturnValue:	CNValue
 
 	public init(source src: KLSource, processManager mgr: CNProcessManager, input ifile: CNFile, output ofile: CNFile, error efile: CNFile, environment env: CNEnvironment, config conf: KEConfig) {
 		guard let vm = JSVirtualMachine() else {
@@ -29,9 +29,9 @@ public class AMBThread: CNThread
 		super.init(processManager: mgr, input: ifile, output: ofile, error: efile, environment: env)
 	}
 
-	public var returnValue: CNNativeValue { get { return mReturnValue }}
+	public var returnValue: CNValue { get { return mReturnValue }}
 
-	open override func main(argument arg: CNNativeValue) -> Int32 {
+	open override func main(argument arg: CNValue) -> Int32 {
 		guard let pmgr = self.processManager else {
 			console.error(string: "No process manager is ready\n")
 			return -1

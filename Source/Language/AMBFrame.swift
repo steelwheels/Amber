@@ -171,7 +171,7 @@ public struct AMBPathArgument {
 public class AMBProperty
 {
 	public enum PropertyValue {
-		case nativeValue(CNNativeValue)
+		case nativeValue(CNValue)
 		case listnerFunction(AMBListnerFunction)
 		case procedureFunction(AMBProcedureFunction)
 	}
@@ -180,7 +180,7 @@ public class AMBProperty
 	public var	type:	AMBType
 	public var	value:	PropertyValue
 
-	public init(name nm: String, type typ: AMBType, nativeValue val: CNNativeValue) {
+	public init(name nm: String, type typ: AMBType, nativeValue val: CNValue) {
 		name	= nm
 		type	= typ
 		value	= .nativeValue(val)

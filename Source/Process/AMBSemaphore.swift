@@ -16,7 +16,7 @@ import UIKit
 public class AMBSemaphore
 {
 	private var mSemaphore:		DispatchSemaphore
-	private var mReturnValue:	CNNativeValue
+	private var mReturnValue:	CNValue
 
 	public init() {
 		mSemaphore	= DispatchSemaphore(value: 0)
@@ -28,7 +28,7 @@ public class AMBSemaphore
 		mSemaphore.signal()
 	}
 
-	public func wait() -> CNNativeValue {
+	public func wait() -> CNValue {
 		mSemaphore.wait()
 		return mReturnValue
 	}

@@ -37,9 +37,9 @@ public class AMBLibraryCompiler
 		return true
 	}
 
-	private func readData(dataName dname: String, context ctxt: KEContext, resource res: KEResource, console cons: CNConsole) -> CNNativeValue? {
+	private func readData(dataName dname: String, context ctxt: KEContext, resource res: KEResource, console cons: CNConsole) -> CNValue? {
 		let reader = AMBDataReader(resource: res, console: cons)
-		let result: CNNativeValue?
+		let result: CNValue?
 		switch reader.read(identifier: dname) {
 		case .ok(let retval):
 			result = retval

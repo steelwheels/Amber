@@ -14,7 +14,7 @@ import Foundation
 public class AMBDataReader
 {
 	public enum ReadResult {
-		case ok(CNNativeValue)
+		case ok(CNValue)
 		case error(NSError)
 	}
 
@@ -40,7 +40,7 @@ public class AMBDataReader
 		return result
 	}
 
-	private func readData(identifier ident: String) throws -> CNNativeValue {
+	private func readData(identifier ident: String) throws -> CNValue {
 		if let datastr = mResource.loadData(identifier: ident) {
 			let parser = AMBParser()
 			switch parser.parse(source: datastr) {
@@ -54,8 +54,8 @@ public class AMBDataReader
 		}
 	}
 
-	private func readData(frame frm: AMBFrame) throws -> CNNativeValue {
-		var result: Dictionary<String, CNNativeValue> = [JSValue.classPropertyName: .stringValue(frm.className)]
+	private func readData(frame frm: AMBFrame) throws -> CNValue {
+		var result: Dictionary<String, CNValue> = [JSValue.classPropertyName: .stringValue(frm.className)]
 		for memb in frm.members {
 			switch memb {
 			case .property(let prop):

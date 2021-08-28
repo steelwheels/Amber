@@ -129,11 +129,11 @@ public class AMBParser
 		}
 	}
 
-	private func parseExpressionProperty(type typ: AMBType, stream strm: CNTokenStream) throws -> CNNativeValue {
+	private func parseExpressionProperty(type typ: AMBType, stream strm: CNTokenStream) throws -> CNValue {
 		if let sym = strm.getSymbol() {
 			switch sym {
 			case "[":
-				var elements: Array<CNNativeValue> = []
+				var elements: Array<CNValue> = []
 				while true {
 					if strm.requireSymbol(symbol: "]") {
 						break
@@ -156,8 +156,8 @@ public class AMBParser
 		}
 	}
 
-	private func parseScalarExpressionProperty(type typ: AMBType, stream strm: CNTokenStream) throws -> CNNativeValue {
-		let value:	CNNativeValue
+	private func parseScalarExpressionProperty(type typ: AMBType, stream strm: CNTokenStream) throws -> CNValue {
+		let value:	CNValue
 		switch typ {
 		case .booleanType:
 			if let val = strm.getBool() {

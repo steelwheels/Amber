@@ -90,7 +90,7 @@ open class AMBFrameCompiler
 		}
 	}
 
-	private func compileNativeValueProperty(nativeValue nval: CNNativeValue, context ctxt: KEContext) throws -> JSValue {
+	private func compileNativeValueProperty(nativeValue nval: CNValue, context ctxt: KEContext) throws -> JSValue {
 		return nval.toJSValue(context: ctxt)
 	}
 
