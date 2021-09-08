@@ -31,14 +31,14 @@ public class AMBComponentDumper
 			pnames.append(pname + " ")
 		}
 		pnames.append("]")
-		newsec.add(string: pnames)
+		newsec.add(text: CNTextLine(string: pnames))
 
 		var anames = "allPropertyName: ["
 		for aname in robj.allPropertyNames {
 			anames.append(aname + " ")
 		}
 		anames.append("]")
-		newsec.add(string: anames)
+		newsec.add(text: CNTextLine(string: anames))
 
 		for memb in frame.members {
 			let name     = AMBFrame.name(of: memb)
@@ -48,31 +48,31 @@ public class AMBComponentDumper
 			case .nativeValue:
 				if let val = robj.immediateValue(forProperty: name) {
 					if let str = val.toString() {
-						newsec.add(string: header + "\(str)")
+						newsec.add(text: CNTextLine(string: header + "\(str)"))
 					} else {
-						newsec.add(string: header + "<Error>")
+						newsec.add(text: CNTextLine(string: header + "<Error>"))
 					}
 				} else {
-					newsec.add(string: "<Error: No immediate value: \(name)>")
+					newsec.add(text: CNTextLine(string: "<Error: No immediate value: \(name)>"))
 				}
 			case .frame:
 				if let childcomp = comp.searchChild(byName: name) {
 					let childtxt = dumpComponentToText(component: childcomp)
 					newsec.add(text: childtxt)
 				} else {
-					newsec.add(string: "<Error: No frame: \(name)>")
+					newsec.add(text: CNTextLine(string: "<Error: No frame: \(name)>"))
 				}
 			case .listnerFunction:
 				if let fval = robj.listnerFuntionValue(forProperty: name) {
-					newsec.add(string: header + fval.toString())
+					newsec.add(text: CNTextLine(string: header + fval.toString()))
 				} else {
-					newsec.add(string: "<Error: listner function: \(name)>")
+					newsec.add(text: CNTextLine(string: "<Error: listner function: \(name)>"))
 				}
 			case .procedureFunction, .eventFunction, .initFunction:
 				if let pval = robj.immediateValue(forProperty: name) {
-					newsec.add(string: header + pval.toString())
+					newsec.add(text: CNTextLine(string: header + pval.toString()))
 				} else {
-					newsec.add(string: "<Error: No immediate value: \(name)>")
+					newsec.add(text: CNTextLine(string: "<Error: No immediate value: \(name)>"))
 				}
 			}
 		}
