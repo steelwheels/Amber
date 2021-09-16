@@ -25,7 +25,7 @@ import JavaScriptCore
 	private var mProcessManager:		CNProcessManager
 	private var mResource:			KEResource
 	private var mEnvironment:		CNEnvironment
-	private var mPropertyValues:		CNObservedValueTable
+	private var mPropertyValues:		CNObserverDictionary
 	private var mListerFuncPointers:	Dictionary<String, Array<AMBObjectPointer>>
 	private var mScriptedPropertyNames:	Array<String>
 
@@ -43,7 +43,7 @@ import JavaScriptCore
 		mProcessManager		= pmgr
 		mResource		= res
 		mEnvironment		= env
-		mPropertyValues		= CNObservedValueTable()
+		mPropertyValues		= CNObserverDictionary()
 		mListerFuncPointers	= [:]
 		mScriptedPropertyNames	= []
 		super.init()
@@ -256,7 +256,7 @@ import JavaScriptCore
 		return "_lparam_" + name
 	}
 
-	public func addObserver(forProperty prop: String, callback cbfunc: @escaping CNObservedValueTable.ListenerFunction) {
+	public func addObserver(forProperty prop: String, callback cbfunc: @escaping CNObserverDictionary.ListenerFunction) {
 		mPropertyValues.addObserver(forKey: prop, listnerFunction: cbfunc)
 	}
 }

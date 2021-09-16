@@ -276,7 +276,7 @@ open class AMBFrameCompiler
 
 	private func addCallback(pointers ptrs: Array<AMBObjectPointer>, ownerObject obj: AMBReactObject, ownerProperty prop: String, listnerFunction lval: JSValue, console cons: CNConsole) {
 		/* Define callback function */
-		let lfunc: CNObservedValueTable.ListenerFunction = {
+		let lfunc: CNObserverDictionary.ListenerFunction = {
 			(_ param: Any?) -> Void in
 			/* Setup parameters */
 			var args: Array<Any> = [obj] 			// insert self
