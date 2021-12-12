@@ -11,7 +11,7 @@ import Foundation
 public class AMBFrameDumper
 {
 	public init() {
-		
+
 	}
 
 	public func dumpToText(frame frm: AMBFrame) -> CNTextSection {

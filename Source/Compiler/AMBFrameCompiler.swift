@@ -15,7 +15,7 @@ open class AMBFrameCompiler
 	public typealias AllocationResult = AMBComponentMapper.MapResult
 
 	let TEMPORARY_VARIABLE_NAME = "_amber_temp_var"
-	
+
 	public enum CompileResult {
 	case ok(AMBComponent)
 	case error(NSError)

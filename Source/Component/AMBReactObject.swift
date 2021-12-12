@@ -36,7 +36,7 @@ import JavaScriptCore
 	public var environment:			CNEnvironment		{ get { return mEnvironment }}
 	public var scriptedPropertyNames:	Array<String>		{ get { return mScriptedPropertyNames }}
 	public var allPropertyNames:		Array<String> 		{ get { return mPropertyValues.keys }}
-	
+
 	public init(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment) {
 		mFrame			= frm
 		mContext		= ctxt
@@ -215,7 +215,7 @@ import JavaScriptCore
 		}
 		return nil
 	}
-	
+
 	public func setChildFrame(forProperty prop: String, frame frm: AMBReactObject) {
 		setImmediateValue(value: JSValue(object: frm, in: mContext), forProperty: prop)
 	}

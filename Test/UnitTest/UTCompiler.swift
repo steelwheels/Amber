@@ -14,7 +14,7 @@ import Foundation
 public func UTCompiler(console cons: CNConsole) -> Bool
 {
 	cons.print(string: "===== UTCompiler\n")
-	
+
 	var result = true
 
 	guard let vm = JSVirtualMachine() else {
