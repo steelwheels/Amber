@@ -380,7 +380,7 @@ open class AMBFrameCompiler
 							cons.error(string: "Failed to get result at \(#file)")
 						}
 					} else {
-						throw NSError.parseError(message: "Internal error at \(#function) [0]")
+						throw NSError.parseError(message: "Internal error for function \(funcname) at \(#function) [0]")
 					}
 				case .nativeValue(_), .procedureFunction(_):
 					break
@@ -389,7 +389,7 @@ open class AMBFrameCompiler
 				if let cobj = obj.childFrame(forProperty: cfrm.instanceName) {
 					try initListnerValues(rootObject: cobj, console: cons)
 				} else {
-					throw NSError.parseError(message: "Internal error at \(#function) [1]")
+					throw NSError.parseError(message: "Internal error for property \(cfrm.instanceName) at \(#function) [1]")
 				}
 			case .eventFunction(_), .initFunction(_):
 				break
