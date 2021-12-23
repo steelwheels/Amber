@@ -71,7 +71,11 @@ public class AMBDataReader
 				throw NSError.parseError(message: "Unsupported frame member")
 			}
 		}
-		return .dictionaryToValue(dictionary: result)
+		if let scalar = CNValue.dictionaryToValue(dictionary: result) {
+			return scalar
+		} else {
+			return .dictionaryValue(result)
+		}
 	}
 }
 
