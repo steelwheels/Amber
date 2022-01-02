@@ -41,7 +41,7 @@ public class AMBThread: CNThread
 		let resource:	KEResource
 		switch mSource {
 		case .script(let url):
-			resource = KEResource(baseURL: url)
+			resource = KEResource(directoryURL: url)
 			if let scr = url.loadContents() {
 				script = scr as String
 			} else {
