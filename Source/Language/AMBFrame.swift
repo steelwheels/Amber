@@ -98,6 +98,8 @@ public enum AMBType {
 	case	stringType
 	case 	urlType
 	case	enumType(KEEnumType)
+	case	arrayType
+	case	dictionaryType
 
 	public func name() -> String {
 		let result: String
@@ -108,6 +110,8 @@ public enum AMBType {
 		case .stringType:		result = "String"
 		case .urlType:			result = "URL"
 		case .enumType(let etype):	result = etype.typeName
+		case .arrayType:		result = "Array"
+		case .dictionaryType:		result = "Dictionary"
 		}
 		return result
 	}
@@ -115,11 +119,13 @@ public enum AMBType {
 	public static func decode(_ str: String) -> AMBType? {
 		let result: AMBType?
 		switch str {
-		case "Bool":	result = .booleanType
-		case "Int":	result = .intType
-		case "Float":	result = .floatType
-		case "String":	result = .stringType
-		case "URL":	result = .urlType
+		case "Bool":		result = .booleanType
+		case "Int":		result = .intType
+		case "Float":		result = .floatType
+		case "String":		result = .stringType
+		case "URL":		result = .urlType
+		case "Array":		result = .arrayType
+		case "Dictionary":	result = .dictionaryType
 		default:
 			let etable = KEEnumTable.shared
 			if let etype = etable.search(by: str) {

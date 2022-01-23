@@ -113,6 +113,7 @@ public class AMBParser
 		}
 		let _ = strm.unget() // reduce the stream
 		let value = try parseExpressionProperty(type: typ, stream: strm)
+		checkResultType(exptectedType: typ, realType: value.valueType)
 		return .property(AMBProperty(name: ident, type: typ, nativeValue: value))
 	}
 
@@ -129,97 +130,140 @@ public class AMBParser
 		}
 	}
 
-	private func parseExpressionProperty(type typ: AMBType, stream strm: CNTokenStream) throws -> CNValue {
-		if let sym = strm.getSymbol() {
-			switch sym {
-			case "[":
-				var elements: Array<CNValue> = []
-				while true {
-					if strm.requireSymbol(symbol: "]") {
-						break
-					}
-					if elements.count > 0 {
-						if !strm.requireSymbol(symbol: ",") {
-							throw makeParseError(message: "\",\" is required between array elements", stream: strm)
-						}
-					}
-					let value = try parseExpressionProperty(type: typ, stream: strm)
-					elements.append(value)
+	private func parseExpressionProperty(type atyp: AMBType, stream strm: CNTokenStream) throws -> CNValue {
+		if let token = strm.get() {
+			let result: CNValue
+			switch token.type {
+			case .SymbolToken(let sym):
+				switch sym {
+				case "[":
+					result = try parseArrayExpressionProperty(type: atyp, stream: strm)
+				case "{":
+					result = try parseDictionaryExpressionProperty(type: atyp, stream: strm)
+				default:
+					throw makeParseError(message: "Unexpected symbol: \(sym)", stream: strm)
 				}
-				return .arrayValue(elements)
-			default:
-				throw makeParseError(message: "Unexpected symbol \"\(sym)\" for expression declaration", stream: strm)
+			case .IdentifierToken(let ident):
+				/* Check type is enum value or not */
+				switch atyp {
+				case .enumType(let etype):
+					if let ival = etype.search(byMemberName: ident) {
+						result = .numberValue(NSNumber(integerLiteral: Int(ival)))
+					} else {
+						throw requireDeclarationError(declaration: "Unknown member of Enum \"\(etype.typeName)\" value", stream: strm)
+					}
+				default:
+					throw makeParseError(message: "Unexpected identifier: \"\(ident)\"", stream: strm)
+				}
+			case .BoolToken(let val):
+				result = .boolValue(val)
+			case .UIntToken(let val):
+				result = .numberValue(NSNumber(value: val))
+			case .IntToken(let val):
+				result = .numberValue(NSNumber(value: val))
+			case .DoubleToken(let val):
+				result = .numberValue(NSNumber(value: val))
+			case .StringToken(let val):
+				result = .stringValue(val)
+			case .TextToken(let val):
+				result = .stringValue(val)
+			case .ReservedWordToken(_), .CommentToken(_):
+				throw makeParseError(message: "Unexpected token: \(token.description)", stream: strm)
+			@unknown default:
+				throw makeParseError(message: "Unknown token: \(token.description)", stream: strm)
 			}
+			return result
 		} else {
-			let _ = strm.unget()
-			return try parseScalarExpressionProperty(type: typ, stream: strm)
+			throw makeParseError(message: "Unexpected end of input stream", stream: strm)
 		}
 	}
 
-	private func parseScalarExpressionProperty(type typ: AMBType, stream strm: CNTokenStream) throws -> CNValue {
-		let value:	CNValue
-		switch typ {
-		case .booleanType:
-			if let val = strm.getBool() {
-				value = .numberValue(NSNumber(booleanLiteral: val))
-			} else {
-				throw requireDeclarationError(declaration: "Boolean value", stream: strm)
+	private func parseArrayExpressionProperty(type atyp: AMBType, stream strm: CNTokenStream) throws -> CNValue {
+		var elements: Array<CNValue> = []
+		while true {
+			if strm.requireSymbol(symbol: "]") {
+				break
 			}
-		case .intType:
-			if let val = strm.getAnyInt() {
-				value = .numberValue(NSNumber(integerLiteral: val))
-			} else {
-				throw requireDeclarationError(declaration: "Integer value", stream: strm)
-			}
-		case .floatType:
-			if let val = strm.getAnyDouble() {
-				value = .numberValue(NSNumber(floatLiteral: val))
-			} else {
-				throw requireDeclarationError(declaration: "Float value", stream: strm)
-			}
-		case .stringType:
-			if let val = strm.getString() {
-				var str = val
-				/* Parse next string */
-				var docont = true
-				while docont {
-					if let next = strm.getString() {
-						str += next
-					} else {
-						let _ = strm.unget()
-						docont = false
-					}
+			if elements.count > 0 {
+				if !strm.requireSymbol(symbol: ",") {
+					throw makeParseError(message: "\",\" is required between array elements", stream: strm)
 				}
-				value = .stringValue(decode(string: str))
-			} else {
-				throw requireDeclarationError(declaration: "String value is expected", stream: strm)
 			}
-		case .urlType:
-			if let val = strm.getString() {
-				if val == "" {
-					value = .URLValue(URL(fileURLWithPath: "/dev/null"))
+			let value = try parseExpressionProperty(type: atyp, stream: strm)
+			elements.append(value)
+		}
+		return .arrayValue(elements)
+	}
+
+	private func parseDictionaryExpressionProperty(type atyp: AMBType, stream strm: CNTokenStream) throws -> CNValue {
+		var elements: Dictionary<String, CNValue> = [:]
+		while true {
+			if strm.requireSymbol(symbol: "}") {
+				break
+			}
+			if elements.count > 0 {
+				if !strm.requireSymbol(symbol: ",") {
+					throw makeParseError(message: "\",\" is required between dictionary elements", stream: strm)
+				}
+			}
+			if let key = strm.requireAnyIdentifier() {
+				if strm.requireSymbol(symbol: ":") {
+					let val = try parseExpressionProperty(type: atyp, stream: strm)
+					elements[key] = val
 				} else {
-					if let url = URL(string: val) {
-						value = .URLValue(url)
-					} else {
-						throw requireDeclarationError(declaration: "Invalid URL value: \"\(val)\"", stream: strm)
-					}
+					throw makeParseError(message: "\":\" is required between dictionary key and value", stream: strm)
 				}
 			} else {
-				throw requireDeclarationError(declaration: "URL value is expected", stream: strm)
-			}
-		case .enumType(let etype):
-			if let val = strm.getIdentifier() {
-				if let ival = etype.search(byMemberName: val) {
-					value = .numberValue(NSNumber(integerLiteral: Int(ival)))
-				} else {
-					throw requireDeclarationError(declaration: "Unknown member of Enum \"\(etype.typeName)\" value", stream: strm)
-				}
-			} else {
-				throw requireDeclarationError(declaration: "Enum \"\(etype.typeName)\" value", stream: strm)
+				throw makeParseError(message: "The key identifier of dictionary is required", stream: strm)
 			}
 		}
-		return value
+		return .dictionaryValue(elements)
+	}
+
+	private func checkResultType(exptectedType etype: AMBType, realType rtype: CNValueType) {
+		let message: String?
+		switch etype {
+		case .booleanType:
+			switch rtype {
+			case .boolType:
+				message = nil	// no error
+			default:
+				message = "Boolean type is expected"
+			}
+		case .intType, .floatType:
+			switch rtype {
+			case .numberType:
+				message = nil	// no error
+			default:
+				message = "Number type is expected"
+			}
+		case .stringType:
+			switch rtype {
+			case .stringType:
+				message = nil 	// no error
+			default:
+				message = "String type is expected"
+			}
+		case .urlType, .enumType(_):
+			message = "Can not happen"
+		case .arrayType:
+			switch rtype {
+			case .arrayType:
+				message = nil	// no error
+			default:
+				message = "Array type is expected"
+			}
+		case .dictionaryType:
+			switch rtype {
+			case .dictionaryType:
+				message = nil 	// no error
+			default:
+				message = "Dictionary type is required"
+			}
+		}
+		if let msg = message {
+			CNLog(logLevel: .error, message: "[Error] \(msg)")
+		}
 	}
 
 	private func decode(string src: String) -> String {

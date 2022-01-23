@@ -3,22 +3,27 @@
 ![Amber Icon 128x128](Resource/amber-icon-128x128.png)
 
 ## Introduction
-The Amber programming language consists of hierarchical structure of _frames_. The frame is used to declare the component such as GUI parts, thread interface. The structure and property of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
+The Amber programming language is used to declare GUI.
+It consists of hierarchical structure of _frames_. The frame is used to declare the GUI component, thread interface and database model. The structure and property of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
 
 This is a sample Amber script:
 ````
-// The view which contains a button
-top_view: VBox {
-    button_a: Button {
-        isEnabled:  Bool     true
-        title:      String  "OK"
-        pressed:    Event() %{
-            /* JavaScript code */
-            console.print("ButtonA is pressed\n") ;
+top: VBox {
+    label: Label {
+        text: String "Hello, World !!"
+    }
+    ok_button: Button {
+        title:  String "OK"
+        pressed: Event() %{
+                console.log("pressed: OK") ;
+                leaveView(1) ;
         %}
     }
 }
 ````
+
+And this is a execution result:
+![hello-world-view](Resource/hello-world-view.png)
 
 ## Frame
 The frame contains multiple members such as properties, functions and child frames. The `identifier` is the name of the frame. The frame will  allocated as the instance of `class-name` class.
@@ -33,7 +38,7 @@ identifier : class-name {
 Following sections describe about the kind of members.
 
 ### Property member
-The named variable to get/set value. Sometimes, the value is mapped on to the component attribute such as color of button.  
+The named variable to get/set value. Sometimes, the value is mapped on to the component attribute such as color of button.
 The following example has constant value to initialize the variable.
 See [Type](#Type) section for the data types (such as `Int`).
 ````
@@ -56,7 +61,7 @@ The frame can contain child frame. See [Class](#Class) section.
 
 ### Listner member
 The listner function is _reactive_.
-In the next example, when the property `self.a` or `self.b` is updated, The value of `property_a` is automatically updated by the return value of the function. 
+In the next example, when the property `self.a` or `self.b` is updated, The value of `property_a` is automatically updated by the return value of the function.
 You can read the property value. But you can not write it.
 
 The `self` is the owner frame of the property. Fore more details, see [self object](#PathExpression).
@@ -125,7 +130,7 @@ In the "Listner" function, the path expression "a.b.c.d0" is binded to argument 
 
 ````
 a: Object {
-    b: Object { 
+    b: Object
         c: Object {
             d0: Int 100     // pointed object 0
             d1: Int 200     // pointed object 1
@@ -153,6 +158,16 @@ Here is the primitive data types:
 |URL    |URL object. It is an instance of [URL](https://github.com/steelwheels/KiwiScript/blob/master/KiwiLibrary/Document/Class/URL.md) class|
 
 ## Immediate Value
+
+### Number and boolean value
+Integer and floating point number can be declared.
+````
+{
+        name1: Int 1234
+        name2: Bool true
+}
+````
+
 ### String value
 The continuous strings are concatenated into a single string.
 In the following example, the property `name` has "a,b,c".
@@ -173,8 +188,24 @@ The instance of [URL](https://github.com/steelwheels/KiwiScript/blob/master/Kiwi
 }
 ````
 
+## Complex value
+### Array value
+````
+{
+        array: Int [1, 2, 3, 4]
+}
+````
+
+### Dictionary value
+The key of dictionary is decribed as an identifier, not string.
+````
+{
+        dict: Object {field:"f", value:123}
+}
+````
+
 ## Comment
-The `//` style comment can be used. 
+The `//` style comment can be used.
 ````
 // This is comment
 text: String %{
@@ -185,7 +216,7 @@ text: String %{
 ## Syntax
 This is BNF of this language:
 ````
-frame           := property_name ':' class '{' 
+frame           := property_name ':' class '{'
                         frame_members_opt
                    '}'
                 ;
@@ -215,6 +246,7 @@ type            := 'Bool'
 typed_expression
                 := constant_expression
                 |  array_expression
+                |  dictionary_expression
                 |  listner_function
                 |  procedural_function
                 ;
@@ -224,7 +256,7 @@ event_function  := 'Event' '(' function_parameters_opt ')'
 init_function   := 'Init'
                    function_body
                 ;
-constant_expression  
+constant_expression
                 := CONSTANT_VALUE
                 ;
 array_expression
@@ -237,6 +269,15 @@ array_elements:
 array_element:
                 := constant_expression
                 |  array_expression
+                ;
+dictionary_expression
+                : '{' dictionary_elements '}'
+                ;
+dictionary_elements:
+                := dictionary_element
+                |  dictionary_elements ',' dictionary_element
+                ;
+dictionary_element: IDENTIFIER ':' expression
                 ;
 listner_function
                 := 'Listner' '(' listner_parameters_opt ')'
