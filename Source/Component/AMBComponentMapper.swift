@@ -20,16 +20,16 @@ open class AMBComponentMapper
 
 	}
 
-	open func map(object robj: AMBReactObject, isEditable edt: Bool, console cons: CNConsole) -> MapResult {
-		return mapObject(object: robj, isEditable: edt, console: cons)
+	open func map(object robj: AMBReactObject, console cons: CNConsole) -> MapResult {
+		return mapObject(object: robj, console: cons)
 	}
 
-	public func mapObject(object robj: AMBReactObject, isEditable edt: Bool, console cons: CNConsole) -> MapResult {
+	public func mapObject(object robj: AMBReactObject, console cons: CNConsole) -> MapResult {
 		if robj.frame.className != "Object" {
 			CNLog(logLevel: .error, message: "Unknown component name: \(robj.frame.className)")
 		}
 		let newcomp = AMBComponentObject()
-		if let err = mapChildObjects(component: newcomp, reactObject: robj, isEditable: edt, console: cons) {
+		if let err = mapChildObjects(component: newcomp, reactObject: robj, console: cons) {
 			return .error(err)
 		}
 		if let err = newcomp.setup(reactObject: robj, console: cons) {
@@ -38,10 +38,10 @@ open class AMBComponentMapper
 		return .ok(newcomp)
 	}
 
-	public func mapChildObjects(component comp: AMBComponent, reactObject robj: AMBReactObject, isEditable edt: Bool, console cons: CNConsole) -> NSError? {
+	public func mapChildObjects(component comp: AMBComponent, reactObject robj: AMBReactObject, console cons: CNConsole) -> NSError? {
 		for prop in robj.scriptedPropertyNames {
 			if let child = robj.childFrame(forProperty: prop) {
-				switch mapObject(object: child, isEditable: edt, console: cons) {
+				switch mapObject(object: child, console: cons) {
 				case .ok(let childcomp):
 					comp.addChild(component: childcomp)
 				case .error(let err):

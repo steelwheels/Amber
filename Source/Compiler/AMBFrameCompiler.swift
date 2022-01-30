@@ -303,7 +303,7 @@ open class AMBFrameCompiler
 	}
 
 	private func allocateComponents(reactObject obj: AMBReactObject, mapper cmapper: AMBComponentMapper, console cons: CNConsole) throws -> AMBComponent {
-		switch cmapper.map(object: obj, isEditable: false, console: cons) {
+		switch cmapper.map(object: obj, console: cons) {
 		case .ok(let comp):
 			return comp
 		case .error(let err):

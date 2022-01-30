@@ -154,6 +154,23 @@ import JavaScriptCore
 		}
 	}
 
+	public func numberValue(forProperty prop: String) -> NSNumber? {
+		if let imm = immediateValue(forProperty: prop) {
+			if imm.isNumber {
+				return imm.toNumber()
+			}
+		}
+		return nil
+	}
+
+	public func setNumberValue(value val: NSNumber, forProperty prop: String) {
+		if let val = JSValue(object: val, in: self.context) {
+			setImmediateValue(value: val, forProperty: prop)
+		} else {
+			NSLog("Failed to allocate number value")
+		}
+	}
+
 	public func stringValue(forProperty prop: String) -> String? {
 		if let imm = immediateValue(forProperty: prop) {
 			if imm.isString {
