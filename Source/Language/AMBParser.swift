@@ -52,11 +52,13 @@ public class AMBParser
 		for src in srcs {
 			switch src.type {
 			case .StringToken(let str):
+				/* Replace "\n" by new line*/
+				let mstr = str.replacingOccurrences(of: "\\n", with: "\n")
 				/* Keep the current string in token to connect with the next string token */
 				if let pstr = prevstr {
-					prevstr  = pstr + str
+					prevstr  = pstr + mstr
 				} else {
-					prevstr  = str
+					prevstr  = mstr
 					prevline = src.lineNo
 				}
 			default:
