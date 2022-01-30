@@ -386,25 +386,34 @@ public class AMBParser
 	}
 
 	private func requireSymbolError(symbol sym: String, stream strm: CNTokenStream?) -> NSError {
-		let lineinfo = makeLineInfo(stream: strm)
-		return NSError.parseError(message: "Symbol \"\(sym)\" is required but it is not given \(lineinfo)")
+		return makeParseError(message: "Symbol \"\(sym)\" is required but it is not given", stream: strm)
 	}
 
 	private func requireDeclarationError(declaration decl: String, stream strm: CNTokenStream?) -> NSError {
-		let lineinfo = makeLineInfo(stream: strm)
-		return NSError.parseError(message: "\(decl) is required but it is not given \(lineinfo)")
+		return makeParseError(message: "\(decl) is required but it is not given", stream: strm)
 	}
 
 	private func makeParseError(message msg: String, stream strm: CNTokenStream?) -> NSError {
 		let lineinfo = makeLineInfo(stream: strm)
-		return NSError.parseError(message: msg + lineinfo)
+		let nearinfo = makeNearInfo(stream: strm)
+		return NSError.parseError(message: msg + nearinfo + lineinfo)
+	}
+
+	private func makeNearInfo(stream strm: CNTokenStream?) -> String {
+		var nearinfo: String = ""
+		if let stm = strm {
+			if let token = stm.get() {
+				nearinfo = "near token \(token.description) "
+			}
+		}
+		return nearinfo
 	}
 
 	private func makeLineInfo(stream strm: CNTokenStream?) -> String {
 		var lineinfo: String = ""
 		if let stm = strm {
 			if let lineno = stm.lineNo {
-				lineinfo = " at line \(lineno)"
+				lineinfo = " at line \(lineno) "
 			}
 		}
 		return lineinfo
