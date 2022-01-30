@@ -35,13 +35,40 @@ public class AMBParser
 		let conf = CNParserConfig(allowIdentiferHasPeriod: false)
 		switch CNStringToToken(string: src, config: conf) {
 		case .ok(let tokens):
-			let stream = CNTokenStream(source: tokens)
+			let ptokens = preprocess(source: tokens)
+			let stream  = CNTokenStream(source: ptokens)
 			return try parseFrame(stream: stream)
 		case .error(let err):
 			throw err
 		@unknown default:
 			throw makeParseError(message: "Unexpected tokenize result", stream: nil)
 		}
+	}
+
+	private func preprocess(source srcs: Array<CNToken>) -> Array<CNToken> {
+		var result:  Array<CNToken> = []
+		var prevstr:  String?       = nil
+		var prevline: Int           = 0
+		for src in srcs {
+			switch src.type {
+			case .StringToken(let str):
+				/* Keep the current string in token to connect with the next string token */
+				if let pstr = prevstr {
+					prevstr  = pstr + str
+				} else {
+					prevstr  = str
+					prevline = src.lineNo
+				}
+			default:
+				/* Flush the kept string */
+				if let pstr = prevstr {
+					result.append(CNToken(type: .StringToken(pstr), lineNo: prevline))
+					prevstr = nil
+				}
+				result.append(src)
+			}
+		}
+		return result
 	}
 
 	private func parseFrame(stream strm: CNTokenStream) throws -> AMBFrame {
