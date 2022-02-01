@@ -39,6 +39,12 @@ public extension AMBComponent
 		}
 		return nil
 	}
+
+	func addScriptedProperty(object robj: AMBReactObject, forProperty prop: String){
+		if !robj.hasValue(forProperty: prop) {
+			robj.addScriptedPropertyName(name: prop)
+		}
+	}
 }
 
 @objc open class AMBComponentObject: NSObject, AMBComponent

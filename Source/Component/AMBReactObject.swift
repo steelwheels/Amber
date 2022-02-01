@@ -91,6 +91,14 @@ import JavaScriptCore
 		}
 	}
 
+	public func hasValue(forProperty prop: String) -> Bool {
+		if let _ = mPropertyValues.value(forKey: prop) {
+			return true
+		} else {
+			return false
+		}
+	}
+
 	public func immediateValue(forProperty prop: String) -> JSValue? {
 		if let val = mPropertyValues.value(forKey: prop) as? JSValue {
 			return val
