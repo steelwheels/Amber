@@ -37,7 +37,7 @@ open class AMBFrameCompiler
 			/* Add setter/getter */
 			defineGetterAndSetters(component: rootcomp, context: ctxt, console: cons)
 
-			/* Initialize listner property values. This must be executed after "defineProperties" */
+			/* Initialize listner property values. */
 			try initListnerValues(rootObject: rootobj, console: cons)
 			return .ok(rootcomp)
 		} catch let err as NSError {
@@ -63,6 +63,7 @@ open class AMBFrameCompiler
 				case .listnerFunction(let lfunc):
 					let funcval = try compileFunction(reactObject: newobj, function: lfunc, context: ctxt, config: conf, console: cons)
 					newobj.setListnerFunctionValue(value: funcval, forProperty: prop.name)
+					newobj.initListnerReturnValue(forProperty: prop.name)
 				}
 				try addPropertyName(object: newobj, propertyName: prop.name)
 			case .eventFunction(let efunc):

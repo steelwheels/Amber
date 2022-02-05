@@ -277,6 +277,10 @@ import JavaScriptCore
 		}
 	}
 
+	public func initListnerReturnValue(forProperty prop: String) {
+		setImmediateValue(value: JSValue(nullIn: mContext), forProperty: prop)
+	}
+
 	private func propertyToListnerFuncParameterName(_ name: String) -> String {
 		return "_lparam_" + name
 	}
