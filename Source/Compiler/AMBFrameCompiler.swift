@@ -30,14 +30,15 @@ open class AMBFrameCompiler
 			let rootobj = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
 			/* Setup listner function */
 			try allocateListnerCallers(rootObject: rootobj, console: cons)
-			/* Initialize listner property values. */
-			try initListnerValues(rootObject: rootobj, console: cons)
 			/* Allocate components by frame */
 			let rootcomp = try allocateComponents(reactObject: rootobj, mapper: cmapper, console: cons)
 			/* Add root object in context */
 			defineRootProperty(component: rootcomp, context: ctxt, console: cons)
 			/* Add setter/getter */
 			defineGetterAndSetters(component: rootcomp, context: ctxt, console: cons)
+
+			/* Initialize listner property values. This must be executed after "defineProperties" */
+			try initListnerValues(rootObject: rootobj, console: cons)
 			return .ok(rootcomp)
 		} catch let err as NSError {
 			return .error(err)
