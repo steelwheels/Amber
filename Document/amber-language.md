@@ -1,6 +1,6 @@
 # Amber Programming Language
 
-![Amber Icon 128x128](Resource/amber-icon-128x128.png)
+![Amber Icon 128x128](Images/amber-icon-128x128.png)
 
 ## Introduction
 The Amber programming language is used to declare GUI.
@@ -23,7 +23,7 @@ top: VBox {
 ````
 
 And this is a execution result:
-![hello-world-view](Resource/hello-world-view.png)
+![hello-world-view](Images/hello-world-view.png)
 
 ## Frame
 The frame contains multiple members such as properties, functions and child frames. The `identifier` is the name of the frame. The frame will  allocated as the instance of `class-name` class.
