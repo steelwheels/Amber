@@ -15,7 +15,7 @@ top: VBox {
     ok_button: Button {
         title:  String "OK"
         pressed: Event() %{
-                console.log("pressed: OK") ;
+                console.print("pressed: OK\n") ;
                 leaveView(1) ;
         %}
     }
@@ -106,7 +106,7 @@ The `Init` function will be called after all components are allocated. It has no
 ````
 {
     init: Init %{
-        console.log("Initialized\n") ;
+        console.print("Initialized\n") ;
     %}
 }
 ````
