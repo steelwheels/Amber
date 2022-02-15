@@ -205,8 +205,9 @@ import JavaScriptCore
 		return nil
 	}
 
-	public func setArrayValue(value arr: Array<Any>, forProperty prop: String) {
-		if let val = JSValue(object: arr, in: self.context) {
+	public func setArrayValue(value arr: Array<CNValue>, forProperty prop: String) {
+		let arrobj = CNValue.arrayValue(arr).toJSValue(context: self.context)
+		if let val = JSValue(object: arrobj, in: self.context) {
 			setImmediateValue(value: val, forProperty: prop)
 		} else {
 			NSLog("Failed to allocate array value")
