@@ -120,7 +120,7 @@ public class AMBThread: CNThread
 
 		/* Execute the component */
 		let executor = AMBComponentExecutor(console: console)
-		executor.exec(component: rootcomp)
+		executor.exec(component: rootcomp, console: console)
 
 		/* Wait until execution finished */
 		mReturnValue = semaphore.wait()

@@ -36,9 +36,6 @@ open class AMBFrameCompiler
 			defineRootProperty(component: rootcomp, context: ctxt, console: cons)
 			/* Add setter/getter */
 			defineGetterAndSetters(component: rootcomp, context: ctxt, console: cons)
-
-			/* Initialize listner property values. */
-			try initListnerValues(rootObject: rootobj, console: cons)
 			return .ok(rootcomp)
 		} catch let err as NSError {
 			return .error(err)
@@ -349,53 +346,6 @@ open class AMBFrameCompiler
 			     + "}) ;\n"
 		log(level: .detail, message: script, console: cons)
 		ctxt.evaluateScript(script)
-	}
-
-	private func initListnerValues(rootObject obj: AMBReactObject, console cons: CNConsole) throws {
-		let frm = obj.frame
-		for member in frm.members {
-			switch member {
-			case .property(let prop):
-				switch prop.value {
-				case .listnerFunction(let lfunc):
-					let funcname = lfunc.identifier
-					if let lfuncval = obj.listnerFuntionValue(forProperty: funcname) {
-						/* Execute listner function */
-						guard let ptrs = obj.listnerFuncPointers(forProperty: funcname) else {
-							throw NSError.parseError(message: "Failed to get pointers for listner: \(funcname)")
-						}
-						var args: Array<Any> = [obj] // self
-						for ptr in ptrs {
-							let holder = ptr.pointedObject
-							let prop   = ptr.pointedName
-							if let pval = holder.immediateValue(forProperty: prop) {
-								args.append(pval)
-							} else {
-								cons.error(string: "Failed to get argument for init: \(prop) at \(#file)")
-							}
-						}
-						/* call the target function */
-						if let res = lfuncval.call(withArguments: args) {
-							obj.setImmediateValue(value: res, forProperty: funcname)
-						} else {
-							cons.error(string: "Failed to get result at \(#file)")
-						}
-					} else {
-						throw NSError.parseError(message: "Internal error for function \(funcname) at \(#function) [0]")
-					}
-				case .nativeValue(_), .procedureFunction(_):
-					break
-				}
-			case .frame(let cfrm):
-				if let cobj = obj.childFrame(forProperty: cfrm.instanceName) {
-					try initListnerValues(rootObject: cobj, console: cons)
-				} else {
-					throw NSError.parseError(message: "Internal error for property \(cfrm.instanceName) at \(#function) [1]")
-				}
-			case .eventFunction(_), .initFunction(_):
-				break
-			}
-		}
 	}
 
 	private func log(level lvl: CNConfig.LogLevel, message msg: String, console cons: CNConsole) {
