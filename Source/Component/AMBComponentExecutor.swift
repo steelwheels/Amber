@@ -28,9 +28,13 @@ public class AMBComponentExecutor
 		for member in frm.members {
 			switch member {
 			case .initFunction(let ifunc):
-				if let fval = robj.immediateValue(forProperty: ifunc.functionName) {
+				if let fval = robj.immediateValue(forProperty: ifunc.objectName) {
 					/* Execute "Init" function */
-					fval.call(withArguments: [robj])		// insert self
+					if let retval = fval.call(withArguments: [robj]) { // insert sel
+						if !retval.isUndefined {
+							robj.setImmediateValue(value: retval, forProperty: ifunc.identifier)
+						}
+					}
 				}
 			default:
 				break

@@ -68,12 +68,12 @@ open class AMBFrameCompiler
 				try addPropertyName(object: newobj, propertyName: prop.name)
 			case .eventFunction(let efunc):
 				let funcval = try compileFunction(reactObject: newobj, function: efunc, context: ctxt, config: conf, console: cons)
-				newobj.setImmediateValue(value: funcval, forProperty: efunc.functionName)
-				try addPropertyName(object: newobj, propertyName: efunc.functionName)
+				newobj.setImmediateValue(value: funcval, forProperty: efunc.identifier)
+				try addPropertyName(object: newobj, propertyName: efunc.identifier)
 			case .initFunction(let ifunc):
 				let funcval = try compileFunction(reactObject: newobj, function: ifunc, context: ctxt, config: conf, console: cons)
-				newobj.setImmediateValue(value: funcval, forProperty: ifunc.functionName)
-				try addPropertyName(object: newobj, propertyName: ifunc.functionName)
+				newobj.setImmediateValue(value: funcval, forProperty: ifunc.objectName)
+				try addPropertyName(object: newobj, propertyName: ifunc.identifier)
 			case .frame(let frm):
 				let frmval = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
 				newobj.setChildFrame(forProperty: frm.instanceName, frame: frmval)
@@ -97,19 +97,19 @@ open class AMBFrameCompiler
 
 	private func compileFunction(reactObject dst: AMBReactObject, function afunc: AMBFunction, context ctxt: KEContext, config conf: KEConfig, console cons: CNConsole) throws -> JSValue {
 		/* Make JavaScript function */
-		let varname = TEMPORARY_VARIABLE_NAME + afunc.functionName
+		let varname = TEMPORARY_VARIABLE_NAME + afunc.identifier
 		let funcscr = functionToScript(function: afunc, context: ctxt)
 		let script  = varname + " = " + funcscr
 		/* Evaluate the function */
 		let _ = ctxt.evaluateScript(script)
 		if ctxt.errorCount != 0 {
 			ctxt.resetErrorCount()
-			throw NSError.parseError(message: "Failed to compile function: \(afunc.functionName)\n\(script)")
+			throw NSError.parseError(message: "Failed to compile function: \(afunc.identifier)\n\(script)")
 		}
 		if let val = ctxt.getValue(name: varname) {
 			return val
 		} else {
-			throw NSError.parseError(message: "No compile result for function: \(afunc.functionName)")
+			throw NSError.parseError(message: "No compile result for function: \(afunc.identifier)")
 		}
 	}
 
@@ -155,7 +155,7 @@ open class AMBFrameCompiler
 		}
 		let header  = "function(\(argstr)) {\n"
 		let tail    = "\n}\n"
-		return header + afunc.functionBody + tail
+		return header + afunc.script + tail
 	}
 
 	private func allocateListnerCallers(rootObject root: AMBReactObject, console cons: CNConsole) throws {
@@ -215,7 +215,7 @@ open class AMBFrameCompiler
 						let ptr = try pathToPointer(pathArgument: arg, objectMap: omap, currentPath: path)
 						pointers.append(ptr)
 					}
-					obj.setListnerFuncPointers(pointers: pointers, forProperty: lfunc.functionName)
+					obj.setListnerFuncPointers(pointers: pointers, forProperty: lfunc.identifier)
 				default:
 					break
 				}
@@ -358,7 +358,7 @@ open class AMBFrameCompiler
 			case .property(let prop):
 				switch prop.value {
 				case .listnerFunction(let lfunc):
-					let funcname = lfunc.functionName
+					let funcname = lfunc.identifier
 					if let lfuncval = obj.listnerFuntionValue(forProperty: funcname) {
 						/* Execute listner function */
 						guard let ptrs = obj.listnerFuncPointers(forProperty: funcname) else {

@@ -102,11 +102,12 @@ You can not read and write the property.
 ````
 
 ### Init member
-The `Init` function will be called after all components are allocated. It has no parameters and the return value is ignored. The init function of child frame is called before parent frame of them. The multiple init function can be defined. But the execution order of them is *NOT* define.
+The `Init` function will be called after all components are allocated. The `Init` function of child frame is called before parent frame of them. The multiple init function can be defined. But the execution order of them is *NOT* defined.
 ````
 {
     init: Init %{
         console.print("Initialized\n") ;
+        retrun 0 ;
     %}
 }
 ````

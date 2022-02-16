@@ -321,7 +321,7 @@ public class AMBParser
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Procedure function body", stream: strm)
 		}
-		return AMBProcedureFunction(name: ident, arguments: args, returnType: typ, body: text)
+		return AMBProcedureFunction(identifier: ident, arguments: args, returnType: typ, script: text)
 	}
 
 	private func parseListnerFunc(frame frm: AMBFrame, identifier ident: String, type typ: AMBType, stream strm: CNTokenStream) throws -> AMBListnerFunction {
@@ -344,7 +344,7 @@ public class AMBParser
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Listner function body", stream: strm)
 		}
-		return AMBListnerFunction(name: ident, arguments: args, returnType: typ, body: text)
+		return AMBListnerFunction(identifier: ident, arguments: args, returnType: typ, script: text)
 	}
 
 	private func parseEventFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBEventFunction {
@@ -367,14 +367,14 @@ public class AMBParser
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Event function body", stream: strm)
 		}
-		return AMBEventFunction(name: ident, arguments: args, body: text)
+		return AMBEventFunction(identifier: ident, arguments: args, script: text)
 	}
 
 	private func parseInitFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBInitFunction {
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Init function body", stream: strm)
 		}
-		return AMBInitFunction(name: ident, body: text)
+		return AMBInitFunction(identifier: ident, script: text)
 	}
 
 	private func parseArgument(stream strm: CNTokenStream) throws -> AMBArgument {

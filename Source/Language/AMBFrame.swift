@@ -43,9 +43,9 @@ public struct AMBFrame
 		case .property(let prop):
 			result = prop.name
 		case .eventFunction(let efunc):
-			result = efunc.functionName
+			result = efunc.identifier
 		case .initFunction(let ifunc):
-			result = ifunc.functionName
+			result = ifunc.identifier
 		case .frame(let frm):
 			result = frm.instanceName
 		}
@@ -228,20 +228,20 @@ open class AMBFunction
 	}
 
 	public var 	functionType	: FunctionType
-	public var 	functionName	: String
-	public var	functionBody	: String
+	public var 	identifier	: String
+	public var	script		: String
 
-	public init(type ftyp: FunctionType, name nm: String, body bdy: String) {
-		functionType = ftyp
-		functionName = nm
-		functionBody = bdy
+	public init(type ftyp: FunctionType, identifier ident: String, script scr: String) {
+		functionType	= ftyp
+		identifier	= ident
+		script		= scr
 	}
 
 	public func toText() -> CNTextSection {
 		let functxt     = CNTextSection()
 		functxt.header = makeFunctionHeader()
 		functxt.footer = "%}"
-		let body = CNTextLine(string: self.functionBody)
+		let body = CNTextLine(string: self.script)
 		functxt.add(text: body)
 		return functxt
 	}
@@ -279,10 +279,10 @@ public class AMBProcedureFunction: AMBFunction
 	public var	arguments: 	Array<AMBArgument>
 	public var	returnType:	AMBType
 
-	public init(name nm: String, arguments args: Array<AMBArgument>, returnType rettyp: AMBType, body bdy: String) {
+	public init(identifier ident: String, arguments args: Array<AMBArgument>, returnType rettyp: AMBType, script scr: String) {
 		arguments	= args
 		returnType	= rettyp
-		super.init(type: .procedure, name: nm, body: bdy)
+		super.init(type: .procedure, identifier: ident, script: scr)
 	}
 
 	open override func makeFunctionHeader() -> String {
@@ -312,10 +312,10 @@ public class AMBListnerFunction: AMBFunction
 	public var	arguments: 	Array<AMBPathArgument>
 	public var	returnType:	AMBType
 
-	public init(name nm: String, arguments args: Array<AMBPathArgument>, returnType rettyp: AMBType, body bdy: String) {
+	public init(identifier ident: String, arguments args: Array<AMBPathArgument>, returnType rettyp: AMBType, script scr: String) {
 		arguments	= args
 		returnType	= rettyp
-		super.init(type: .listner, name: nm, body: bdy)
+		super.init(type: .listner, identifier: ident, script: scr)
 	}
 
 	open override func makeFunctionHeader() -> String {
@@ -345,9 +345,9 @@ public class AMBEventFunction: AMBFunction
 {
 	public var	arguments: 	Array<AMBArgument>
 
-	public init(name nm: String, arguments args: Array<AMBArgument>, body bdy: String) {
+	public init(identifier ident: String, arguments args: Array<AMBArgument>, script scr: String) {
 		arguments = args
-		super.init(type: .event, name: nm, body: bdy)
+		super.init(type: .event, identifier: ident, script: scr)
 	}
 
 	open override func makeFunctionHeader() -> String {
@@ -373,9 +373,13 @@ public class AMBEventFunction: AMBFunction
 
 public class AMBInitFunction: AMBFunction
 {
-	public init(name nm: String, body bdy: String) {
-		super.init(type: .initialize, name: nm, body: bdy)
+	public init(identifier ident: String, script scr: String) {
+		super.init(type: .initialize, identifier: ident, script: scr)
 	}
+
+	public var objectName: String { get {
+		return super.identifier + "@body"
+	}}
 
 	open override func makeFunctionHeader() -> String {
 		let functype = AMBFunction.encode(type: self.functionType)
