@@ -30,6 +30,33 @@ public class AMBComponentExecutor
 	}
 
 	private func execInitFunctions(component comp: AMBComponent) {
+		/* Seach and execute "Init" function */
+		let robj = comp.reactObject
+		let frm  = robj.frame
+		for member in frm.members {
+			switch member {
+			case .initFunction(let ifunc):
+				if let fval = robj.immediateValue(forProperty: ifunc.objectName) {
+					/* Execute "Init" function */
+					if let retval = fval.call(withArguments: [robj]) { // insert sel
+						if !retval.isUndefined {
+							robj.setImmediateValue(value: retval, forProperty: ifunc.identifier)
+						}
+					}
+				}
+			case .frame(let frame):
+				if let child = comp.searchChild(byName: frame.instanceName) {
+					execInitFunctions(component: child)
+				} else {
+					CNLog(logLevel: .error, message: "Unexpected frame name", atFunction: #function, inFile: #file)
+				}
+			default:
+				break // Not target
+			}
+		}
+
+/*
+
 		/* Execute child first */
 		for child in comp.children {
 			execInitFunctions(component: child)
@@ -51,7 +78,7 @@ public class AMBComponentExecutor
 			default:
 				break
 			}
-		}
+		}*/
 	}
 
 	private func execListnerFunctions(rootObject robj: AMBReactObject, console cons: CNConsole) throws {

@@ -20,12 +20,15 @@ import JavaScriptCore
 
 @objc public class AMBReactObject: NSObject, AMBObjectInterface
 {
+	public typealias ListnerHolder = CNObserverDictionary.ListnerHolder
+
 	private var mFrame:			AMBFrame
 	private var mContext:			KEContext
 	private var mProcessManager:		CNProcessManager
 	private var mResource:			KEResource
 	private var mEnvironment:		CNEnvironment
 	private var mPropertyValues:		CNObserverDictionary
+	private var mPropertyListners:		Array<ListnerHolder>
 	private var mListerFuncPointers:	Dictionary<String, Array<AMBObjectPointer>>
 	private var mScriptedPropertyNames:	Array<String>
 
@@ -44,6 +47,7 @@ import JavaScriptCore
 		mResource		= res
 		mEnvironment		= env
 		mPropertyValues		= CNObserverDictionary()
+		mPropertyListners	= []
 		mListerFuncPointers	= [:]
 		mScriptedPropertyNames	= []
 		super.init()
@@ -54,6 +58,12 @@ import JavaScriptCore
 		}
 		if let clsstr = JSValue(object: frame.className, in: ctxt) {
 			setImmediateValue(value: clsstr, forProperty: "className")
+		}
+	}
+
+	deinit {
+		for listner in mPropertyListners {
+			mPropertyValues.removeObserver(listnerHolder: listner)
 		}
 	}
 
@@ -287,7 +297,9 @@ import JavaScriptCore
 	}
 
 	public func addObserver(forProperty prop: String, callback cbfunc: @escaping CNObserverDictionary.ListenerFunction) {
-		mPropertyValues.addObserver(forKey: prop, listnerFunction: cbfunc)
+		mPropertyListners.append(
+			mPropertyValues.addObserver(forKey: prop, listnerFunction: cbfunc)
+		)
 	}
 }
 

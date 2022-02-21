@@ -102,13 +102,25 @@ You can not read and write the property.
 ````
 
 ### Init member
-The `Init` function will be called after all components are allocated. The `Init` function of child frame is called before parent frame of them. The multiple init function can be defined. But the execution order of them is *NOT* defined.
+The `Init` function will be called after all components are allocated.
+If there are multiple `Init` functions, it is called by the declaration order.
 ````
 {
     init: Init %{
         console.print("Initialized\n") ;
         retrun 0 ;
     %}
+}
+````
+
+If there are multiple `Init` functions, it is called by the declaration order.
+````
+top: {
+        v1: Init %{ return 1 ; }                        // First
+        obj: {
+                v2: Init %{ return top.v1 + 2 ; }       // Second
+        }
+        v3: Init %{ return top.obj.v2 + 3 ; }           // Third
 }
 ````
 
