@@ -8,9 +8,10 @@ This framework contains following implementation:
   * The compiler
 
 ## Documents
+### Language
 * [AmberScript language specification](Document/amber-language.md): The specificiation of Amber programming language
-* [Overview](Document/Overview.md): Overview of the implementation of this framework,
 
+### Data formats
 # References
 * [Steel Wheels Project](https://steelwheels.github.io): The owner of this project
 
