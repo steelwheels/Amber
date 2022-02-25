@@ -193,7 +193,13 @@ public class AMBParser
 			case .DoubleToken(let val):
 				result = .numberValue(NSNumber(value: val))
 			case .StringToken(let val):
-				result = .stringValue(val)
+				switch atyp {
+				case .urlType:
+					let url = URL(fileURLWithPath: val)
+					result = .URLValue(url)
+				default:
+					result = .stringValue(val)
+				}
 			case .TextToken(let val):
 				result = .stringValue(val)
 			case .ReservedWordToken(_), .CommentToken(_):
