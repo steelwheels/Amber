@@ -263,41 +263,53 @@ public class AMBParser
 			case .boolType:
 				message = nil	// no error
 			default:
-				message = "Boolean type is expected"
+				message = "Boolean type is expected but \(rtype.description) is given"
 			}
 		case .intType, .floatType:
 			switch rtype {
 			case .numberType:
 				message = nil	// no error
 			default:
-				message = "Number type is expected"
+				message = "Number type is expected but \(rtype.description) is given"
 			}
 		case .stringType:
 			switch rtype {
 			case .stringType:
 				message = nil 	// no error
 			default:
-				message = "String type is expected"
+				message = "String type is expected but \(rtype.description) is given"
 			}
-		case .urlType, .enumType(_):
-			message = "Can not happen"
+		case .urlType:
+			switch rtype {
+			case .URLType:
+				message = nil 	// no error
+			default:
+				message = "URL type is expected but \(rtype.description) is given"
+			}
+		case .enumType(_):
+			switch rtype {
+			case .numberType: /* Enum will be tralslated into number */
+				message = nil	// no error
+			default:
+				message = "Enum type is expected but \(rtype.description) is given"
+			}
 		case .arrayType:
 			switch rtype {
 			case .arrayType:
 				message = nil	// no error
 			default:
-				message = "Array type is expected"
+				message = "Array type is expected but \(rtype.description) is given"
 			}
 		case .dictionaryType:
 			switch rtype {
 			case .dictionaryType:
 				message = nil 	// no error
 			default:
-				message = "Dictionary type is required"
+				message = "Dictionary type is required but \(rtype.description) is given"
 			}
 		}
 		if let msg = message {
-			CNLog(logLevel: .error, message: "[Error] \(msg)")
+			CNLog(logLevel: .error, message: msg, atFunction: #function, inFile: #file)
 		}
 	}
 

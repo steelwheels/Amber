@@ -27,7 +27,7 @@ public func UTDataReader(console cons: CNConsole) -> Bool
 		cons.print(string: "[Error] Failed to get path of resource: \(err.toString())\n")
 		return false
 	@unknown default:
-		fatalError("Can not happen")
+		fatalError("Can not happen at function \(#function) in file \(#file )")
 	}
 	let res = KEResource(baseURL: resurl)
 	res.setData(identifier: "dat0", path: "data0.amb")
