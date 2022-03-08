@@ -55,7 +55,8 @@ public class AMBDataReader
 	}
 
 	private func readData(frame frm: AMBFrame) throws -> CNValue {
-		var result: Dictionary<String, CNValue> = [JSValue.classPropertyName: .stringValue(frm.className)]
+		var result: Dictionary<String, CNValue> = [:]
+		CNValue.setClassName(toValue: &result, className: frm.className)
 		for memb in frm.members {
 			switch memb {
 			case .property(let prop):
