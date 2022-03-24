@@ -124,6 +124,17 @@ top: {
 }
 ````
 
+The `Init` function can have a parameter. The parameter will be given by frame launcher (See [enterView](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Function/enterView.md) function for view component).
+
+
+````
+top: {
+        v1: Init (args) %{
+                ...
+        %}
+}
+````
+
 ## Expression
 ### Path Expression
 The path expression is used to point the object in the hierarchical frames. It is presented as multi instance names separated by '`.`'.

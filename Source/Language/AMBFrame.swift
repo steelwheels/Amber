@@ -272,6 +272,20 @@ open class AMBFunction
 		}
 		return result
 	}
+
+	fileprivate func argumentsToString(arguments args: Array<AMBArgument>) -> String {
+		var line: String = ""
+		var is1st = true
+		for arg in args {
+			if is1st { is1st = false} else { line += ", " }
+			line += argumentToString(argument: arg)
+		}
+		return line
+	}
+
+	fileprivate func argumentToString(argument arg: AMBArgument) -> String {
+		return arg.name
+	}
 }
 
 public class AMBProcedureFunction: AMBFunction
@@ -290,20 +304,6 @@ public class AMBProcedureFunction: AMBFunction
 		let functype = AMBFunction.encode(type: self.functionType)
 		let rettype  = returnType.name()
 		return rettype + " " + functype + "(\(paramstr)) %{"
-	}
-
-	private func argumentsToString(arguments args: Array<AMBArgument>) -> String {
-		var line: String = ""
-		var is1st = true
-		for arg in args {
-			if is1st { is1st = false} else { line += ", " }
-			line += argumentToString(argument: arg)
-		}
-		return line
-	}
-
-	private func argumentToString(argument arg: AMBArgument) -> String {
-		return arg.name
 	}
 }
 
@@ -355,25 +355,14 @@ public class AMBEventFunction: AMBFunction
 		let functype = AMBFunction.encode(type: self.functionType)
 		return functype + "(\(paramstr)) %{"
 	}
-
-	private func argumentsToString(arguments args: Array<AMBArgument>) -> String {
-		var line: String = ""
-		var is1st = true
-		for arg in args {
-			if is1st { is1st = false} else { line += ", " }
-			line += argumentToString(argument: arg)
-		}
-		return line
-	}
-
-	private func argumentToString(argument arg: AMBArgument) -> String {
-		return arg.name
-	}
 }
 
 public class AMBInitFunction: AMBFunction
 {
-	public init(identifier ident: String, script scr: String) {
+	public var	arguments: 	Array<AMBArgument>
+
+	public init(identifier ident: String, arguments args: Array<AMBArgument>, script scr: String) {
+		arguments = args
 		super.init(type: .initialize, identifier: ident, script: scr)
 	}
 
@@ -382,8 +371,14 @@ public class AMBInitFunction: AMBFunction
 	}}
 
 	open override func makeFunctionHeader() -> String {
-		let functype = AMBFunction.encode(type: self.functionType)
-		return functype + "%{"
+		if arguments.count > 0 {
+			let paramstr = argumentsToString(arguments: self.arguments)
+			let functype = AMBFunction.encode(type: self.functionType)
+			return functype + "(\(paramstr)) %{"
+		} else {
+			let functype = AMBFunction.encode(type: self.functionType)
+			return functype + "%{"
+		}
 	}
 }
 

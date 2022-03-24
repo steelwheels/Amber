@@ -52,7 +52,7 @@ private func testCompiler(source src: String, virtualMachie vm: JSVirtualMachine
 		cons.print(string: text + "\n")
 		/* compile */
 		let compiler = AMBFrameCompiler()
-		let resource = KEResource(baseURL: URL(fileURLWithPath: "/tmp/a"))
+		let resource = KEResource(packageDirectory: URL(fileURLWithPath: "/tmp/a"))
 		let mapper   = AMBComponentMapper()
 		switch compiler.compile(frame: frame, mapper: mapper, context: ctxt, processManager: pmgr, resource: resource, environment: env, config: conf, console: cons) {
 		case .ok(let comp):

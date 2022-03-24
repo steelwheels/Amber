@@ -24,7 +24,7 @@ public func UTComponent(console cons: CNConsole) -> Bool
 
 	let frame   = AMBFrame(className: "Class", instanceName: "Object")
 	let procmgr = CNProcessManager()
-	let res     = KEResource(baseURL: URL(fileURLWithPath: "/dev/null"))
+	let res     = KEResource(packageDirectory: URL(fileURLWithPath: "/dev/null"))
 	let env     = CNEnvironment()
 	let robj    = AMBReactObject(frame: frame, context: ctxt, processManager: procmgr, resource: res, environment: env)
 

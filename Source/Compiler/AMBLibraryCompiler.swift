@@ -21,33 +21,7 @@ public class AMBLibraryCompiler
 	}
 
 	private func defineFunctions(context ctxt: KEContext, resource res: KEResource, console cons: CNConsole) -> Bool {
-		/* readData function */
-		let readfunc: @convention(block) (_ nameval: JSValue) -> JSValue = {
-			(_ nameval: JSValue) -> JSValue in
-			if let name = nameval.toString() {
-				if let retval = self.readData(dataName: name, context: ctxt, resource: res, console: cons) {
-					let val = retval.toJSValue(context: ctxt)
-					//NSLog("readData(JS) = \(val.toText().toStrings().joined(separator: "\n"))")
-					return val
-				}
-			}
-			return JSValue(nullIn: ctxt)
-		}
-		ctxt.set(name: "readData", function: readfunc)
 		return true
-	}
-
-	private func readData(dataName dname: String, context ctxt: KEContext, resource res: KEResource, console cons: CNConsole) -> CNValue? {
-		let reader = AMBDataReader(resource: res, console: cons)
-		let result: CNValue?
-		switch reader.read(identifier: dname) {
-		case .ok(let retval):
-			result = retval
-		case .error(let err):
-			cons.error(string: "readData [Error] \(err.toString())\n")
-			result = nil
-		}
-		return result
 	}
 }
 

@@ -14,7 +14,6 @@
 		0535C1BC2520B9D7002A9172 /* AMBFrameDumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1BB2520B9D7002A9172 /* AMBFrameDumper.swift */; };
 		0535C1BD2520B9D7002A9172 /* AMBFrameDumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1BB2520B9D7002A9172 /* AMBFrameDumper.swift */; };
 		053807C325D7CC480069F760 /* CoconutData.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 05ED77DB2520987B000EC3FC /* CoconutData.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		053807CB25D7D6420069F760 /* UTDataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 053807CA25D7D6420069F760 /* UTDataReader.swift */; };
 		054449CC252B5CDE00FBF305 /* Amber.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05ED77DC252098B5000EC3FC /* Amber.xcframework */; };
 		054449CE252B5CF000FBF305 /* CoconutData.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05ED77DB2520987B000EC3FC /* CoconutData.xcframework */; };
 		0547491B2573237B00DC1939 /* AMBComponentDumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0547491A2573237B00DC1939 /* AMBComponentDumper.swift */; };
@@ -23,8 +22,6 @@
 		055C9EA925236BED00E6B266 /* KiwiLibrary.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */; };
 		055C9EAE25236C0100E6B266 /* KiwiEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */; };
 		055C9EB025236C0100E6B266 /* KiwiLibrary.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */; };
-		056228F225D7A0820081B08A /* AMBDataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056228F125D7A0820081B08A /* AMBDataReader.swift */; };
-		056228F325D7A0820081B08A /* AMBDataReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 056228F125D7A0820081B08A /* AMBDataReader.swift */; };
 		05851CBB2574637F00359DDC /* AMBLibraryCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05851CBA2574637F00359DDC /* AMBLibraryCompiler.swift */; };
 		05851CBC2574637F00359DDC /* AMBLibraryCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05851CBA2574637F00359DDC /* AMBLibraryCompiler.swift */; };
 		05851CC125749CE400359DDC /* AMBSemaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05851CC025749CE400359DDC /* AMBSemaphore.swift */; };
@@ -37,6 +34,10 @@
 		05A3926C252378A500A1A37A /* AMBFrameCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A3926B252378A500A1A37A /* AMBFrameCompiler.swift */; };
 		05A3926D252378A500A1A37A /* AMBFrameCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A3926B252378A500A1A37A /* AMBFrameCompiler.swift */; };
 		05A51A7D25D95E5400CE633F /* data0.amb in Resources */ = {isa = PBXBuildFile; fileRef = 05A51A7C25D95E5400CE633F /* data0.amb */; };
+		05B973D827ECB6CE00ED9577 /* KiwiEngine.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		05B973DC27ECB6D000ED9577 /* KiwiLibrary.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		05B973E027ECB6D800ED9577 /* Amber.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 05ED77DC252098B5000EC3FC /* Amber.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		05B973E427ECB6DC00ED9577 /* CoconutDatabase.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 05FA2FEB2680CE8800B8242A /* CoconutDatabase.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		05D6D9B32529EAC800930E48 /* AMBComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9B22529EAC800930E48 /* AMBComponent.swift */; };
 		05D6D9B42529EAC800930E48 /* AMBComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9B22529EAC800930E48 /* AMBComponent.swift */; };
 		05D6D9B82529FD5A00930E48 /* AMBComponentMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9B72529FD5A00930E48 /* AMBComponentMapper.swift */; };
@@ -107,6 +108,10 @@
 			dstSubfolderSpec = 10;
 			files = (
 				053807C325D7CC480069F760 /* CoconutData.xcframework in CopyFiles */,
+				05B973D827ECB6CE00ED9577 /* KiwiEngine.xcframework in CopyFiles */,
+				05B973DC27ECB6D000ED9577 /* KiwiLibrary.xcframework in CopyFiles */,
+				05B973E427ECB6DC00ED9577 /* CoconutDatabase.xcframework in CopyFiles */,
+				05B973E027ECB6D800ED9577 /* Amber.xcframework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,11 +134,9 @@
 		0535C1A22520B1F4002A9172 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		0535C1B62520B4F4002A9172 /* UTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTParser.swift; sourceTree = "<group>"; };
 		0535C1BB2520B9D7002A9172 /* AMBFrameDumper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBFrameDumper.swift; sourceTree = "<group>"; };
-		053807CA25D7D6420069F760 /* UTDataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTDataReader.swift; sourceTree = "<group>"; };
 		0547491A2573237B00DC1939 /* AMBComponentDumper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBComponentDumper.swift; sourceTree = "<group>"; };
 		055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = KiwiEngine.xcframework; path = ../../../Library/Frameworks/KiwiEngine.xcframework; sourceTree = "<group>"; };
 		055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = KiwiLibrary.xcframework; path = ../../../Library/Frameworks/KiwiLibrary.xcframework; sourceTree = "<group>"; };
-		056228F125D7A0820081B08A /* AMBDataReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBDataReader.swift; sourceTree = "<group>"; };
 		05851CBA2574637F00359DDC /* AMBLibraryCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBLibraryCompiler.swift; sourceTree = "<group>"; };
 		05851CC025749CE400359DDC /* AMBSemaphore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBSemaphore.swift; sourceTree = "<group>"; };
 		05851CC925749FD100359DDC /* AMBComponentExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBComponentExecutor.swift; sourceTree = "<group>"; };
@@ -223,7 +226,6 @@
 				0535C1A22520B1F4002A9172 /* main.swift */,
 				0589BCB82524C5990077892D /* UTCompiler.swift */,
 				05D6D9BB252A12A100930E48 /* UTComponent.swift */,
-				053807CA25D7D6420069F760 /* UTDataReader.swift */,
 				0535C1B62520B4F4002A9172 /* UTParser.swift */,
 			);
 			path = UnitTest;
@@ -249,14 +251,6 @@
 				05A392672523763700A1A37A /* AMBReactObject.swift */,
 			);
 			path = Component;
-			sourceTree = "<group>";
-		};
-		056228ED25D79D2E0081B08A /* Data */ = {
-			isa = PBXGroup;
-			children = (
-				056228F125D7A0820081B08A /* AMBDataReader.swift */,
-			);
-			path = Data;
 			sourceTree = "<group>";
 		};
 		05A51A7B25D95E3400CE633F /* Resource */ = {
@@ -323,7 +317,6 @@
 				05ED778325204C94000EC3FC /* Language */,
 				05D6D9B02529E2D800930E48 /* Compiler */,
 				055C9EA425236BB100E6B266 /* Component */,
-				056228ED25D79D2E0081B08A /* Data */,
 				052D3A722573E71800B8F95A /* Process */,
 			);
 			name = Source;
@@ -577,7 +570,6 @@
 				0589BCB92524C5990077892D /* UTCompiler.swift in Sources */,
 				05D6D9BC252A12A100930E48 /* UTComponent.swift in Sources */,
 				0535C1B72520B4F4002A9172 /* UTParser.swift in Sources */,
-				053807CB25D7D6420069F760 /* UTDataReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,7 +582,6 @@
 				05851CBB2574637F00359DDC /* AMBLibraryCompiler.swift in Sources */,
 				0535C1BC2520B9D7002A9172 /* AMBFrameDumper.swift in Sources */,
 				05D6D9B32529EAC800930E48 /* AMBComponent.swift in Sources */,
-				056228F225D7A0820081B08A /* AMBDataReader.swift in Sources */,
 				0547491B2573237B00DC1939 /* AMBComponentDumper.swift in Sources */,
 				05A3926C252378A500A1A37A /* AMBFrameCompiler.swift in Sources */,
 				05ED778525204CE3000EC3FC /* AMBFrame.swift in Sources */,
@@ -610,7 +601,6 @@
 				05851CBC2574637F00359DDC /* AMBLibraryCompiler.swift in Sources */,
 				0535C1BD2520B9D7002A9172 /* AMBFrameDumper.swift in Sources */,
 				05D6D9B42529EAC800930E48 /* AMBComponent.swift in Sources */,
-				056228F325D7A0820081B08A /* AMBDataReader.swift in Sources */,
 				0547491C2573237B00DC1939 /* AMBComponentDumper.swift in Sources */,
 				05A3926D252378A500A1A37A /* AMBFrameCompiler.swift in Sources */,
 				05ED778625204CE3000EC3FC /* AMBFrame.swift in Sources */,

@@ -389,10 +389,25 @@ public class AMBParser
 	}
 
 	private func parseInitFunc(frame frm: AMBFrame, identifier ident: String, stream strm: CNTokenStream) throws -> AMBInitFunction {
+		var args: Array<AMBArgument> = []
+		if strm.requireSymbol(symbol: "(") {
+			var finished = strm.requireSymbol(symbol: ")")
+			while !finished {
+				let arg  = try parseArgument(stream: strm)
+				args.append(arg)
+				finished = strm.requireSymbol(symbol: ")")
+				if !finished {
+					guard strm.requireSymbol(symbol: ",") else {
+						throw requireSymbolError(symbol: ",", stream: strm)
+					}
+					finished = strm.requireSymbol(symbol: ")")
+				}
+			}
+		}
 		guard let text = strm.getText() else {
 			throw requireDeclarationError(declaration: "Init function body", stream: strm)
 		}
-		return AMBInitFunction(identifier: ident, script: text)
+		return AMBInitFunction(identifier: ident, arguments: args, script: text)
 	}
 
 	private func parseArgument(stream strm: CNTokenStream) throws -> AMBArgument {

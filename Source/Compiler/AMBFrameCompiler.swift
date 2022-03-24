@@ -135,8 +135,11 @@ open class AMBFrameCompiler
 				fatalError("Failed to convert event function")
 			}
 		case .initialize:
-			if let _ = afunc as? AMBInitFunction {
+			if let ifunc = afunc as? AMBInitFunction {
 				argstr = "self"					// insert self
+				for arg in ifunc.arguments {
+					argstr += ", " + arg.name
+				}
 			} else {
 				fatalError("Failed to convert event function")
 			}

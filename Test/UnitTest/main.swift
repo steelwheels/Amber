@@ -15,9 +15,8 @@ CNPreference.shared.systemPreference.logLevel = .detail
 
 let res1 = UTCompiler(console: cons)
 let res2 = UTComponent(console: cons)
-let res3 = UTDataReader(console: cons)
 
-let result = res1 && res2 && res3
+let result = res1 && res2
 if result {
 	cons.print(string: "SUMMARY: OK\n")
 } else {

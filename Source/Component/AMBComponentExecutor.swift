@@ -17,9 +17,9 @@ public class AMBComponentExecutor
 		mConsole = cons
 	}
 
-	public func exec(component comp: AMBComponent, console cons: CNConsole) {
+	public func exec(component comp: AMBComponent, argument arg: CNValue, console cons: CNConsole) {
 		do {
-			execInitFunctions(component: comp)
+			execInitFunctions(component: comp, argument: arg)
 			try execListnerFunctions(rootObject: comp.reactObject, console: cons)
 		} catch let err as NSError {
 			cons.error(string: "[Error] \(err.toString())")
@@ -29,7 +29,7 @@ public class AMBComponentExecutor
 		}
 	}
 
-	private func execInitFunctions(component comp: AMBComponent) {
+	private func execInitFunctions(component comp: AMBComponent, argument arg: CNValue) {
 		/* Seach and execute "Init" function */
 		let robj = comp.reactObject
 		let frm  = robj.frame
@@ -38,15 +38,18 @@ public class AMBComponentExecutor
 			case .initFunction(let ifunc):
 				if let fval = robj.immediateValue(forProperty: ifunc.objectName) {
 					/* Execute "Init" function */
-					if let retval = fval.call(withArguments: [robj]) { // insert sel
+					let argval = arg.toJSValue(context: robj.context)
+					if let retval = fval.call(withArguments: [robj, argval]) { // insert self and 1 parameter
 						if !retval.isUndefined {
 							robj.setImmediateValue(value: retval, forProperty: ifunc.identifier)
 						}
 					}
+				} else {
+					CNLog(logLevel: .error, message: "Failed to call Init function", atFunction: #function, inFile: #file)
 				}
 			case .frame(let frame):
 				if let child = comp.searchChild(byName: frame.instanceName) {
-					execInitFunctions(component: child)
+					execInitFunctions(component: child, argument: arg)
 				} else {
 					CNLog(logLevel: .error, message: "Unexpected frame name", atFunction: #function, inFile: #file)
 				}
