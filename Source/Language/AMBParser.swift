@@ -176,8 +176,8 @@ public class AMBParser
 				/* Check type is enum value or not */
 				switch atyp {
 				case .enumType(let etype):
-					if let ival = etype.search(byMemberName: ident) {
-						result = .numberValue(NSNumber(integerLiteral: Int(ival)))
+					if let eval = etype.search(byName: ident) {
+						result = .numberValue(NSNumber(integerLiteral: eval.value))
 					} else {
 						throw requireDeclarationError(declaration: "Unknown member of Enum \"\(etype.typeName)\" value", stream: strm)
 					}

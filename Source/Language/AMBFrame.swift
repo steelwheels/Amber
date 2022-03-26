@@ -97,7 +97,7 @@ public enum AMBType {
 	case	floatType
 	case	stringType
 	case 	urlType
-	case	enumType(KEEnumType)
+	case	enumType(CNEnumType)
 	case	arrayType
 	case	dictionaryType
 
