@@ -280,21 +280,25 @@ open class AMBFrameCompiler
 		let lfunc: CNObserverDictionary.ListenerFunction = {
 			(_ param: Any?) -> Void in
 			/* Setup parameters */
-			var args: Array<Any> = [obj] 			// insert self
+			var valid: Bool       = true
+			var args:  Array<Any> = [obj] 			// insert self
 			for ptr in ptrs {
 				let holder = ptr.pointedObject
 				let prop   = ptr.pointedName
 				if let pval = holder.immediateValue(forProperty: prop) {
 					args.append(pval)
 				} else {
-					cons.error(string: "Failed to get argument for callback: \(prop) at \(#file)")
+					valid = false
+					break
 				}
 			}
 			/* call the target function */
-			if let res = lval.call(withArguments: args) {
-				obj.setImmediateValue(value: res, forProperty: prop)
-			} else {
-				cons.error(string: "Failed to get result at \(#file)")
+			if valid {
+				if let res = lval.call(withArguments: args) {
+					obj.setImmediateValue(value: res, forProperty: prop)
+				} else {
+					CNLog(logLevel: .error, message: "Failed to get result ", atFunction: #function, inFile: #file)
+				}
 			}
 		}
 		/* Set callback function to pointed objects */
