@@ -23,11 +23,8 @@ public class AMBParser
 		do {
 			let frame = try parseLex(source: src)
 			return .ok(frame)
-		} catch let err as NSError {
-			return .error(err)
 		} catch {
-			let err = NSError.parseError(message: "Unknown error")
-			return .error(err)
+			return .error(error as NSError)
 		}
 	}
 

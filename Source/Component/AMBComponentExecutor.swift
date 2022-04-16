@@ -21,10 +21,8 @@ public class AMBComponentExecutor
 		do {
 			execInitFunctions(component: comp, argument: arg)
 			try execListnerFunctions(rootObject: comp.reactObject, console: cons)
-		} catch let err as NSError {
-			cons.error(string: "[Error] \(err.toString())")
 		} catch {
-			let err = NSError.parseError(message: "Unknown error")
+			let err = error as NSError
 			cons.error(string: "[Error] \(err.toString())")
 		}
 	}

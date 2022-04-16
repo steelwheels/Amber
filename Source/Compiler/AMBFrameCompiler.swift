@@ -37,11 +37,8 @@ open class AMBFrameCompiler
 			/* Add setter/getter */
 			defineGetterAndSetters(component: rootcomp, context: ctxt, console: cons)
 			return .ok(rootcomp)
-		} catch let err as NSError {
-			return .error(err)
 		} catch {
-			let err = NSError.parseError(message: "Unknown error")
-			return .error(err)
+			return .error(error as NSError)
 		}
 	}
 
