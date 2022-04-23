@@ -238,7 +238,7 @@ public class AMBParser
 					throw makeParseError(message: "\",\" is required between dictionary elements", stream: strm)
 				}
 			}
-			if let key = strm.requireAnyIdentifier() {
+			if let key = strm.requireIdentifier() {
 				if strm.requireSymbol(symbol: ":") {
 					let val = try parseExpressionProperty(type: atyp, stream: strm)
 					elements[key] = val
