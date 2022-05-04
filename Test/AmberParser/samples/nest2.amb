@@ -1,0 +1,8 @@
+top: VBox {
+  message: HBox {
+    logo: ImageView {
+      name: String "icon"
+    }
+  }
+}
+

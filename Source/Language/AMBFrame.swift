@@ -287,12 +287,8 @@ public class AMBInitFunctionValue: AMBFunctionValue
 {
 	public static var TypeName	= "Init"
 
-	private var	mArguments: 	Array<AMBArgument>
 
-	public var arguments: Array<AMBArgument> { get { return mArguments }}
-
-	public init(identifier ident: String, script scr: String, arguments args: Array<AMBArgument>){
-		mArguments = args
+	public init(identifier ident: String, script scr: String){
 		super.init(valueType: .initFunction, identifier: ident, script: scr)
 	}
 
@@ -305,24 +301,12 @@ public class AMBInitFunctionValue: AMBFunctionValue
 	}}
 
 	public override func makeFunctionHeader() -> String {
-		if mArguments.count > 0 {
-			let paramstr = AMBArgument.argumentsToString(arguments: mArguments)
-			let functype = AMBInitFunctionValue.TypeName
-			return functype + "(\(paramstr)) %{"
-		} else {
-			let functype = AMBInitFunctionValue.TypeName
-			return functype + " %{"
-		}
+		let functype = AMBInitFunctionValue.TypeName
+		return functype + " %{"
 	}
 
 	public override func makeScriptArgument() -> String {
-		let argstr: String
-		if mArguments.count > 0 {
-			argstr = "self, " + AMBArgument.argumentsToString(arguments: mArguments)
-		} else {
-			argstr = "self"
-		}
-		return argstr
+		return "self"
 	}
 
 	public override func toText() -> CNText {
@@ -352,19 +336,16 @@ public class AMBEventFunctionValue: AMBFunctionValue
 	}
 
 	public override func makeFunctionHeader() -> String {
-		let paramstr = AMBArgument.argumentsToString(arguments: mArguments)
+		let args     = AMBArgument.arguments(from: mArguments)
+		let paramstr = args.joined(separator: ", ")
 		let functype = AMBEventFunctionValue.TypeName
 		return functype + "(\(paramstr)) %{"
 	}
 
 	public override func makeScriptArgument() -> String {
-		let argstr: String
-		if mArguments.count > 0 {
-			argstr = "self, " + AMBArgument.argumentsToString(arguments: mArguments)
-		} else {
-			argstr = "self"
-		}
-		return argstr
+		var args: Array<String> = ["self"]
+		args.append(contentsOf: AMBArgument.arguments(from: mArguments))
+		return args.joined(separator: ", ")
 	}
 
 	public override func toText() -> CNText {
@@ -387,7 +368,7 @@ public class AMBListnerFunctionValue: AMBFunctionValue
 	public var arguments: Array<AMBPathArgument> { get { return mArguments }}
 
 	public init(identifier ident: String, script scr: String, returnType rtype: AMBValue.ValueType, arguments args: Array<AMBPathArgument>){
-		mArguments  = []
+		mArguments  = args
 		mReturnType = rtype
 		super.init(valueType: .listnerFunction, identifier: ident, script: scr)
 	}
@@ -397,14 +378,17 @@ public class AMBListnerFunctionValue: AMBFunctionValue
 	}
 
 	public override func makeFunctionHeader() -> String {
-		let paramstr = AMBPathArgument.pathArgumentsToString(pathArguments: mArguments)
+		let args     = AMBPathArgument.arguments(from: mArguments)
+		let paramstr = args.joined(separator: ", ")
 		let functype = AMBListnerFunctionValue.TypeName
 		let rettype  = mReturnType.description
 		return rettype + " " + functype + "(\(paramstr)) %{"
 	}
 
 	public override func makeScriptArgument() -> String {
-		return AMBPathArgument.pathArgumentsToString(pathArguments: mArguments)
+		var args: Array<String> = ["self"]
+		args.append(contentsOf: AMBPathArgument.arguments(from: mArguments))
+		return args.joined(separator: ", ")
 	}
 
 	public override func toText() -> CNText {
@@ -436,14 +420,16 @@ public class AMBProcedureFunctionValue: AMBFunctionValue
 	}
 
 	public override func makeFunctionHeader() -> String {
-		let paramstr = AMBArgument.argumentsToString(arguments: mArguments)
+		let args     = AMBArgument.arguments(from: mArguments)
+		let paramstr = args.joined(separator: ", ")
 		let functype = AMBProcedureFunctionValue.TypeName
 		let rettype  = mReturnType.description
 		return rettype + " " + functype + "(\(paramstr)) %{"
 	}
 
 	public override func makeScriptArgument() -> String {
-		return AMBArgument.argumentsToString(arguments: mArguments)
+		let args = AMBArgument.arguments(from: mArguments)
+		return args.joined(separator: ", ")
 	}
 
 	public override func toText() -> CNText {
@@ -484,7 +470,7 @@ public class AMBFrame: AMBValue
 			let value = memb.value
 
 			let newsect = CNTextSection()
-			newsect.header = "\(memb.identifier): \(self.type.description) "
+			newsect.header = "\(memb.identifier): \(value.type.description) "
 			newsect.footer = ""
 
 			newsect.add(text: value.toText())
@@ -504,14 +490,12 @@ public struct AMBArgument {
 		return arg.name
 	}
 
-	fileprivate static func argumentsToString(arguments args: Array<AMBArgument>) -> String {
-		var line: String = ""
-		var is1st = true
+	fileprivate static func arguments(from args: Array<AMBArgument>) -> Array<String> {
+		var result: Array<String> = []
 		for arg in args {
-			if is1st { is1st = false} else { line += ", " }
-			line += argumentToString(argument: arg)
+			result.append(arg.name)
 		}
-		return line
+		return result
 	}
 }
 
@@ -528,14 +512,12 @@ public struct AMBPathArgument {
 		return "\(arg.name): \(arg.expression.toString())"
 	}
 
-	fileprivate static func pathArgumentsToString(pathArguments pargs: Array<AMBPathArgument>) -> String {
-		var line: String = ""
-		var is1st = true
-		for parg in pargs {
-			if is1st { is1st = false} else { line += ", " }
-			line += pathArgumentToString(pathArgument: parg)
+	fileprivate static func arguments(from args: Array<AMBPathArgument>) -> Array<String> {
+		var result: Array<String> = []
+		for arg in args {
+			result.append(arg.name)
 		}
-		return line
+		return result
 	}
 }
 

@@ -359,29 +359,8 @@ public class AMBParser
 	}
 
 	private func parseInitFunc(identifier ident: String, stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
-		guard strm.requireSymbol(symbol: "(") else {
-			return .failure(parseError(message: "\"(\" is required to define init function parameters (named \"\(ident)\")", stream: strm))
-		}
-
-		var args: Array<AMBArgument> = []
-		var finished = strm.requireSymbol(symbol: ")")
-		while !finished {
-			switch parseArgument(stream: strm) {
-			case .success(let arg):
-				args.append(arg)
-				finished = strm.requireSymbol(symbol: ")")
-				if !finished {
-					guard strm.requireSymbol(symbol: ",") else {
-						return .failure(parseError(message: "\",\" is required to list arguments", stream: strm))
-					}
-					finished = strm.requireSymbol(symbol: ")")
-				}
-			case .failure(let err):
-				return .failure(err)
-			}
-		}
 		if let text = strm.getText() {
-			return .success(AMBInitFunctionValue(identifier: ident, script: text, arguments: args))
+			return .success(AMBInitFunctionValue(identifier: ident, script: text))
 		} else {
 			return .failure(parseError(message: "The body of Init function is required", stream: strm))
 		}

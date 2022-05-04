@@ -48,7 +48,8 @@ public extension AMBComponent
 
 	func toText() -> CNText {
 		let component = CNTextSection()
-		component.header = "component: {"
+		let frame     = self.reactObject.frame
+		component.header = "component \(frame.instanceName):\(frame.className) {"
 		component.footer = "}"
 		component.add(text: self.reactObject.toText())
 

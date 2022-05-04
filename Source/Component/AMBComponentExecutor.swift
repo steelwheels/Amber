@@ -17,17 +17,14 @@ public class AMBComponentExecutor
 		mConsole = cons
 	}
 
-	public func exec(component comp: AMBComponent, argument arg: CNValue, console cons: CNConsole) {
-		do {
-			execInitFunctions(component: comp, argument: arg)
-			try execListnerFunctions(rootObject: comp.reactObject, console: cons)
-		} catch {
-			let err = error as NSError
+	public func exec(component comp: AMBComponent, console cons: CNConsole) {
+		execInitFunctions(component: comp)
+		if let err = execListnerFunctions(rootObject: comp.reactObject, console: cons) {
 			cons.error(string: "[Error] \(err.toString())")
 		}
 	}
 
-	private func execInitFunctions(component comp: AMBComponent, argument arg: CNValue) {
+	private func execInitFunctions(component comp: AMBComponent) {
 		/* Seach and execute "Init" function */
 		let robj = comp.reactObject
 		let frm  = robj.frame
@@ -38,11 +35,8 @@ public class AMBComponentExecutor
 				if let initfunc = value as? AMBInitFunctionValue {
 					if let fval = robj.immediateValue(forProperty: initfunc.objectName) {
 						/* Execute "Init" function */
-						let argval = arg.toJSValue(context: robj.context)
-						if let retval = fval.call(withArguments: [robj, argval]) { // insert self and 1 parameter
-							if !retval.isUndefined {
-								robj.setImmediateValue(value: retval, forProperty: initfunc.identifier)
-							}
+						if let retval = fval.call(withArguments: [robj]) { // insert self and 1 parameter
+							robj.setImmediateValue(value: retval, forProperty: initfunc.identifier)
 						} else {
 							CNLog(logLevel: .error, message: "Failed to execute this function", atFunction: #function, inFile: #file)
 						}
@@ -55,7 +49,7 @@ public class AMBComponentExecutor
 			case .frame(_):
 				if let frame = value as? AMBFrame {
 					if let child = comp.searchChild(byName: frame.instanceName) {
-						execInitFunctions(component: child, argument: arg)
+						execInitFunctions(component: child)
 					} else {
 						CNLog(logLevel: .error, message: "Unexpected frame name: \(frame.instanceName)", atFunction: #function, inFile: #file)
 					}
@@ -68,7 +62,7 @@ public class AMBComponentExecutor
 		}
 	}
 
-	private func execListnerFunctions(rootObject robj: AMBReactObject, console cons: CNConsole) throws {
+	private func execListnerFunctions(rootObject robj: AMBReactObject, console cons: CNConsole) -> NSError? {
 		let frm  = robj.frame
 		for memb in frm.members {
 			let value = memb.value
@@ -79,7 +73,7 @@ public class AMBComponentExecutor
 					if let lfuncval = robj.listnerFuntionValue(forProperty: funcname) {
 						/* Execute listner function */
 						guard let ptrs = robj.listnerFuncPointers(forProperty: funcname) else {
-							throw NSError.parseError(message: "Failed to get pointers for listner: \(funcname)")
+							return NSError.parseError(message: "Failed to get pointers for listner: \(funcname)")
 						}
 						var args: Array<Any> = [robj] // self
 						for ptr in ptrs {
@@ -98,7 +92,7 @@ public class AMBComponentExecutor
 							cons.error(string: "Failed to get result at \(#file)")
 						}
 					} else {
-						throw NSError.parseError(message: "Internal error for function \(funcname) at \(#function) [0]")
+						return NSError.parseError(message: "Internal error for function \(funcname) at \(#function) [0]")
 					}
 				} else {
 					CNLog(logLevel: .error, message: "Can not happen", atFunction: #function, inFile: #file)
@@ -106,15 +100,18 @@ public class AMBComponentExecutor
 			case .frame(_):
 				if let frame = value as? AMBFrame {
 					if let cobj = robj.childFrame(forProperty: frame.instanceName) {
-						try execListnerFunctions(rootObject: cobj, console: cons)
+						if let err = execListnerFunctions(rootObject: cobj, console: cons) {
+							return err
+						}
 					} else {
-						throw NSError.parseError(message: "Internal error for property \(frame.instanceName) at \(#function) [1]")
+						return NSError.parseError(message: "Internal error for property \(frame.instanceName) at \(#function) [1]")
 					}
 				}
 			default:
 				break
 			}
 		}
+		return nil
 	}
 }
 

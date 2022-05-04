@@ -257,22 +257,21 @@ import JavaScriptCore
 	}
 
 	public func setListnerFunctionValue(value fval: JSValue, forProperty prop: String) {
-		let fname = propertyToListnerFuncName(prop)
-		setImmediateValue(value: fval, forProperty: fname)
+		setImmediateValue(value: fval, forProperty: "_lfunc_" + prop)
 	}
 
 	public func listnerFuntionValue(forProperty prop: String) -> JSValue? {
-		let fname = propertyToListnerFuncName(prop)
-		if let obj = immediateValue(forProperty: fname) {
+		if let obj = immediateValue(forProperty: "_lfunc_" + prop) {
 			return obj
 		} else {
 			return nil
 		}
 	}
 
+	/*
 	private func propertyToListnerFuncName(_ name: String) -> String {
 		return "_lfunc_" + name
-	}
+	}*/
 
 	public func setListnerFuncPointers(pointers ptrs: Array<AMBObjectPointer>, forProperty prop: String) {
 		let lname = propertyToListnerFuncParameterName(prop)

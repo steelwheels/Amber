@@ -65,7 +65,6 @@ open class AMBFrameCompiler
 		for memb in frm.members {
 			let ident = memb.identifier
 			let value = memb.value
-			NSLog("cF: ident=\(ident)")
 			switch value.type {
 			case .scalar(_):
 				if let scalar = value as? AMBScalarValue {
@@ -99,7 +98,6 @@ open class AMBFrameCompiler
 				if let frame = value as? AMBFrame {
 					switch compileFrame(frame: frame, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons) {
 					case .success(let robj):
-						NSLog("cF: setchild: \(newobj.frame.instanceName) <- \(robj.frame.instanceName)")
 						newobj.setChildFrame(forProperty: robj.frame.instanceName, frame: robj)
 					case .failure(let err):
 						return .failure(err)
@@ -133,7 +131,7 @@ open class AMBFrameCompiler
 				if let lfunc = value as? AMBListnerFunctionValue {
 					switch compileFunction(reactObject: newobj, function: lfunc, context: ctxt, config: conf, console: cons) {
 					case .success(let funcval):
-						newobj.setListnerFunctionValue(value: funcval, forProperty: ident)
+						newobj.setListnerFunctionValue(value: funcval, forProperty: lfunc.identifier)
 						newobj.initListnerReturnValue(forProperty: ident)
 					case .failure(let err):
 						return .failure(err)
@@ -153,12 +151,9 @@ open class AMBFrameCompiler
 					CNLog(logLevel: .error, message: "Can not happen (7)", atFunction: #function, inFile: #file)
 				}
 			}
-			NSLog("cF: (2)")
 			if let err = addPropertyName(object: newobj, propertyName: ident) {
-				NSLog("cF: (3)")
 				return .failure(err)
 			}
-			NSLog("cF: (4)")
 		}
 		return .success(newobj)
 	}
