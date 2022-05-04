@@ -10,14 +10,9 @@
 		052D3A742573E76100B8F95A /* AMBThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D3A732573E76100B8F95A /* AMBThread.swift */; };
 		052D3A752573E76100B8F95A /* AMBThread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052D3A732573E76100B8F95A /* AMBThread.swift */; };
 		0535C1A32520B1F4002A9172 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1A22520B1F4002A9172 /* main.swift */; };
-		0535C1B72520B4F4002A9172 /* UTParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1B62520B4F4002A9172 /* UTParser.swift */; };
-		0535C1BC2520B9D7002A9172 /* AMBFrameDumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1BB2520B9D7002A9172 /* AMBFrameDumper.swift */; };
-		0535C1BD2520B9D7002A9172 /* AMBFrameDumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535C1BB2520B9D7002A9172 /* AMBFrameDumper.swift */; };
 		053807C325D7CC480069F760 /* CoconutData.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 05ED77DB2520987B000EC3FC /* CoconutData.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		054449CC252B5CDE00FBF305 /* Amber.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05ED77DC252098B5000EC3FC /* Amber.xcframework */; };
 		054449CE252B5CF000FBF305 /* CoconutData.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05ED77DB2520987B000EC3FC /* CoconutData.xcframework */; };
-		0547491B2573237B00DC1939 /* AMBComponentDumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0547491A2573237B00DC1939 /* AMBComponentDumper.swift */; };
-		0547491C2573237B00DC1939 /* AMBComponentDumper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0547491A2573237B00DC1939 /* AMBComponentDumper.swift */; };
 		055C9EA725236BED00E6B266 /* KiwiEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */; };
 		055C9EA925236BED00E6B266 /* KiwiLibrary.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */; };
 		055C9EAE25236C0100E6B266 /* KiwiEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */; };
@@ -28,7 +23,6 @@
 		05851CC225749CE400359DDC /* AMBSemaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05851CC025749CE400359DDC /* AMBSemaphore.swift */; };
 		05851CCA25749FD100359DDC /* AMBComponentExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05851CC925749FD100359DDC /* AMBComponentExecutor.swift */; };
 		05851CCB25749FD100359DDC /* AMBComponentExecutor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05851CC925749FD100359DDC /* AMBComponentExecutor.swift */; };
-		0589BCB92524C5990077892D /* UTCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0589BCB82524C5990077892D /* UTCompiler.swift */; };
 		05A392682523763700A1A37A /* AMBReactObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A392672523763700A1A37A /* AMBReactObject.swift */; };
 		05A392692523763700A1A37A /* AMBReactObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A392672523763700A1A37A /* AMBReactObject.swift */; };
 		05A3926C252378A500A1A37A /* AMBFrameCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A3926B252378A500A1A37A /* AMBFrameCompiler.swift */; };
@@ -42,7 +36,6 @@
 		05D6D9B42529EAC800930E48 /* AMBComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9B22529EAC800930E48 /* AMBComponent.swift */; };
 		05D6D9B82529FD5A00930E48 /* AMBComponentMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9B72529FD5A00930E48 /* AMBComponentMapper.swift */; };
 		05D6D9B92529FD5A00930E48 /* AMBComponentMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9B72529FD5A00930E48 /* AMBComponentMapper.swift */; };
-		05D6D9BC252A12A100930E48 /* UTComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05D6D9BB252A12A100930E48 /* UTComponent.swift */; };
 		05ED776E25204BD3000EC3FC /* Amber_macOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 05ED776C25204BD3000EC3FC /* Amber_macOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05ED777C25204BF9000EC3FC /* Amber_iOS.h in Headers */ = {isa = PBXBuildFile; fileRef = 05ED777A25204BF9000EC3FC /* Amber_iOS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		05ED778525204CE3000EC3FC /* AMBFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ED778425204CE3000EC3FC /* AMBFrame.swift */; };
@@ -56,13 +49,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		05072AE325DE926F00813E79 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 05B7616B25204B3700B6BF0B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 052F4548256A9D2B00CF8A99;
-			remoteInfo = UnitTestBundle;
-		};
 		052F4557256A9D3700CF8A99 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 05B7616B25204B3700B6BF0B /* Project object */;
@@ -128,25 +114,20 @@
 
 /* Begin PBXFileReference section */
 		052D3A732573E76100B8F95A /* AMBThread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBThread.swift; sourceTree = "<group>"; };
-		052F4549256A9D2B00CF8A99 /* UnitTest.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTest.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		052F4549256A9D2B00CF8A99 /* ambparser.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ambparser.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		052F454B256A9D2B00CF8A99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0535C1A02520B1F3002A9172 /* UnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0535C1A02520B1F3002A9172 /* ambparser */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ambparser; sourceTree = BUILT_PRODUCTS_DIR; };
 		0535C1A22520B1F4002A9172 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		0535C1B62520B4F4002A9172 /* UTParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTParser.swift; sourceTree = "<group>"; };
-		0535C1BB2520B9D7002A9172 /* AMBFrameDumper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBFrameDumper.swift; sourceTree = "<group>"; };
-		0547491A2573237B00DC1939 /* AMBComponentDumper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBComponentDumper.swift; sourceTree = "<group>"; };
 		055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = KiwiEngine.xcframework; path = ../../../Library/Frameworks/KiwiEngine.xcframework; sourceTree = "<group>"; };
 		055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = KiwiLibrary.xcframework; path = ../../../Library/Frameworks/KiwiLibrary.xcframework; sourceTree = "<group>"; };
 		05851CBA2574637F00359DDC /* AMBLibraryCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBLibraryCompiler.swift; sourceTree = "<group>"; };
 		05851CC025749CE400359DDC /* AMBSemaphore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBSemaphore.swift; sourceTree = "<group>"; };
 		05851CC925749FD100359DDC /* AMBComponentExecutor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBComponentExecutor.swift; sourceTree = "<group>"; };
-		0589BCB82524C5990077892D /* UTCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTCompiler.swift; sourceTree = "<group>"; };
 		05A392672523763700A1A37A /* AMBReactObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBReactObject.swift; sourceTree = "<group>"; };
 		05A3926B252378A500A1A37A /* AMBFrameCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBFrameCompiler.swift; sourceTree = "<group>"; };
 		05A51A7C25D95E5400CE633F /* data0.amb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = data0.amb; sourceTree = "<group>"; };
 		05D6D9B22529EAC800930E48 /* AMBComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBComponent.swift; sourceTree = "<group>"; };
 		05D6D9B72529FD5A00930E48 /* AMBComponentMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBComponentMapper.swift; sourceTree = "<group>"; };
-		05D6D9BB252A12A100930E48 /* UTComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTComponent.swift; sourceTree = "<group>"; };
 		05ED776925204BD3000EC3FC /* Amber.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Amber.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05ED776C25204BD3000EC3FC /* Amber_macOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Amber_macOS.h; sourceTree = "<group>"; };
 		05ED776D25204BD3000EC3FC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -202,6 +183,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0525A036281FC41A00E5F14A /* samples */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = samples;
+			sourceTree = "<group>";
+		};
 		052D3A722573E71800B8F95A /* Process */ = {
 			isa = PBXGroup;
 			children = (
@@ -211,31 +199,29 @@
 			path = Process;
 			sourceTree = "<group>";
 		};
-		052F454A256A9D2B00CF8A99 /* UnitTestBundle */ = {
+		052F454A256A9D2B00CF8A99 /* AmberParserBundle */ = {
 			isa = PBXGroup;
 			children = (
 				05A51A7B25D95E3400CE633F /* Resource */,
 				052F454B256A9D2B00CF8A99 /* Info.plist */,
 			);
-			path = UnitTestBundle;
+			path = AmberParserBundle;
 			sourceTree = "<group>";
 		};
-		0535C1A12520B1F4002A9172 /* UnitTest */ = {
+		0535C1A12520B1F4002A9172 /* AmberParser */ = {
 			isa = PBXGroup;
 			children = (
+				0525A036281FC41A00E5F14A /* samples */,
 				0535C1A22520B1F4002A9172 /* main.swift */,
-				0589BCB82524C5990077892D /* UTCompiler.swift */,
-				05D6D9BB252A12A100930E48 /* UTComponent.swift */,
-				0535C1B62520B4F4002A9172 /* UTParser.swift */,
 			);
-			path = UnitTest;
+			path = AmberParser;
 			sourceTree = "<group>";
 		};
 		0535C1AA2520B207002A9172 /* Test */ = {
 			isa = PBXGroup;
 			children = (
-				052F454A256A9D2B00CF8A99 /* UnitTestBundle */,
-				0535C1A12520B1F4002A9172 /* UnitTest */,
+				052F454A256A9D2B00CF8A99 /* AmberParserBundle */,
+				0535C1A12520B1F4002A9172 /* AmberParser */,
 			);
 			name = Test;
 			path = ../Test;
@@ -245,7 +231,6 @@
 			isa = PBXGroup;
 			children = (
 				05D6D9B22529EAC800930E48 /* AMBComponent.swift */,
-				0547491A2573237B00DC1939 /* AMBComponentDumper.swift */,
 				05851CC925749FD100359DDC /* AMBComponentExecutor.swift */,
 				05D6D9B72529FD5A00930E48 /* AMBComponentMapper.swift */,
 				05A392672523763700A1A37A /* AMBReactObject.swift */,
@@ -287,8 +272,8 @@
 			children = (
 				05ED776925204BD3000EC3FC /* Amber.framework */,
 				05ED777825204BF9000EC3FC /* Amber.framework */,
-				0535C1A02520B1F3002A9172 /* UnitTest */,
-				052F4549256A9D2B00CF8A99 /* UnitTest.bundle */,
+				0535C1A02520B1F3002A9172 /* ambparser */,
+				052F4549256A9D2B00CF8A99 /* ambparser.bundle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -328,7 +313,6 @@
 			children = (
 				05ED778425204CE3000EC3FC /* AMBFrame.swift */,
 				05ED779825208BCA000EC3FC /* AMBParser.swift */,
-				0535C1BB2520B9D7002A9172 /* AMBFrameDumper.swift */,
 			);
 			path = Language;
 			sourceTree = "<group>";
@@ -376,7 +360,6 @@
 			buildToolPath = /usr/bin/make;
 			buildWorkingDirectory = "";
 			dependencies = (
-				05072AE425DE926F00813E79 /* PBXTargetDependency */,
 				054DA5D82588E0B90032FE91 /* PBXTargetDependency */,
 			);
 			name = Check;
@@ -402,9 +385,9 @@
 /* End PBXLegacyTarget section */
 
 /* Begin PBXNativeTarget section */
-		052F4548256A9D2B00CF8A99 /* UnitTestBundle */ = {
+		052F4548256A9D2B00CF8A99 /* amberparser */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 052F454C256A9D2B00CF8A99 /* Build configuration list for PBXNativeTarget "UnitTestBundle" */;
+			buildConfigurationList = 052F454C256A9D2B00CF8A99 /* Build configuration list for PBXNativeTarget "amberparser" */;
 			buildPhases = (
 				052F4545256A9D2B00CF8A99 /* Sources */,
 				052F4546256A9D2B00CF8A99 /* Frameworks */,
@@ -416,14 +399,14 @@
 			dependencies = (
 				052F4558256A9D3700CF8A99 /* PBXTargetDependency */,
 			);
-			name = UnitTestBundle;
+			name = amberparser;
 			productName = UnitTestBundle;
-			productReference = 052F4549256A9D2B00CF8A99 /* UnitTest.bundle */;
+			productReference = 052F4549256A9D2B00CF8A99 /* ambparser.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
-		0535C19F2520B1F3002A9172 /* UnitTest */ = {
+		0535C19F2520B1F3002A9172 /* ambparser */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0535C1A42520B1F4002A9172 /* Build configuration list for PBXNativeTarget "UnitTest" */;
+			buildConfigurationList = 0535C1A42520B1F4002A9172 /* Build configuration list for PBXNativeTarget "ambparser" */;
 			buildPhases = (
 				0535C19C2520B1F3002A9172 /* Sources */,
 				0535C19D2520B1F3002A9172 /* Frameworks */,
@@ -434,9 +417,9 @@
 			dependencies = (
 				052F455A256A9D3E00CF8A99 /* PBXTargetDependency */,
 			);
-			name = UnitTest;
+			name = ambparser;
 			productName = UnitTest;
-			productReference = 0535C1A02520B1F3002A9172 /* UnitTest */;
+			productReference = 0535C1A02520B1F3002A9172 /* ambparser */;
 			productType = "com.apple.product-type.tool";
 		};
 		05ED776825204BD2000EC3FC /* Amber_macOS */ = {
@@ -522,8 +505,8 @@
 				05ED776825204BD2000EC3FC /* Amber_macOS */,
 				05ED777725204BF9000EC3FC /* Amber_iOS */,
 				05ED77A3252093C3000EC3FC /* Install */,
-				052F4548256A9D2B00CF8A99 /* UnitTestBundle */,
-				0535C19F2520B1F3002A9172 /* UnitTest */,
+				052F4548256A9D2B00CF8A99 /* amberparser */,
+				0535C19F2520B1F3002A9172 /* ambparser */,
 				054DA5D02588E0AD0032FE91 /* Check */,
 			);
 		};
@@ -567,9 +550,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0535C1A32520B1F4002A9172 /* main.swift in Sources */,
-				0589BCB92524C5990077892D /* UTCompiler.swift in Sources */,
-				05D6D9BC252A12A100930E48 /* UTComponent.swift in Sources */,
-				0535C1B72520B4F4002A9172 /* UTParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -580,9 +560,7 @@
 				05A392682523763700A1A37A /* AMBReactObject.swift in Sources */,
 				05851CC125749CE400359DDC /* AMBSemaphore.swift in Sources */,
 				05851CBB2574637F00359DDC /* AMBLibraryCompiler.swift in Sources */,
-				0535C1BC2520B9D7002A9172 /* AMBFrameDumper.swift in Sources */,
 				05D6D9B32529EAC800930E48 /* AMBComponent.swift in Sources */,
-				0547491B2573237B00DC1939 /* AMBComponentDumper.swift in Sources */,
 				05A3926C252378A500A1A37A /* AMBFrameCompiler.swift in Sources */,
 				05ED778525204CE3000EC3FC /* AMBFrame.swift in Sources */,
 				052D3A742573E76100B8F95A /* AMBThread.swift in Sources */,
@@ -599,9 +577,7 @@
 				05A392692523763700A1A37A /* AMBReactObject.swift in Sources */,
 				05851CC225749CE400359DDC /* AMBSemaphore.swift in Sources */,
 				05851CBC2574637F00359DDC /* AMBLibraryCompiler.swift in Sources */,
-				0535C1BD2520B9D7002A9172 /* AMBFrameDumper.swift in Sources */,
 				05D6D9B42529EAC800930E48 /* AMBComponent.swift in Sources */,
-				0547491C2573237B00DC1939 /* AMBComponentDumper.swift in Sources */,
 				05A3926D252378A500A1A37A /* AMBFrameCompiler.swift in Sources */,
 				05ED778625204CE3000EC3FC /* AMBFrame.swift in Sources */,
 				052D3A752573E76100B8F95A /* AMBThread.swift in Sources */,
@@ -614,11 +590,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		05072AE425DE926F00813E79 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 052F4548256A9D2B00CF8A99 /* UnitTestBundle */;
-			targetProxy = 05072AE325DE926F00813E79 /* PBXContainerItemProxy */;
-		};
 		052F4558256A9D3700CF8A99 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 05ED77A3252093C3000EC3FC /* Install */;
@@ -626,12 +597,12 @@
 		};
 		052F455A256A9D3E00CF8A99 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 052F4548256A9D2B00CF8A99 /* UnitTestBundle */;
+			target = 052F4548256A9D2B00CF8A99 /* amberparser */;
 			targetProxy = 052F4559256A9D3E00CF8A99 /* PBXContainerItemProxy */;
 		};
 		054DA5D82588E0B90032FE91 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0535C19F2520B1F3002A9172 /* UnitTest */;
+			target = 0535C19F2520B1F3002A9172 /* ambparser */;
 			targetProxy = 054DA5D72588E0B90032FE91 /* PBXContainerItemProxy */;
 		};
 		05ED77AA252093CD000EC3FC /* PBXTargetDependency */ = {
@@ -677,13 +648,13 @@
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = ../Test/UnitTestBundle/Info.plist;
+				INFOPLIST_FILE = ../Test/AmberParserBundle/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = github.com.steelwheels.UnitTestBundle;
-				PRODUCT_NAME = UnitTest;
+				PRODUCT_BUNDLE_IDENTIFIER = github.com.steelwheels.AmberParserBundle;
+				PRODUCT_NAME = ambparser;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -715,13 +686,13 @@
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				INFOPLIST_FILE = ../Test/UnitTestBundle/Info.plist;
+				INFOPLIST_FILE = ../Test/AmberParserBundle/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = github.com.steelwheels.UnitTestBundle;
-				PRODUCT_NAME = UnitTest;
+				PRODUCT_BUNDLE_IDENTIFIER = github.com.steelwheels.AmberParserBundle;
+				PRODUCT_NAME = ambparser;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -761,8 +732,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = TR2DNF3P93;
@@ -834,8 +805,8 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = TR2DNF3P93;
@@ -861,7 +832,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_INCLUDE_PATHS = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -1457,7 +1428,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		052F454C256A9D2B00CF8A99 /* Build configuration list for PBXNativeTarget "UnitTestBundle" */ = {
+		052F454C256A9D2B00CF8A99 /* Build configuration list for PBXNativeTarget "amberparser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				052F454D256A9D2B00CF8A99 /* Debug */,
@@ -1466,7 +1437,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0535C1A42520B1F4002A9172 /* Build configuration list for PBXNativeTarget "UnitTest" */ = {
+		0535C1A42520B1F4002A9172 /* Build configuration list for PBXNativeTarget "ambparser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0535C1A52520B1F4002A9172 /* Debug */,

@@ -301,6 +301,22 @@ import JavaScriptCore
 			mPropertyValues.addObserver(forKey: prop, listnerFunction: cbfunc)
 		)
 	}
+
+	public func toText() -> CNTextSection {
+		let sect = CNTextSection()
+		sect.header = "react-object: {"
+		sect.footer = "}"
+
+		let props = CNTextSection()
+		props.header = "properties: {"
+		props.footer = "}"
+		for name in self.allPropertyNames {
+			props.add(text: CNTextLine(string: name))
+		}
+		sect.add(text: props)
+
+		return sect
+	}
 }
 
 public struct AMBObjectPointer {

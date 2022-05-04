@@ -1,0 +1,14 @@
+[SOURCE] a: Object {
+}
+
+
+[FRAME] a: Object {
+}
+[SOURCE] a: b {
+	c: Int 10
+}
+
+
+[FRAME] a: b {
+  c: b10
+}

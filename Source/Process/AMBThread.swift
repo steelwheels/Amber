@@ -74,17 +74,21 @@ public class AMBThread: CNThread
 		let ambparser = AMBParser()
 		let frame: AMBFrame
 		switch ambparser.parse(source: script as String) {
-		case .ok(let frm):
-			frame = frm
-		case .error(let err):
+		case .success(let val):
+			if let frm = val as? AMBFrame {
+				frame = frm
+			} else {
+				console.error(string: "Frame is required but it is not given\n")
+				return -1
+			}
+		case .failure(let err):
 			console.error(string: "Parse error: \(err.toString())\n")
 			return -1
 		}
 
 		if doVerbose() {
 			console.print(string: "[Frame dump]\n")
-			let dumper = AMBFrameDumper()
-			let txt = dumper.dumpToText(frame: frame).toStrings().joined(separator: "\n")
+			let txt = frame.toText().toStrings().joined(separator: "\n")
 			console.print(string: txt + "\n")
 		}
 
@@ -93,17 +97,16 @@ public class AMBThread: CNThread
 		let mapper      = AMBComponentMapper()
 		let rootcomp: AMBComponent
 		switch ambcompiler.compile(frame: frame, mapper: mapper, context: mContext, processManager: pmgr, resource: resource, environment: self.environment, config: config, console: console) {
-		case .ok(let comp):
+		case .success(let comp):
 			rootcomp = comp
-		case .error(let err):
+		case .failure(let err):
 			console.error(string: "Error: \(err.toString())\n")
 			return -1
 		}
 
 		if doVerbose() {
 			console.print(string: "[Component dump]\n")
-			let dumper = AMBComponentDumper()
-			let txt = dumper.dumpToText(component: rootcomp).toStrings().joined(separator: "\n")
+			let txt = frame.toText().toStrings().joined(separator: "\n")
 			console.print(string: txt + "\n")
 		}
 

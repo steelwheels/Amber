@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "0535C19F2520B1F3002A9172"
-               BuildableName = "UnitTest"
-               BlueprintName = "UnitTest"
+               BlueprintIdentifier = "052F4548256A9D2B00CF8A99"
+               BuildableName = "ambparser.bundle"
+               BlueprintName = "amberparser"
                ReferencedContainer = "container:Amber.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -40,16 +40,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0535C19F2520B1F3002A9172"
-            BuildableName = "UnitTest"
-            BlueprintName = "UnitTest"
-            ReferencedContainer = "container:Amber.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -57,16 +47,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "0535C19F2520B1F3002A9172"
-            BuildableName = "UnitTest"
-            BlueprintName = "UnitTest"
+            BlueprintIdentifier = "052F4548256A9D2B00CF8A99"
+            BuildableName = "ambparser.bundle"
+            BlueprintName = "amberparser"
             ReferencedContainer = "container:Amber.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

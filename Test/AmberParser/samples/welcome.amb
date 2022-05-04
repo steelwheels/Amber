@@ -1,0 +1,53 @@
+top: VBox {
+	message: HBox {
+		logo: ImageView {
+			name: String "icon"
+	    }
+	    text_a: Label {
+			text: String
+				"Welcome to JSTerminal.\n\n"
+				"Before using this software, "
+				"please select the home directory "
+				"of this application.\n\n"
+				"I recommend you to create unique directory\n"
+				"such as ~/Development."
+			fontSize: FontSize large
+	    }
+	}
+	select: HBox {
+		home: URL ""
+		path_field: TextField {
+			text: String Listner(url: top.select.home) %{
+				if(!url.isNull){
+					top.done_button.isEnabled = true ;
+					return url.path ;
+				} else {
+					return "<none>" ;
+				}
+			%}
+		}
+		select_button: Button {
+			isEnabled:	Bool	true
+			title:  	String	"Select Home Directory"
+			pressed: Event() %{
+				let url = openPanel(
+					"Select Home Directory",
+					FileType.directory,
+					[]
+				) ;
+				if(url != null) {
+					top.select.home = url ;
+				}
+			%}
+		}
+	}
+	done_button: Button {
+		isEnabled:	Bool	false
+		title: 		String	"OK"
+		pressed: Event() %{
+			Preference.user.homeDirectory = top.select.home ;
+			enterView("terminal", null) ;
+		%}
+	}
+}
+

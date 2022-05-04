@@ -12,8 +12,6 @@ import Foundation
 
 open class AMBFrameCompiler
 {
-	public typealias AllocationResult = AMBComponentMapper.MapResult
-
 	let TEMPORARY_VARIABLE_NAME = "_amber_temp_var"
 
 	public enum CompileResult {
@@ -21,147 +19,196 @@ open class AMBFrameCompiler
 	case error(NSError)
 	}
 
+	private struct PointerStrings {
+		var path: 	String
+		var property:	String
+
+		public init(path pth: String, property prop: String) {
+			path 		= pth
+			property	= prop
+		}
+	}
+
 	public init() {
 	}
 
-	public func compile(frame frm: AMBFrame, mapper cmapper: AMBComponentMapper, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> CompileResult {
-		do {
-			/* Allocate frames */
-			let rootobj = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
-			/* Setup listner function */
-			try allocateListnerCallers(rootObject: rootobj, console: cons)
-			/* Allocate components by frame */
-			let rootcomp = try allocateComponents(reactObject: rootobj, mapper: cmapper, console: cons)
-			/* Add root object in context */
-			defineRootProperty(component: rootcomp, context: ctxt, console: cons)
-			/* Add setter/getter */
-			defineGetterAndSetters(component: rootcomp, context: ctxt, console: cons)
-			return .ok(rootcomp)
-		} catch {
-			return .error(error as NSError)
+	public func compile(frame frm: AMBFrame, mapper cmapper: AMBComponentMapper, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> Result<AMBComponent, NSError> {
+		/* Allocate frames */
+		let rootobj: AMBReactObject
+		switch compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons) {
+		case .success(let robj):
+			rootobj = robj
+		case .failure(let err):
+			return .failure(err)
 		}
+		/* Setup listner function */
+		if let err = allocateListnerCallers(rootObject: rootobj, console: cons) {
+			return .failure(err)
+		}
+		/* Allocate components by frame */
+		let rootcomp: AMBComponent
+		switch allocateComponents(reactObject: rootobj, mapper: cmapper, console: cons) {
+		case .success(let comp):
+			rootcomp = comp
+		case .failure(let err):
+			return .failure(err)
+		}
+		/* Add root object in context */
+		defineRootProperty(component: rootcomp, context: ctxt, console: cons)
+		/* Add setter/getter */
+		defineGetterAndSetters(component: rootcomp, context: ctxt, console: cons)
+		return .success(rootcomp)
 	}
 
-	private func compileFrame(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) throws -> AMBReactObject {
+	private func compileFrame(frame frm: AMBFrame, context ctxt: KEContext, processManager pmgr: CNProcessManager, resource res: KEResource, environment env: CNEnvironment, config conf: KEConfig, console cons: CNConsole) -> Result<AMBReactObject, NSError> {
 		let newobj = AMBReactObject(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env)
-		for member in frm.members {
-			switch member {
-			case .property(let prop):
-				switch prop.value {
-				case .nativeValue(let nval):
-					let val = try compileNativeValueProperty(nativeValue: nval, context: ctxt)
-					newobj.setImmediateValue(value: val, forProperty: prop.name)
-				case .procedureFunction(let pfunc):
-					let funcval = try compileFunction(reactObject: newobj, function: pfunc, context: ctxt, config: conf, console: cons)
-					newobj.setImmediateValue(value: funcval, forProperty: prop.name)
-				case .listnerFunction(let lfunc):
-					let funcval = try compileFunction(reactObject: newobj, function: lfunc, context: ctxt, config: conf, console: cons)
-					newobj.setListnerFunctionValue(value: funcval, forProperty: prop.name)
-					newobj.initListnerReturnValue(forProperty: prop.name)
+		for memb in frm.members {
+			let ident = memb.identifier
+			let value = memb.value
+			NSLog("cF: ident=\(ident)")
+			switch value.type {
+			case .scalar(_):
+				if let scalar = value as? AMBScalarValue {
+					let val = compileNativeValueProperty(nativeValue: scalar.value, context: ctxt)
+					newobj.setImmediateValue(value: val, forProperty: ident)
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen (0)", atFunction: #function, inFile: #file)
 				}
-				try addPropertyName(object: newobj, propertyName: prop.name)
-			case .eventFunction(let efunc):
-				let funcval = try compileFunction(reactObject: newobj, function: efunc, context: ctxt, config: conf, console: cons)
-				newobj.setImmediateValue(value: funcval, forProperty: efunc.identifier)
-				try addPropertyName(object: newobj, propertyName: efunc.identifier)
-			case .initFunction(let ifunc):
-				let funcval = try compileFunction(reactObject: newobj, function: ifunc, context: ctxt, config: conf, console: cons)
-				newobj.setImmediateValue(value: funcval, forProperty: ifunc.objectName)
-				try addPropertyName(object: newobj, propertyName: ifunc.identifier)
-			case .frame(let frm):
-				let frmval = try compileFrame(frame: frm, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons)
-				newobj.setChildFrame(forProperty: frm.instanceName, frame: frmval)
-				try addPropertyName(object: newobj, propertyName: frm.instanceName)
+			case .enumerate(_):
+				if let scalar = value as? AMBScalarValue {
+					let val = compileEnumValueProperty(enumValue: scalar.value, context: ctxt)
+					newobj.setImmediateValue(value: val, forProperty: ident)
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen (0)", atFunction: #function, inFile: #file)
+				}
+			case .array:
+				if let array = value as? AMBArrayValue {
+					let val = array.toJSValue(context: ctxt)
+					newobj.setImmediateValue(value: val, forProperty: ident)
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen (1)", atFunction: #function, inFile: #file)
+				}
+			case .dictionary:
+				if let dict = value as? AMBDictionaryValue {
+					let val = dict.toJSValue(context: ctxt)
+					newobj.setImmediateValue(value: val, forProperty: ident)
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen (2)", atFunction: #function, inFile: #file)
+				}
+			case .frame(_):
+				if let frame = value as? AMBFrame {
+					switch compileFrame(frame: frame, context: ctxt, processManager: pmgr, resource: res, environment: env, config: conf, console: cons) {
+					case .success(let robj):
+						NSLog("cF: setchild: \(newobj.frame.instanceName) <- \(robj.frame.instanceName)")
+						newobj.setChildFrame(forProperty: robj.frame.instanceName, frame: robj)
+					case .failure(let err):
+						return .failure(err)
+					}
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen (3)", atFunction: #function, inFile: #file)
+				}
+			case .initFunction:
+				if let ifunc = value as? AMBInitFunctionValue {
+					switch compileFunction(reactObject: newobj, function: ifunc, context: ctxt, config: conf, console: cons) {
+					case .success(let funcval):
+						newobj.setImmediateValue(value: funcval, forProperty: ifunc.objectName)
+					case .failure(let err):
+						return .failure(err)
+					}
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen (4)", atFunction: #function, inFile: #file)
+				}
+			case .eventFunction:
+				if let efunc = value as? AMBEventFunctionValue {
+					switch compileFunction(reactObject: newobj, function: efunc, context: ctxt, config: conf, console: cons) {
+					case .success(let funcval):
+						newobj.setImmediateValue(value: funcval, forProperty: ident)
+					case .failure(let err):
+						return .failure(err)
+					}
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen (5)", atFunction: #function, inFile: #file)
+				}
+			case .listnerFunction:
+				if let lfunc = value as? AMBListnerFunctionValue {
+					switch compileFunction(reactObject: newobj, function: lfunc, context: ctxt, config: conf, console: cons) {
+					case .success(let funcval):
+						newobj.setListnerFunctionValue(value: funcval, forProperty: ident)
+						newobj.initListnerReturnValue(forProperty: ident)
+					case .failure(let err):
+						return .failure(err)
+					}
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen (6)", atFunction: #function, inFile: #file)
+				}
+			case .procedureFunction:
+				if let proc = value as? AMBProcedureFunctionValue {
+					switch compileFunction(reactObject: newobj, function: proc, context: ctxt, config: conf, console: cons) {
+					case .success(let funcval):
+						newobj.setImmediateValue(value: funcval, forProperty: ident)
+					case .failure(let err):
+						return .failure(err)
+					}
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen (7)", atFunction: #function, inFile: #file)
+				}
 			}
+			NSLog("cF: (2)")
+			if let err = addPropertyName(object: newobj, propertyName: ident) {
+				NSLog("cF: (3)")
+				return .failure(err)
+			}
+			NSLog("cF: (4)")
 		}
-		return newobj
+		return .success(newobj)
 	}
 
-	private func addPropertyName(object robj: AMBReactObject, propertyName pname: String) throws {
+	private func addPropertyName(object robj: AMBReactObject, propertyName pname: String) -> NSError? {
 		if robj.scriptedPropertyNames.contains(pname) {
-			throw NSError.parseError(message: "Multi defined property names: \(pname)")
+			return NSError.parseError(message: "Multi defined property names: \(pname)")
 		} else {
 			robj.addScriptedPropertyName(name: pname)
+			return nil
 		}
 	}
 
-	private func compileNativeValueProperty(nativeValue nval: CNValue, context ctxt: KEContext) throws -> JSValue {
+	private func compileNativeValueProperty(nativeValue nval: CNValue, context ctxt: KEContext) -> JSValue {
 		return nval.toJSValue(context: ctxt)
 	}
 
-	private func compileFunction(reactObject dst: AMBReactObject, function afunc: AMBFunction, context ctxt: KEContext, config conf: KEConfig, console cons: CNConsole) throws -> JSValue {
+	private func compileEnumValueProperty(enumValue eval: CNValue, context ctxt: KEContext) -> JSValue {
+		return eval.toJSValue(context: ctxt)
+	}
+
+	private func compileFunction(reactObject dst: AMBReactObject, function afunc: AMBFunctionValue, context ctxt: KEContext, config conf: KEConfig, console cons: CNConsole) -> Result<JSValue, NSError> {
 		/* Make JavaScript function */
 		let varname = TEMPORARY_VARIABLE_NAME + afunc.identifier
-		let funcscr = functionToScript(function: afunc, context: ctxt)
+		let funcscr = afunc.toScript()
 		let script  = varname + " = " + funcscr
 		/* Evaluate the function */
 		let _ = ctxt.evaluateScript(script)
 		if ctxt.errorCount != 0 {
 			ctxt.resetErrorCount()
-			throw NSError.parseError(message: "Failed to compile function: \(afunc.identifier)\n\(script)")
+			let err = NSError.parseError(message: "Failed to compile function: \(afunc.identifier)\n\(script)")
+			return .failure(err)
 		}
 		if let val = ctxt.getValue(name: varname) {
-			return val
+			return .success(val)
 		} else {
-			throw NSError.parseError(message: "No compile result for function: \(afunc.identifier)")
+			let err = NSError.parseError(message: "No compile result for function: \(afunc.identifier)")
+			return .failure(err)
 		}
 	}
 
-	private func functionToScript(function afunc: AMBFunction, context ctxt: KEContext) -> String {
-		var argstr: String = ""
-		switch afunc.functionType {
-		case .procedure:
-			if let pfunc = afunc as? AMBProcedureFunction {
-				argstr = ""					// do NOT insert self
-				for arg in pfunc.arguments {
-					if argstr.count > 0 {
-						argstr += ", "
-					}
-					argstr += arg.name
-				}
-			} else {
-				fatalError("Failed to convert procedure function")
-			}
-		case .event:
-			if let efunc = afunc as? AMBEventFunction {
-				argstr = "self"					// insert self
-				for arg in efunc.arguments {
-					argstr += ", " + arg.name
-				}
-			} else {
-				fatalError("Failed to convert event function")
-			}
-		case .initialize:
-			if let ifunc = afunc as? AMBInitFunction {
-				argstr = "self"					// insert self
-				for arg in ifunc.arguments {
-					argstr += ", " + arg.name
-				}
-			} else {
-				fatalError("Failed to convert event function")
-			}
-		case .listner:
-			if let lfunc = afunc as? AMBListnerFunction {
-				argstr = "self"				// insert self
-				for arg in lfunc.arguments {
-					argstr += ", " + arg.name
-				}
-			} else {
-				fatalError("Failed to convert listner function")
-			}
-		}
-		let header  = "function(\(argstr)) {\n"
-		let tail    = "\n}\n"
-		return header + afunc.script + tail
-	}
-
-	private func allocateListnerCallers(rootObject root: AMBReactObject, console cons: CNConsole) throws {
+	private func allocateListnerCallers(rootObject root: AMBReactObject, console cons: CNConsole) -> NSError? {
 		/* make pathString -> object map <path-string, react-object> */
 		let omap:Dictionary<String, AMBReactObject>  = makeObjectMap(pathString: nil, object: root)
 		/* make object pointer for each listner function parameters */
-		try makeObjectPointers(pathString: nil, objectMap: omap,reactObject: root)
+		if let err = makeObjectPointers(pathString: nil, objectMap: omap,reactObject: root) {
+			return err
+		}
 		/* Link listner functions */
-		try linkListnerFunctions(reactObject: root, console: cons)
+		return linkListnerFunctions(reactObject: root, console: cons)
 	}
 
 	private func makeObjectMap(pathString path: String?, object obj: AMBReactObject) -> Dictionary<String, AMBReactObject> {
@@ -184,7 +231,7 @@ open class AMBFrameCompiler
 		return result
 	}
 
-	private func makeObjectPointers(pathString path: String?, objectMap omap: Dictionary<String, AMBReactObject>, reactObject obj: AMBReactObject) throws {
+	private func makeObjectPointers(pathString path: String?, objectMap omap: Dictionary<String, AMBReactObject>, reactObject obj: AMBReactObject) -> NSError? {
 		let objname = obj.frame.instanceName
 		let newpath: String
 		if let p = path {
@@ -192,51 +239,66 @@ open class AMBFrameCompiler
 		} else {
 			newpath = objname
 		}
-		try makeObjectPointer(pathString: newpath, objectMap: omap, reactObject: obj)
+		if let err =  makeObjectPointer(pathString: newpath, objectMap: omap, reactObject: obj) {
+			return err
+		}
 		for key in obj.scriptedPropertyNames {
 			if let child = obj.childFrame(forProperty: key) {
-				try makeObjectPointers(pathString: newpath, objectMap: omap, reactObject: child)
+				if let err = makeObjectPointers(pathString: newpath, objectMap: omap, reactObject: child) {
+					return err
+				}
 			}
 		}
+		return nil
 	}
 
-	private func makeObjectPointer(pathString path: String, objectMap omap: Dictionary<String, AMBReactObject>, reactObject obj: AMBReactObject) throws {
+	private func makeObjectPointer(pathString path: String, objectMap omap: Dictionary<String, AMBReactObject>, reactObject obj: AMBReactObject) -> NSError? {
 		let frame = obj.frame
-		for member in frame.members {
-			switch member {
-			case .property(let prop):
-				switch prop.value {
-				case .listnerFunction(let lfunc):
+		for memb in frame.members {
+			let ident = memb.identifier
+			let value = memb.value
+			switch value.type {
+			case .listnerFunction:
+				if let lfunc = value as? AMBListnerFunctionValue {
 					var pointers: Array<AMBObjectPointer> = []
 					for arg in lfunc.arguments {
-						let ptr = try pathToPointer(pathArgument: arg, objectMap: omap, currentPath: path)
-						pointers.append(ptr)
+						switch pathToPointer(pathArgument: arg, objectMap: omap, currentPath: path) {
+						case .success(let ptr):
+							pointers.append(ptr)
+						case .failure(let err):
+							return err
+						}
 					}
-					obj.setListnerFuncPointers(pointers: pointers, forProperty: lfunc.identifier)
-				default:
-					break
+					obj.setListnerFuncPointers(pointers: pointers, forProperty: ident)
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen", atFunction: #function, inFile: #file)
 				}
 			default:
 				break
 			}
 		}
+		return nil
 	}
 
-	private func pathToPointer(pathArgument arg: AMBPathArgument, objectMap omap: Dictionary<String, AMBReactObject>, currentPath curpath: String) throws -> AMBObjectPointer {
-		let (abspath, propname) = try makePointerString(pathArgument: arg, currentPath: curpath)
-		if let obj = omap[abspath] {
-			return AMBObjectPointer(referenceName: arg.name, pointedName: propname, pointedObject: obj)
-		} else {
-			throw NSError.parseError(message: "No object at path \(abspath)")
+	private func pathToPointer(pathArgument arg: AMBPathArgument, objectMap omap: Dictionary<String, AMBReactObject>, currentPath curpath: String) -> Result<AMBObjectPointer, NSError> {
+		switch makePointerString(pathArgument: arg, currentPath: curpath) {
+		case .success(let strs):
+			if let obj = omap[strs.path] {
+				return .success(AMBObjectPointer(referenceName: arg.name, pointedName: strs.property, pointedObject: obj))
+			} else {
+				return .failure(NSError.parseError(message: "No object at path \(strs.path)"))
+			}
+		case .failure(let err):
+			return .failure(err)
 		}
 	}
 
-	private func makePointerString(pathArgument arg: AMBPathArgument, currentPath curpath: String) throws -> (String, String) { // (Path, Property)
+	private func makePointerString(pathArgument arg: AMBPathArgument, currentPath curpath: String) -> Result<PointerStrings, NSError> {
 		let pathelms = arg.expression.elements
 		let elmnum   = pathelms.count
 		guard elmnum >= 2 else {
 			let pathstr = pathelms.joined(separator: ".")
-			throw NSError.parseError(message: "Too short path expression: \(pathstr)")
+			return .failure(NSError.parseError(message: "Too short path expression: \(pathstr)"))
 		}
 		let rootpath = pathelms[0]
 		let propname = pathelms[elmnum-1]	// last item for property
@@ -254,22 +316,25 @@ open class AMBFrameCompiler
 				abspath += "." + pathelms[i]
 			}
 		}
-		return (abspath, propname)
+		return .success(PointerStrings(path: abspath, property: propname))
 	}
 
-	private func linkListnerFunctions(reactObject obj: AMBReactObject, console cons: CNConsole) throws {
+	private func linkListnerFunctions(reactObject obj: AMBReactObject, console cons: CNConsole) -> NSError? {
 		/* Visit children first */
 		for key in obj.scriptedPropertyNames {
 			if let child = obj.childFrame(forProperty: key) {
 				/* Visit child frame */
-				try linkListnerFunctions(reactObject: child, console: cons)
+				if let err = linkListnerFunctions(reactObject: child, console: cons) {
+					return err
+				}
 			} else if let funcval = obj.listnerFuntionValue(forProperty: key) {
 				guard let ptrs = obj.listnerFuncPointers(forProperty: key) else {
-					throw NSError.parseError(message: "Failed to get pointers for listner: \(key)")
+					return NSError.parseError(message: "Failed to get pointers for listner: \(key)")
 				}
 				addCallback(pointers: ptrs, ownerObject: obj, ownerProperty: key, listnerFunction: funcval, console: cons)
 			}
 		}
+		return nil
 	}
 
 	private func addCallback(pointers ptrs: Array<AMBObjectPointer>, ownerObject obj: AMBReactObject, ownerProperty prop: String, listnerFunction lval: JSValue, console cons: CNConsole) {
@@ -304,13 +369,8 @@ open class AMBFrameCompiler
 		}
 	}
 
-	private func allocateComponents(reactObject obj: AMBReactObject, mapper cmapper: AMBComponentMapper, console cons: CNConsole) throws -> AMBComponent {
-		switch cmapper.map(object: obj, console: cons) {
-		case .ok(let comp):
-			return comp
-		case .error(let err):
-			throw err
-		}
+	private func allocateComponents(reactObject obj: AMBReactObject, mapper cmapper: AMBComponentMapper, console cons: CNConsole) -> Result<AMBComponent, NSError> {
+		return cmapper.map(object: obj, console: cons)
 	}
 
 	private func defineRootProperty(component comp: AMBComponent, context ctxt: KEContext, console cons: CNConsole) {

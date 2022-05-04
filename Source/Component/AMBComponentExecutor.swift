@@ -31,65 +31,51 @@ public class AMBComponentExecutor
 		/* Seach and execute "Init" function */
 		let robj = comp.reactObject
 		let frm  = robj.frame
-		for member in frm.members {
-			switch member {
-			case .initFunction(let ifunc):
-				if let fval = robj.immediateValue(forProperty: ifunc.objectName) {
-					/* Execute "Init" function */
-					let argval = arg.toJSValue(context: robj.context)
-					if let retval = fval.call(withArguments: [robj, argval]) { // insert self and 1 parameter
-						if !retval.isUndefined {
-							robj.setImmediateValue(value: retval, forProperty: ifunc.identifier)
+		for memb in frm.members {
+			let value = memb.value
+			switch value.type {
+			case .initFunction:
+				if let initfunc = value as? AMBInitFunctionValue {
+					if let fval = robj.immediateValue(forProperty: initfunc.objectName) {
+						/* Execute "Init" function */
+						let argval = arg.toJSValue(context: robj.context)
+						if let retval = fval.call(withArguments: [robj, argval]) { // insert self and 1 parameter
+							if !retval.isUndefined {
+								robj.setImmediateValue(value: retval, forProperty: initfunc.identifier)
+							}
+						} else {
+							CNLog(logLevel: .error, message: "Failed to execute this function", atFunction: #function, inFile: #file)
 						}
+					} else {
+						CNLog(logLevel: .error, message: "Init function is not found", atFunction: #function, inFile: #file)
 					}
 				} else {
-					CNLog(logLevel: .error, message: "Failed to call Init function", atFunction: #function, inFile: #file)
+					CNLog(logLevel: .error, message: "Can not happen", atFunction: #function, inFile: #file)
 				}
-			case .frame(let frame):
-				if let child = comp.searchChild(byName: frame.instanceName) {
-					execInitFunctions(component: child, argument: arg)
-				} else {
-					CNLog(logLevel: .error, message: "Unexpected frame name", atFunction: #function, inFile: #file)
-				}
-			default:
-				break // Not target
-			}
-		}
-
-/*
-
-		/* Execute child first */
-		for child in comp.children {
-			execInitFunctions(component: child)
-		}
-		/* Seach and execute "Init" function */
-		let robj = comp.reactObject
-		let frm  = robj.frame
-		for member in frm.members {
-			switch member {
-			case .initFunction(let ifunc):
-				if let fval = robj.immediateValue(forProperty: ifunc.objectName) {
-					/* Execute "Init" function */
-					if let retval = fval.call(withArguments: [robj]) { // insert sel
-						if !retval.isUndefined {
-							robj.setImmediateValue(value: retval, forProperty: ifunc.identifier)
-						}
+			case .frame(_):
+				if let frame = value as? AMBFrame {
+					if let child = comp.searchChild(byName: frame.instanceName) {
+						execInitFunctions(component: child, argument: arg)
+					} else {
+						CNLog(logLevel: .error, message: "Unexpected frame name: \(frame.instanceName)", atFunction: #function, inFile: #file)
 					}
+				} else {
+					CNLog(logLevel: .error, message: "Can not happen", atFunction: #function, inFile: #file)
 				}
 			default:
 				break
 			}
-		}*/
+		}
 	}
 
 	private func execListnerFunctions(rootObject robj: AMBReactObject, console cons: CNConsole) throws {
 		let frm  = robj.frame
-		for member in frm.members {
-			switch member {
-			case .property(let prop):
-				switch prop.value {
-				case .listnerFunction(let lfunc):
-					let funcname = lfunc.identifier
+		for memb in frm.members {
+			let value = memb.value
+			switch value.type {
+			case .listnerFunction:
+				if let listner = value as? AMBListnerFunctionValue {
+					let funcname = listner.identifier
 					if let lfuncval = robj.listnerFuntionValue(forProperty: funcname) {
 						/* Execute listner function */
 						guard let ptrs = robj.listnerFuncPointers(forProperty: funcname) else {
@@ -114,16 +100,18 @@ public class AMBComponentExecutor
 					} else {
 						throw NSError.parseError(message: "Internal error for function \(funcname) at \(#function) [0]")
 					}
-				case .nativeValue(_), .procedureFunction(_):
-					break
-				}
-			case .frame(let cfrm):
-				if let cobj = robj.childFrame(forProperty: cfrm.instanceName) {
-					try execListnerFunctions(rootObject: cobj, console: cons)
 				} else {
-					throw NSError.parseError(message: "Internal error for property \(cfrm.instanceName) at \(#function) [1]")
+					CNLog(logLevel: .error, message: "Can not happen", atFunction: #function, inFile: #file)
 				}
-			case .eventFunction(_), .initFunction(_):
+			case .frame(_):
+				if let frame = value as? AMBFrame {
+					if let cobj = robj.childFrame(forProperty: frame.instanceName) {
+						try execListnerFunctions(rootObject: cobj, console: cons)
+					} else {
+						throw NSError.parseError(message: "Internal error for property \(frame.instanceName) at \(#function) [1]")
+					}
+				}
+			default:
 				break
 			}
 		}

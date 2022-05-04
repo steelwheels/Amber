@@ -45,6 +45,23 @@ public extension AMBComponent
 			robj.addScriptedPropertyName(name: prop)
 		}
 	}
+
+	func toText() -> CNText {
+		let component = CNTextSection()
+		component.header = "component: {"
+		component.footer = "}"
+		component.add(text: self.reactObject.toText())
+
+		let children = CNTextSection()
+		children.header = "children: {"
+		children.footer = "}"
+		for child in self.children {
+			children.add(text: child.toText())
+		}
+		component.add(text: children)
+
+		return component
+	}
 }
 
 @objc open class AMBComponentObject: NSObject, AMBComponent
