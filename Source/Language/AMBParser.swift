@@ -275,13 +275,13 @@ public class AMBParser
 		var docont = true
 		var is1st  = true
 		while docont {
-			if strm.requireString(value: "]") {
+			if strm.requireSymbol(symbol: "]") {
 				docont = false
 			} else {
 				if is1st {
 					is1st = false
 				} else {
-					if !strm.requireString(value: ",") {
+					if !strm.requireSymbol(symbol: ",") {
 						return .failure(parseError(message: "\",\" is required to divide array elements", stream: strm))
 					}
 				}
@@ -304,20 +304,20 @@ public class AMBParser
 		var docont = true
 		var is1st  = true
 		while docont {
-			if strm.requireString(value: "}") {
+			if strm.requireSymbol(symbol: "}") {
 				docont = false
 			} else {
 				if is1st {
 					is1st = false
 				} else {
-					if !strm.requireString(value: ",") {
+					if !strm.requireSymbol(symbol: ",") {
 						return .failure(parseError(message: "\",\" is required to divide dictionary elements", stream: strm))
 					}
 				}
 				guard let key = strm.getIdentifier() else {
 					return .failure(parseError(message: "The key for dirctionary is required", stream: strm))
 				}
-				if !strm.requireString(value: ":") {
+				if !strm.requireSymbol(symbol: ":") {
 					return .failure(parseError(message: "The \":\" for dirctionary is required", stream: strm))
 				}
 				switch parseElementValue(stream: strm) {
