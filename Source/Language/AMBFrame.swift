@@ -108,14 +108,14 @@ public class AMBValue: AMBObject
 	public var type: ValueType { get { return mValueType }}
 
 	public func toJSValue(context ctxt: KEContext) -> JSValue {
-		return JSValue(object: self.toObject(context: ctxt), in: ctxt)
+		return JSValue(object: self.toAny(context: ctxt), in: ctxt)
 	}
 
 	open func typeName() -> String {
 		return "Unknown type"
 	}
 
-	open func toObject(context ctxt: KEContext) -> NSObject {
+	open func toAny(context ctxt: KEContext) -> Any {
 		CNLog(logLevel: .error, message: "Must be override", atFunction: #function, inFile: #file)
 		return NSNull()
 	}
@@ -141,12 +141,8 @@ public class AMBScalarValue: AMBValue
 		return mValue.valueType.description
 	}
 
-	public override func toObject(context ctxt: KEContext) -> NSObject {
-		if let obj = mValue.toObject() {
-			return obj
-		} else {
-			return NSNull()
-		}
+	public override func toAny(context ctxt: KEContext) -> Any {
+		return mValue.toAny()
 	}
 
 	public override func toText() -> CNText {
@@ -175,10 +171,10 @@ public class AMBArrayValue: AMBValue
 		return AMBArrayValue.TypeName
 	}
 
-	public override func toObject(context ctxt: KEContext) -> NSObject {
+	public override func toAny(context ctxt: KEContext) -> Any {
 		let result = NSMutableArray(capacity: 8)
 		for elm in mValue {
-			result.add(elm.toObject(context: ctxt))
+			result.add(elm.toAny(context: ctxt))
 		}
 		return result
 	}
@@ -214,10 +210,10 @@ public class AMBDictionaryValue: AMBValue
 		return "Dictionary"
 	}
 
-	public override func toObject(context ctxt: KEContext) -> NSObject {
+	public override func toAny(context ctxt: KEContext) -> Any {
 		let result = NSMutableDictionary(capacity: 8)
 		for (key, memb) in mValue {
-			result.setValue(memb.toObject(context: ctxt), forKey: key)
+			result.setValue(memb.toAny(context: ctxt), forKey: key)
 		}
 		return result
 	}
@@ -225,13 +221,16 @@ public class AMBDictionaryValue: AMBValue
 	public override func toText() -> CNText {
 		let result = CNTextSection()
 		result.header = "{" ; result.footer = "}"
-		for (key, val) in mValue {
-			let newsect = CNTextSection()
-			newsect.header = "\(key):"
-			newsect.footer = ""
-			newsect.add(text: val.toText())
+		let keys = mValue.keys.sorted()
+		for key in keys {
+			if let val = mValue[key] {
+				let newsect = CNTextSection()
+				newsect.header = "\(key):"
+				newsect.footer = ""
+				newsect.add(text: val.toText())
 
-			result.add(text: newsect)
+				result.add(text: newsect)
+			}
 		}
 		return result
 	}
@@ -251,7 +250,7 @@ public class AMBFunctionValue: AMBValue
 		super.init(valueType: vtype)
 	}
 
-	public override func toObject(context ctxt: KEContext) -> NSObject {
+	public override func toAny(context ctxt: KEContext) -> Any {
 		let scr = self.toScript()
 		if let resval = ctxt.evaluateScript(scr) {
 			if ctxt.errorCount == 0 {

@@ -1,0 +1,7 @@
+top: VBox {
+    terminal_a: Terminal {
+	shell: Shell {
+	}
+    }
+}
+

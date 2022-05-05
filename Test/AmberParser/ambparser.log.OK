@@ -4,11 +4,1116 @@
 
 [FRAME] a: Object {
 }
+[COMPONENT] component a:Object {
+  react-object: {
+    properties: {
+      className
+      instanceName
+    }
+  }
+  children: {
+  }
+}
 [SOURCE] a: b {
 	c: Int 10
 }
 
 
 [FRAME] a: b {
-  c: b10
+  c: Number 
+    10
+}
+[COMPONENT] component a:b {
+  react-object: {
+    properties: {
+      c
+      className
+      instanceName
+    }
+  }
+  children: {
+  }
+}
+[SOURCE] a: Object {
+	b: Object {
+		c: Int 124
+	}
+}
+
+
+[FRAME] a: Object {
+  b: Object 
+    b: Object {
+      c: Number 
+        124
+    }
+}
+[COMPONENT] component a:Object {
+  react-object: {
+    properties: {
+      className
+      instanceName
+      b
+    }
+  }
+  children: {
+    component b:Object {
+      react-object: {
+        properties: {
+          c
+          className
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+  }
+}
+[SOURCE] top: VBox {
+  message: HBox {
+    logo: ImageView {
+      name: String "icon"
+    }
+  }
+}
+
+
+[FRAME] top: VBox {
+  message: HBox 
+    message: HBox {
+      logo: ImageView 
+        logo: ImageView {
+          name: String 
+            "icon"
+        }
+    }
+}
+[COMPONENT] component top:VBox {
+  react-object: {
+    properties: {
+      message
+      className
+      instanceName
+    }
+  }
+  children: {
+    component message:HBox {
+      react-object: {
+        properties: {
+          className
+          logo
+          instanceName
+        }
+      }
+      children: {
+        component logo:ImageView {
+          react-object: {
+            properties: {
+              name
+              className
+              instanceName
+            }
+          }
+          children: {
+          }
+        }
+      }
+    }
+  }
+}
+[SOURCE] top: VBox {
+	message: HBox {
+		logo: ImageView {
+			name: String "icon"
+	    }
+	    text_a: Label {
+			text: String
+				"Welcome to JSTerminal.\n\n"
+				"Before using this software, "
+				"please select the home directory "
+				"of this application.\n\n"
+				"I recommend you to create unique directory\n"
+				"such as ~/Development."
+			fontSize: FontSize large
+	    }
+	}
+	select: HBox {
+		home: URL ""
+		path_field: TextField {
+			text: String Listner(url: top.select.home) %{
+				if(!url.isNull){
+					top.done_button.isEnabled = true ;
+					return url.path ;
+				} else {
+					return "<none>" ;
+				}
+			%}
+		}
+		select_button: Button {
+			isEnabled:	Bool	true
+			title:  	String	"Select Home Directory"
+			pressed: Event() %{
+				let url = openPanel(
+					"Select Home Directory",
+					FileType.directory,
+					[]
+				) ;
+				if(url != null) {
+					top.select.home = url ;
+				}
+			%}
+		}
+	}
+	done_button: Button {
+		isEnabled:	Bool	false
+		title: 		String	"OK"
+		pressed: Event() %{
+			Preference.user.homeDirectory = top.select.home ;
+			enterView("terminal", null) ;
+		%}
+	}
+}
+
+
+[FRAME] top: VBox {
+  message: HBox 
+    message: HBox {
+      logo: ImageView 
+        logo: ImageView {
+          name: String 
+            "icon"
+        }
+      text_a: Label 
+        text_a: Label {
+          text: String 
+            "Welcome to JSTerminal.
+            Before using this software, please select the home directory of this application.
+            I recommend you to create unique directory
+            such as ~/Development."
+          fontSize: Enum 
+            {
+              class: "enum",
+              name: "large",
+              value: 19
+            }
+        }
+    }
+  select: HBox 
+    select: HBox {
+      home: String 
+        ""
+      path_field: TextField 
+        path_field: TextField {
+          text: Listner 
+            String Listner(url) %{
+              				if(!url.isNull){
+              					top.done_button.isEnabled = true ;
+              					return url.path ;
+              				} else {
+              					return "<none>" ;
+              				}
+              			
+            %}
+        }
+      select_button: Button 
+        select_button: Button {
+          isEnabled: Bool 
+            true
+          title: String 
+            "Select Home Directory"
+          pressed: Event 
+            Event() %{
+              				let url = openPanel(
+              					"Select Home Directory",
+              					FileType.directory,
+              					[]
+              				) ;
+              				if(url != null) {
+              					top.select.home = url ;
+              				}
+              			
+            %}
+        }
+    }
+  done_button: Button 
+    done_button: Button {
+      isEnabled: Bool 
+        false
+      title: String 
+        "OK"
+      pressed: Event 
+        Event() %{
+          			Preference.user.homeDirectory = top.select.home ;
+          			enterView("terminal", null) ;
+          		
+        %}
+    }
+}
+[COMPONENT] component top:VBox {
+  react-object: {
+    properties: {
+      done_button
+      select
+      message
+      className
+      instanceName
+    }
+  }
+  children: {
+    component message:HBox {
+      react-object: {
+        properties: {
+          text_a
+          className
+          logo
+          instanceName
+        }
+      }
+      children: {
+        component logo:ImageView {
+          react-object: {
+            properties: {
+              name
+              className
+              instanceName
+            }
+          }
+          children: {
+          }
+        }
+        component text_a:Label {
+          react-object: {
+            properties: {
+              fontSize
+              className
+              text
+              instanceName
+            }
+          }
+          children: {
+          }
+        }
+      }
+    }
+    component select:HBox {
+      react-object: {
+        properties: {
+          path_field
+          select_button
+          home
+          className
+          instanceName
+        }
+      }
+      children: {
+        component path_field:TextField {
+          react-object: {
+            properties: {
+              _lfunc_text
+              className
+              text
+              instanceName
+            }
+          }
+          children: {
+          }
+        }
+        component select_button:Button {
+          react-object: {
+            properties: {
+              pressed
+              title
+              className
+              instanceName
+              isEnabled
+            }
+          }
+          children: {
+          }
+        }
+      }
+    }
+    component done_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+          isEnabled
+        }
+      }
+      children: {
+      }
+    }
+  }
+}
+[SOURCE] top: VBox {
+    bitmap: Bitmap {
+        width:          Int     640
+        height:         Int     480
+        rowCount:       Int     50
+        columnCount:    Int     50
+
+        draw: Event(context, count) %{
+            let off  = 3.14 / 100.0 * count ;
+
+	    context.clean() ;
+            for(x=0 ; x<6.28 ; x+=0.1) {
+                let ys = Math.sin(off + x) ;
+                let yc = Math.cos(off + x) ;
+                let yt = Math.tan(off + x) ;
+
+                let xr  = Math.round(x  * (50/6.28) ) ;
+                let ysr = Math.round((ys * 25.0) + 25.0) ;
+                let ycr = Math.round((yc * 25.0) + 25.0) ;
+                let ytr = Math.round((yt * 25.0) + 25.0) ;
+
+                context.set(xr, ysr, Color.green) ;
+                context.set(xr, ycr, Color.blue) ;
+                context.set(xr, ytr, Color.red) ;
+            }
+        %}
+    }
+    buttons: HBox {
+        start_button: Button {
+            title: String Listner(state: top.bitmap.state) %{
+                let result = "Unknown" ;
+                switch(state) {
+                    case AnimationState.idle:
+                        result = "Start" ;
+                    break ;
+                    case AnimationState.run:
+                        result = "Stop" ;
+                    break ;
+                    case AnimationState.pause:
+                        result = "Wait" ;
+                    break ;
+                }
+                return result ;
+            %}
+            pressed: Event() %{
+                let grp = top.bitmap ;
+                switch(grp.state) {
+                    case AnimationState.idle:
+                        grp.start(1.0, 10.0) ;
+                    break ;
+                    case AnimationState.run:
+                        grp.stop() ;
+                    break ;
+                    case AnimationState.pause:
+                        console.log("No effect") ;
+                    break ;
+                }
+            %}
+        }
+        quit_button: Button {
+   		    title: String "Quit"
+		    isEnabled: Bool Listner(state: top.bitmap.state) %{
+                let result = false ;
+                switch(state) {
+                    case AnimationState.idle:
+                        result = true ;
+                    break ;
+                    case AnimationState.run:
+                        result = false ;
+                    break ;
+                    case AnimationState.pause:
+                        result = false ;
+                    break ;
+                }
+                return result ;
+            %}
+		    pressed: Event() %{
+			    leaveView(1) ;
+            %}
+        }
+    }
+
+}
+
+
+[FRAME] top: VBox {
+  bitmap: Bitmap 
+    bitmap: Bitmap {
+      width: Number 
+        640
+      height: Number 
+        480
+      rowCount: Number 
+        50
+      columnCount: Number 
+        50
+      draw: Event 
+        Event(context, count) %{
+                      let off  = 3.14 / 100.0 * count ;
+          	    context.clean() ;
+                      for(x=0 ; x<6.28 ; x+=0.1) {
+                          let ys = Math.sin(off + x) ;
+                          let yc = Math.cos(off + x) ;
+                          let yt = Math.tan(off + x) ;
+                          let xr  = Math.round(x  * (50/6.28) ) ;
+                          let ysr = Math.round((ys * 25.0) + 25.0) ;
+                          let ycr = Math.round((yc * 25.0) + 25.0) ;
+                          let ytr = Math.round((yt * 25.0) + 25.0) ;
+                          context.set(xr, ysr, Color.green) ;
+                          context.set(xr, ycr, Color.blue) ;
+                          context.set(xr, ytr, Color.red) ;
+                      }
+                  
+        %}
+    }
+  buttons: HBox 
+    buttons: HBox {
+      start_button: Button 
+        start_button: Button {
+          title: Listner 
+            String Listner(state) %{
+                              let result = "Unknown" ;
+                              switch(state) {
+                                  case AnimationState.idle:
+                                      result = "Start" ;
+                                  break ;
+                                  case AnimationState.run:
+                                      result = "Stop" ;
+                                  break ;
+                                  case AnimationState.pause:
+                                      result = "Wait" ;
+                                  break ;
+                              }
+                              return result ;
+                          
+            %}
+          pressed: Event 
+            Event() %{
+                              let grp = top.bitmap ;
+                              switch(grp.state) {
+                                  case AnimationState.idle:
+                                      grp.start(1.0, 10.0) ;
+                                  break ;
+                                  case AnimationState.run:
+                                      grp.stop() ;
+                                  break ;
+                                  case AnimationState.pause:
+                                      console.log("No effect") ;
+                                  break ;
+                              }
+                          
+            %}
+        }
+      quit_button: Button 
+        quit_button: Button {
+          title: String 
+            "Quit"
+          isEnabled: Listner 
+            Bool Listner(state) %{
+                              let result = false ;
+                              switch(state) {
+                                  case AnimationState.idle:
+                                      result = true ;
+                                  break ;
+                                  case AnimationState.run:
+                                      result = false ;
+                                  break ;
+                                  case AnimationState.pause:
+                                      result = false ;
+                                  break ;
+                              }
+                              return result ;
+                          
+            %}
+          pressed: Event 
+            Event() %{
+              			    leaveView(1) ;
+                          
+            %}
+        }
+    }
+}
+[COMPONENT] component top:VBox {
+  react-object: {
+    properties: {
+      buttons
+      bitmap
+      className
+      instanceName
+    }
+  }
+  children: {
+    component bitmap:Bitmap {
+      react-object: {
+        properties: {
+          rowCount
+          draw
+          height
+          columnCount
+          className
+          width
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+    component buttons:HBox {
+      react-object: {
+        properties: {
+          start_button
+          quit_button
+          className
+          instanceName
+        }
+      }
+      children: {
+        component start_button:Button {
+          react-object: {
+            properties: {
+              pressed
+              title
+              className
+              _lfunc_title
+              instanceName
+            }
+          }
+          children: {
+          }
+        }
+        component quit_button:Button {
+          react-object: {
+            properties: {
+              pressed
+              title
+              _lfunc_isEnabled
+              className
+              instanceName
+              isEnabled
+            }
+          }
+          children: {
+          }
+        }
+      }
+    }
+  }
+}
+[SOURCE] top: VBox {
+    ok_button: Button {
+        title:     String "OK"
+	isEnabled: Bool  true
+        pressed: Event() %{
+		console.log("pressed: OK") ;
+	    	leaveView(1) ;
+        %}
+    }
+    arrows_button: Button {
+        title:     String "->"
+	isEnabled: Bool  true
+        pressed: Event() %{
+		console.log("pressed: right arrow") ;
+	    	leaveView(1) ;
+        %}
+    }
+    cancel_button: Button {
+        title:  String "Cancel"
+	isEnabled: Bool  true
+        pressed: Event() %{
+		console.log("pressed: Cancel") ;
+		leaveView(0) ;
+        %}
+    }
+}
+
+
+[FRAME] top: VBox {
+  ok_button: Button 
+    ok_button: Button {
+      title: String 
+        "OK"
+      isEnabled: Bool 
+        true
+      pressed: Event 
+        Event() %{
+          		console.log("pressed: OK") ;
+          	    	leaveView(1) ;
+                  
+        %}
+    }
+  arrows_button: Button 
+    arrows_button: Button {
+      title: String 
+        "->"
+      isEnabled: Bool 
+        true
+      pressed: Event 
+        Event() %{
+          		console.log("pressed: right arrow") ;
+          	    	leaveView(1) ;
+                  
+        %}
+    }
+  cancel_button: Button 
+    cancel_button: Button {
+      title: String 
+        "Cancel"
+      isEnabled: Bool 
+        true
+      pressed: Event 
+        Event() %{
+          		console.log("pressed: Cancel") ;
+          		leaveView(0) ;
+                  
+        %}
+    }
+}
+[COMPONENT] component top:VBox {
+  react-object: {
+    properties: {
+      arrows_button
+      className
+      ok_button
+      cancel_button
+      instanceName
+    }
+  }
+  children: {
+    component ok_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+          isEnabled
+        }
+      }
+      children: {
+      }
+    }
+    component arrows_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+          isEnabled
+        }
+      }
+      children: {
+      }
+    }
+    component cancel_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+          isEnabled
+        }
+      }
+      children: {
+      }
+    }
+  }
+}
+[SOURCE] top: VBox {
+    terminal_a: Terminal {
+	shell: Shell {
+	}
+    }
+}
+
+
+[FRAME] top: VBox {
+  terminal_a: Terminal 
+    terminal_a: Terminal {
+      shell: Shell 
+        shell: Shell {
+        }
+    }
+}
+[COMPONENT] component top:VBox {
+  react-object: {
+    properties: {
+      terminal_a
+      className
+      instanceName
+    }
+  }
+  children: {
+    component terminal_a:Terminal {
+      react-object: {
+        properties: {
+          shell
+          className
+          instanceName
+        }
+      }
+      children: {
+        component shell:Shell {
+          react-object: {
+            properties: {
+              className
+              instanceName
+            }
+          }
+          children: {
+          }
+        }
+      }
+    }
+  }
+}
+[SOURCE] top: VBox {
+    members: Storage {
+        name: String "main"
+        path: String "town.members"
+    }
+
+    title: ImageView {
+        name: String "town_title"
+    }
+    party_title: Label {
+	text: String "The current party"
+    }
+    partyTable: TableView {
+	hasHeader:    Bool true
+	isSelectable: Bool true
+	fieldNames: Array [
+                {field:"name",          title:"Name"},
+                {field:"level",         title:"Level"},
+                {field:"hitPoint",      title:"HP"},
+                {field:"magicPoint",    title:"MP"}
+        ]
+	init: Init %{
+		self.dataTable = top.members.table ;
+		self.reload() ;
+	%}
+	filter: Event(record) %{
+		let char = new Character.Character(record) ;
+		return char.isPartyMember() ;
+	%}
+    }
+    tavern_button: Button {
+        title:  String "Tavern"
+        pressed: Event() %{
+		enterView("tavern", null) ;
+		top.partyTable.reload() ;
+        %}
+    }
+    inn_button: Button {
+        title:  String "Inn"
+        pressed: Event() %{
+		enterView("inn", null) ;
+        %}
+    }
+    temple_button: Button {
+        title:  String "Temple"
+        pressed: Event() %{
+		enterView("temple", null) ;
+        %}
+    }
+    shop_button: Button {
+        title:  String "Shop"
+        pressed: Event() %{
+		enterView("shop", null) ;
+        %}
+    }
+    edge_button: Button {
+        title:  String "Edge of town"
+        pressed: Event() %{
+		console.log("pressed: Edge") ;
+        %}
+    }
+    ret_button: Button {
+        title:  String "Opening"
+        pressed: Event() %{
+		let table = top.members.table ;
+		console.print("Save table ... ") ;
+		if(table.save()){
+			console.print("done\n") ;
+		} else {
+			console.print("fail\n") ;
+		}
+		leaveView(0) ;
+        %}
+    }
+}
+
+
+[FRAME] top: VBox {
+  members: Storage 
+    members: Storage {
+      name: String 
+        "main"
+      path: String 
+        "town.members"
+    }
+  title: ImageView 
+    title: ImageView {
+      name: String 
+        "town_title"
+    }
+  party_title: Label 
+    party_title: Label {
+      text: String 
+        "The current party"
+    }
+  partyTable: TableView 
+    partyTable: TableView {
+      hasHeader: Bool 
+        true
+      isSelectable: Bool 
+        true
+      fieldNames: Array 
+        [
+          {
+            field:
+              "name"
+            title:
+              "Name"
+          }
+          {
+            field:
+              "level"
+            title:
+              "Level"
+          }
+          {
+            field:
+              "hitPoint"
+            title:
+              "HP"
+          }
+          {
+            field:
+              "magicPoint"
+            title:
+              "MP"
+          }
+        ]
+      init: Init 
+        Init %{
+          		self.dataTable = top.members.table ;
+          		self.reload() ;
+          	
+        %}
+      filter: Event 
+        Event(record) %{
+          		let char = new Character.Character(record) ;
+          		return char.isPartyMember() ;
+          	
+        %}
+    }
+  tavern_button: Button 
+    tavern_button: Button {
+      title: String 
+        "Tavern"
+      pressed: Event 
+        Event() %{
+          		enterView("tavern", null) ;
+          		top.partyTable.reload() ;
+                  
+        %}
+    }
+  inn_button: Button 
+    inn_button: Button {
+      title: String 
+        "Inn"
+      pressed: Event 
+        Event() %{
+          		enterView("inn", null) ;
+                  
+        %}
+    }
+  temple_button: Button 
+    temple_button: Button {
+      title: String 
+        "Temple"
+      pressed: Event 
+        Event() %{
+          		enterView("temple", null) ;
+                  
+        %}
+    }
+  shop_button: Button 
+    shop_button: Button {
+      title: String 
+        "Shop"
+      pressed: Event 
+        Event() %{
+          		enterView("shop", null) ;
+                  
+        %}
+    }
+  edge_button: Button 
+    edge_button: Button {
+      title: String 
+        "Edge of town"
+      pressed: Event 
+        Event() %{
+          		console.log("pressed: Edge") ;
+                  
+        %}
+    }
+  ret_button: Button 
+    ret_button: Button {
+      title: String 
+        "Opening"
+      pressed: Event 
+        Event() %{
+          		let table = top.members.table ;
+          		console.print("Save table ... ") ;
+          		if(table.save()){
+          			console.print("done\n") ;
+          		} else {
+          			console.print("fail\n") ;
+          		}
+          		leaveView(0) ;
+                  
+        %}
+    }
+}
+[COMPONENT] component top:VBox {
+  react-object: {
+    properties: {
+      title
+      partyTable
+      shop_button
+      party_title
+      ret_button
+      edge_button
+      temple_button
+      members
+      inn_button
+      className
+      tavern_button
+      instanceName
+    }
+  }
+  children: {
+    component members:Storage {
+      react-object: {
+        properties: {
+          path
+          name
+          className
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+    component title:ImageView {
+      react-object: {
+        properties: {
+          name
+          className
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+    component party_title:Label {
+      react-object: {
+        properties: {
+          className
+          text
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+    component partyTable:TableView {
+      react-object: {
+        properties: {
+          filter
+          init@body
+          className
+          hasHeader
+          isSelectable
+          instanceName
+          fieldNames
+        }
+      }
+      children: {
+      }
+    }
+    component tavern_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+    component inn_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+    component temple_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+    component shop_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+    component edge_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+    component ret_button:Button {
+      react-object: {
+        properties: {
+          pressed
+          title
+          className
+          instanceName
+        }
+      }
+      children: {
+      }
+    }
+  }
 }
