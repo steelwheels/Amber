@@ -113,9 +113,9 @@ public class AMBParser
 		}
 		let rettype = AMBValue.ValueType.decode(string: typestr)
 
-		/* Parse for listner and procedural function */
 		var targtype: AMBValue.ValueType = rettype
 		if let funcname = strm.requireIdentifier() {
+			/* Parse for listner and procedural function */
 			let ftype = AMBValue.ValueType.decode(string: funcname)
 			switch ftype {
 			case .listnerFunction, .procedureFunction:
@@ -123,6 +123,18 @@ public class AMBParser
 			default:
 				let _ = strm.unget() // unget the identifier
 			}
+		} else if let sym = strm.requireSymbol() {
+			if !targtype.isFrame() {
+				switch sym {
+				case "[":
+					targtype = .array
+				case "{":
+					targtype = .dictionary
+				default:
+					break
+				}
+			}
+			let _ = strm.unget() // unget the symbol
 		}
 
 		let value: AMBValue
@@ -153,14 +165,14 @@ public class AMBParser
 				return .failure(err)
 			}
 		case .array:
-			switch parseArrayValue(stream: strm){
+			switch parseArrayValue(elementType: rettype, stream: strm){
 			case .success(let val):
 				value = val
 			case .failure(let err):
 				return .failure(err)
 			}
 		case .dictionary:
-			switch parseDictionaryValue(stream: strm) {
+			switch parseDictionaryValue(elementType: rettype, stream: strm) {
 			case .success(let val):
 				value = val
 			case .failure(let err):
@@ -267,7 +279,7 @@ public class AMBParser
 		}
 	}
 
-	private func parseArrayValue(stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
+	private func parseArrayValue(elementType etype: AMBValue.ValueType, stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
 		guard strm.requireSymbol(symbol: "[") else {
 			return .failure(parseError(message: "\"[\" for array definition is required", stream: strm))
 		}
@@ -285,7 +297,7 @@ public class AMBParser
 						return .failure(parseError(message: "\",\" is required to divide array elements", stream: strm))
 					}
 				}
-				switch parseElementValue(stream: strm) {
+				switch parseElementValue(elementType: etype, stream: strm) {
 				case .success(let val):
 					result.append(value: val)
 				case .failure(let err):
@@ -296,7 +308,7 @@ public class AMBParser
 		return .success(result)
 	}
 
-	private func parseDictionaryValue(stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
+	private func parseDictionaryValue(elementType etype: AMBValue.ValueType, stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
 		guard strm.requireSymbol(symbol: "{") else {
 			return .failure(parseError(message: "\"{\" for dictionary definition is required", stream: strm))
 		}
@@ -320,7 +332,7 @@ public class AMBParser
 				if !strm.requireSymbol(symbol: ":") {
 					return .failure(parseError(message: "The \":\" for dirctionary is required", stream: strm))
 				}
-				switch parseElementValue(stream: strm) {
+				switch parseElementValue(elementType: etype, stream: strm) {
 				case .success(let val):
 					result.set(member: AMBMember(identifier: key, value: val))
 				case .failure(let err):
@@ -331,12 +343,12 @@ public class AMBParser
 		return .success(result)
 	}
 
-	private func parseElementValue(stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
+	private func parseElementValue(elementType etype: AMBValue.ValueType, stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
 		if let sym = strm.requireSymbol() {
 			switch sym {
 			case "{":
 				let _ = strm.unget() // unget symbol
-				switch parseDictionaryValue(stream: strm) {
+				switch parseDictionaryValue(elementType: etype, stream: strm) {
 				case .success(let val):
 					return .success(val)
 				case .failure(let err):
@@ -344,7 +356,7 @@ public class AMBParser
 				}
 			case "[":
 				let _ = strm.unget() // unget symbol
-				switch parseArrayValue(stream: strm) {
+				switch parseArrayValue(elementType: etype, stream: strm) {
 				case .success(let val):
 					return .success(val)
 				case .failure(let err):
@@ -352,6 +364,19 @@ public class AMBParser
 				}
 			default:
 				return .failure(parseError(message: "Unexpected symbol \"\(sym)\" for element value", stream: strm))
+			}
+		} else if let ident = strm.requireIdentifier() {
+			let dectype = AMBValue.ValueType.decode(string: ident)
+			switch dectype {
+			case .procedureFunction:
+				switch parseProceduralFunc(identifier: "_", returnType: etype, stream: strm) {
+				case .success(let val):
+					return .success(val)
+				case .failure(let err):
+					return .failure(err)
+				}
+			default:
+				return .failure(parseError(message: "Invalid identifier for the member: \(ident)", stream: strm))
 			}
 		} else {
 			return parseScalarValue(stream: strm)
@@ -450,121 +475,6 @@ public class AMBParser
 		}
 	}
 
-/*
-
-
-
-
-
-				switch rettype {
-				case .dictionary:
-					let _ = strm.unget() // unget the symbol
-					switch parseDictionaryValue(stream: strm) {
-					case .success(let val):
-						value = val
-					case .failure(let err):
-						return .failure(err)
-					}
-				case .frame(_):
-				}
-			case "[":
-			default:
-				return .failure(unexpectedSymbolError(symbol: "\(sym)", stream: strm))
-			}
-		}
-		return .success(AMBMember(identifier: ident, value: value))
-	}
-
-
-
-	private func parseValue(identifier identp: String?, stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
-		guard let typestr = strm.getIdentifier() else {
-			return .failure(requireDeclarationError(declaration: "Type", stream: strm))
-		}
-		let rettype = AMBValue.ValueType.decode(string: typestr)
-
-		if let funcname = strm.requireIdentifier() {
-			switch funcname {
-			case AMBListnerFunctionValue.TypeName:
-				if let ident = identp {
-					return parseListnerFunc(identifier: ident, returnType: rettype, stream: strm)
-				} else {
-					return .failure(requireDeclarationError(declaration: "Identifier is required for init method", stream: strm))
-				}
-			case AMBProcedureFunctionValue.TypeName:
-				if let ident = identp {
-					return parseProceduralFunc(identifier: ident, returnType: rettype, stream: strm)
-				} else {
-					return .failure(requireDeclarationError(declaration: "Identifier is required for init method", stream: strm))
-				}
-			default:
-				let _ = strm.unget() // unget the identifier
-			}
-		}
-
-		if let sym = strm.requireSymbol() {
-			switch sym {
-			case "{":
-				switch rettype {
-				case .frame(_):
-					return parseFrame(stream: strm)
-				case .dictionary:
-					let _ = strm.unget() // unget the symbol
-					return parseDictionaryValue(identifier: identp, stream: strm)
-				default:
-					let _ = strm.unget() // unget the symbol
-				}
-			case "[":
-				switch rettype {
-				case .array:
-					let _ = strm.unget() // unget the symbol
-					return parseArrayValue(stream: strm)
-				default:
-					let _ = strm.unget() // unget the symbol
-				}
-			default:
-				let _ = strm.unget() // unget the symbol
-			}
-		}
-
-		let result: Result<AMBValue, NSError>
-		switch rettype {
-		case .scalar(let stype):
-			result = parseScalarValue(stream: strm, scalarType: stype)
-		case .frame(_):
-			let _ = strm.unget()	/* class name */
-			result = parseFrame(stream: strm)
-		case .array:
-			result = parseArrayValue(stream: strm)
-		case .dictionary:
-			result = parseDictionaryValue(identifier: identp, stream: strm)
-		case .initFunction:
-			result = parseInitFunc(identifier: identp, stream: strm)
-		case .eventFunction:
-			result = parseEventFunc(identifier: identp, stream: strm)
-		case .listnerFunction:
-			result = .failure(otherError(message: "Listner function requires return type", stream: strm))
-		case .procedureFunction:
-			result = .failure(otherError(message: "Procedural function requires return type", stream: strm))
-		}
-		return result
-	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/
 	private func parseArgument(stream strm: CNTokenStream) -> Result<AMBArgument, NSError> {
 		if let ident = strm.getIdentifier() {
 			return .success(AMBArgument(name: ident))

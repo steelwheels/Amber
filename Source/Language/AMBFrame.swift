@@ -39,6 +39,28 @@ public class AMBValue: AMBObject
 		case listnerFunction
 		case procedureFunction
 
+		public func isScalar() -> Bool {
+			let result: Bool
+			switch self {
+			case .scalar(_):
+				result = true
+			default:
+				result = false
+			}
+			return result
+		}
+
+		public func isFrame() -> Bool {
+			let result: Bool
+			switch self {
+			case .frame(_):
+				result = true
+			default:
+				result = false
+			}
+			return result
+		}
+
 		public var description: String { get {
 			let result: String
 			switch self {
@@ -71,10 +93,12 @@ public class AMBValue: AMBObject
 		public static func decode(string str: String) -> ValueType {
 			let result: ValueType
 			switch str {
-			case AMBArrayValue.TypeName:
-				result = .array
-			case AMBDictionaryValue.TypeName:
-				result = .dictionary
+			/* Array and dictionary does not have explicitry type definition
+			 * case AMBArrayValue.TypeName:
+			 *	result = .array
+			 * case AMBDictionaryValue.TypeName:
+			 *	result = .dictionary
+			 */
 			case AMBInitFunctionValue.TypeName:
 				result = .initFunction
 			case AMBEventFunctionValue.TypeName:
