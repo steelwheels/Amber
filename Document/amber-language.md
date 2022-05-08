@@ -10,12 +10,12 @@ This is a sample Amber script:
 ````
 top: VBox {
     label: Label {
-        text: String "Hello, World !!"
+        text: "Hello, World !!"
     }
     ok_button: Button {
-        title:  String "OK"
+        title: "OK"
         pressed: Event() %{
-                console.print("pressed: OK\n") ;
+                console.log("pressed: OK") ;
                 leaveView(1) ;
         %}
     }
@@ -25,32 +25,51 @@ top: VBox {
 And this is a execution result:
 ![hello-world-view](Images/hello-world-view.png)
 
+The source code is [here](https://github.com/steelwheels/JSTerminal/tree/master/Resource/Sample/hello-world.jspkg).
+
 ## Frame
+ The frame is used to map the component, such as GUI, thread , database model.  The kind of compont is defined by the `class`.
+
 The frame contains multiple members such as properties, functions and child frames. The `identifier` is the name of the frame. The frame will  allocated as the instance of `class-name` class.
 
+You can see the list of built-in classes at [component library](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Library.md). Each components has special propeties to control it. 
 ````
-identifier : class-name {
-    name : type expression
-    ....
+identifier : class-name
+{
+    .... property members ....
 }
 ````
 
-Following sections describe about the kind of members.
+### Properties
+The property is named variable to get/set value. The variable will be mapped on to the component. 
 
-### Property member
-The named variable to get/set value. Sometimes, the value is mapped on to the component attribute such as color of button.
-The following example has constant value to initialize the variable.
-See [Type](#Type) section for the data types (such as `Int`).
 ````
 {
-    property_a : Int        0
-    property_b : Float      12.3
-    property_c : String     ["a", "b", "c"]
+    name : value
 }
 ````
 
-### Frame member
-The frame can contain child frame. See [Class](#Class) section.
+For example, the `title` property is used to decide the label text for the [button component](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Components/Button.md).
+````
+button: Button {
+        title: "Hello from Label"
+}
+````
+
+### Scalar property
+Here is the primitive data types.
+
+|Type   |Description    |Example |
+|:--    |:--            |:-- |
+|Bool   |Boolean variable which has `true` or `false`|true|
+|Int    |Signed integer value (32bit)   |-123 |
+|Float  |Floating point value           |123.4 |
+|String |Strint value                   |"Hello" |
+
+You don't have to declare the type itself. It will be decided by the compiler.
+
+### Frame property
+The frame can contain child frame.
 ````
 {
     object: Object {
@@ -59,7 +78,10 @@ The frame can contain child frame. See [Class](#Class) section.
 }
 ````
 
-### Listner member
+The `Object` class is built-in plane component.
+The other components are defined in [component library](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Library.md).
+
+### Listner property
 The listner function is _reactive_.
 In the next example, when the property `self.a` or `self.b` is updated, The value of `property_a` is automatically updated by the return value of the function.
 You can read the property value. But you can not write it.
@@ -68,17 +90,18 @@ The `self` is the owner frame of the property. Fore more details, see [self obje
 
 ````
 {
-    property_a : Int Listner(a: self.a. b: selfb) %{
-                    return a + b ;
-                 %}
+    ...
+    listner : Listner(a: self.a. b: selfb) %{
+                return a + b ;
+              %}
+    ....
 }
 ````
 
-### Event member
-The event function is called by the component object.
+### Event property
+The event function is called by the component.
 For example, the button component call the `pressed` event
 when it is clicked by user.
-The parameter is passed by event caller.
 
 Now you can't define the calle of this function.
 They are implemented as built-in function.
@@ -86,29 +109,28 @@ They are implemented as built-in function.
 ````
 {
     pressed : Event(p0, p1) %{
-        count = count + 1 ;
+        console.log("p0 + p1 = " + (p0+p1)) ;
     %}
 }
 ````
 
-### Function member
+### Function property
 The procedural function is also supported.
 This is called in the statement on the other function and expression.
 You can not read and write the property.
 ````
 {
-    add: Int Func(a, b) %{ return a + b ; %}
+    add: Func(a, b) %{ return a + b ; %}
 }
 ````
 
-### Init member
+### Init property
 The `Init` function will be called after all components are allocated.
 If there are multiple `Init` functions, it is called by the declaration order.
 ````
 {
     init: Init %{
-        console.print("Initialized\n") ;
-        retrun 0 ;
+       ...
     %}
 }
 ````
@@ -124,16 +146,8 @@ top: {
 }
 ````
 
-The `Init` function can have a parameter. The parameter will be given by frame launcher (See [enterView](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Function/enterView.md) function for view component).
+There is [sample script](https://github.com/steelwheels/JSTerminal/tree/master/Resource/Sample/init.jspkg) which uses `Init` functions.
 
-
-````
-top: {
-        v1: Init (args) %{
-                ...
-        %}
-}
-````
 
 ## Expression
 ### Path Expression
@@ -147,8 +161,8 @@ In the following example, there are 2 expressions:
 
 |Path expression    |Pointed object             |
 |:--                |:--                        |
-|a.b.c.d0           |"d0" property in frame "c" |
-|self.c.d1          |"d1" property in frame "c" |
+|a.b.c.d0           |"d0" property in frame "c in frame "b" in frame in "a". |
+|self.c.d1          |"d1" property in frame "c" against of the object owner.|
 
 In the "Listner" function, the path expression "a.b.c.d0" is binded to argument "a0" and expression "self.c.d1" is binded to "a1".
 
@@ -171,24 +185,14 @@ a: Object {
 }
 ````
 
-## Type
-Here is the primitive data types:
-|Type   |Description    |
-|:--    |:--            |
-|Bool   |Boolean variable which has `true` or `false` |
-|Int    |Signed integer value (32bit)   |
-|Float  |Floating point value           |
-|String |Strint value                   |
-|URL    |URL object. It is an instance of [URL](https://github.com/steelwheels/KiwiScript/blob/master/KiwiLibrary/Document/Class/URL.md) class|
-
 ## Immediate Value
 
 ### Number and boolean value
 Integer and floating point number can be declared.
 ````
 {
-        name1: Int 1234
-        name2: Bool true
+        name1: 1234
+        name2: true
 }
 ````
 
@@ -208,7 +212,7 @@ The instance of [URL](https://github.com/steelwheels/KiwiScript/blob/master/Kiwi
 
 ````
 {
-    homeDirectory: URL ""   // Presents no URL
+    homeDirectory: ""   // Presents no URL
 }
 ````
 
@@ -221,10 +225,11 @@ The instance of [URL](https://github.com/steelwheels/KiwiScript/blob/master/Kiwi
 ````
 
 ### Dictionary value
-The key of dictionary is decribed as an identifier, not string.
+The key of dictionary is decribed by arra
 ````
-{
-        dict: Object {field:"f", value:123}
+... {
+	a: {key:"field-a", value:0},
+	b: {key:"field-b", value:1}
 }
 ````
 
@@ -251,7 +256,7 @@ frame_members_opt
                 |  frame_members
                 ;
 frame_members   := frame_member
-                |  frame_members ',' frame_member
+                |  frame_members frame_member
                 ;
 frame_member    := property_name ':' expression
                 |  frame

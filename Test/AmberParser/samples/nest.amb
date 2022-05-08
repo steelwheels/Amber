@@ -1,6 +1,6 @@
 a: Object {
 	b: Object {
-		c: Int 124
+		c: 124
 	}
 }
 

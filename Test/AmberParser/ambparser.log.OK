@@ -15,7 +15,7 @@
   }
 }
 [SOURCE] a: b {
-	c: Int 10
+	c: 10
 }
 
 
@@ -35,8 +35,52 @@
   }
 }
 [SOURCE] a: Object {
+	b: [
+		{key:"field-a", value:0},
+		{key:"field-b", value:1}
+	]
+	c: ["hello", "good morning", "god night"]
+}
+
+
+[FRAME] a: Object {
+  b: Array 
+    [
+      {
+        key:
+          "field-a"
+        value:
+          0
+      }
+      {
+        key:
+          "field-b"
+        value:
+          1
+      }
+    ]
+  c: Array 
+    [
+      "hello"
+      "good morning"
+      "god night"
+    ]
+}
+[COMPONENT] component a:Object {
+  react-object: {
+    properties: {
+      c
+      className
+      instanceName
+      b
+    }
+  }
+  children: {
+  }
+}
+[SOURCE] a: Object {
 	b: Object {
-		c: Int 124
+		c: 124
 	}
 }
 
@@ -73,7 +117,7 @@
 [SOURCE] top: VBox {
   message: HBox {
     logo: ImageView {
-      name: String "icon"
+      name: "icon"
     }
   }
 }
@@ -125,23 +169,22 @@
 [SOURCE] top: VBox {
 	message: HBox {
 		logo: ImageView {
-			name: String "icon"
-	    }
-	    text_a: Label {
-			text: String
-				"Welcome to JSTerminal.\n\n"
-				"Before using this software, "
-				"please select the home directory "
-				"of this application.\n\n"
-				"I recommend you to create unique directory\n"
-				"such as ~/Development."
-			fontSize: FontSize large
-	    }
+			name: "icon"
+		}
+		text_a: Label {
+			text:	"Welcome to JSTerminal.\n\n"
+					"Before using this software, "
+					"please select the home directory "
+					"of this application.\n\n"
+					"I recommend you to create unique directory\n"
+					"such as ~/Development."
+            fontSize: FontSize.large
+		}
 	}
 	select: HBox {
-		home: URL ""
+ 		home: ""
 		path_field: TextField {
-			text: String Listner(url: top.select.home) %{
+			text: Listner(url: top.select.home) %{
 				if(!url.isNull){
 					top.done_button.isEnabled = true ;
 					return url.path ;
@@ -151,23 +194,23 @@
 			%}
 		}
 		select_button: Button {
-			isEnabled:	Bool	true
-			title:  	String	"Select Home Directory"
+			isEnabled:	true
+			title:  	"Select Home Directory"
 			pressed: Event() %{
-				let url = openPanel(
-					"Select Home Directory",
-					FileType.directory,
-					[]
-				) ;
-				if(url != null) {
-					top.select.home = url ;
-				}
+					let url = openPanel(
+						"Select Home Directory",
+						FileType.directory,
+						[]
+					) ;
+					if(url != null) {
+						top.select.home = url ;
+					}
 			%}
 		}
 	}
 	done_button: Button {
-		isEnabled:	Bool	false
-		title: 		String	"OK"
+		isEnabled:	false
+		title: 		"OK"
 		pressed: Event() %{
 			Preference.user.homeDirectory = top.select.home ;
 			enterView("terminal", null) ;
@@ -206,7 +249,7 @@
       path_field: TextField 
         path_field: TextField {
           text: Listner 
-            String Listner(url) %{
+            Listner(url) %{
               				if(!url.isNull){
               					top.done_button.isEnabled = true ;
               					return url.path ;
@@ -224,14 +267,14 @@
             "Select Home Directory"
           pressed: Event 
             Event() %{
-              				let url = openPanel(
-              					"Select Home Directory",
-              					FileType.directory,
-              					[]
-              				) ;
-              				if(url != null) {
-              					top.select.home = url ;
-              				}
+              					let url = openPanel(
+              						"Select Home Directory",
+              						FileType.directory,
+              						[]
+              					) ;
+              					if(url != null) {
+              						top.select.home = url ;
+              					}
               			
             %}
         }
@@ -350,67 +393,66 @@
   }
 }
 [SOURCE] top: VBox {
-    bitmap: Bitmap {
-        width:          Int     640
-        height:         Int     480
-        rowCount:       Int     50
-        columnCount:    Int     50
+	bitmap: Bitmap {
+		width:          640
+        height:         480
+        rowCount:       50
+        columnCount:    50
 
-        draw: Event(context, count) %{
-            let off  = 3.14 / 100.0 * count ;
+		draw: Event(context, count) %{
+			let off  = 3.14 / 100.0 * count ;
+			context.clean() ;
+			for(x=0 ; x<6.28 ; x+=0.1) {
+				let ys = Math.sin(off + x) ;
+				let yc = Math.cos(off + x) ;
+				let yt = Math.tan(off + x) ;
 
-	    context.clean() ;
-            for(x=0 ; x<6.28 ; x+=0.1) {
-                let ys = Math.sin(off + x) ;
-                let yc = Math.cos(off + x) ;
-                let yt = Math.tan(off + x) ;
+				let xr  = Math.round(x  * (50/6.28) ) ;
+				let ysr = Math.round((ys * 25.0) + 25.0) ;
+				let ycr = Math.round((yc * 25.0) + 25.0) ;
+				let ytr = Math.round((yt * 25.0) + 25.0) ;
 
-                let xr  = Math.round(x  * (50/6.28) ) ;
-                let ysr = Math.round((ys * 25.0) + 25.0) ;
-                let ycr = Math.round((yc * 25.0) + 25.0) ;
-                let ytr = Math.round((yt * 25.0) + 25.0) ;
-
-                context.set(xr, ysr, Color.green) ;
-                context.set(xr, ycr, Color.blue) ;
-                context.set(xr, ytr, Color.red) ;
-            }
-        %}
-    }
-    buttons: HBox {
-        start_button: Button {
-            title: String Listner(state: top.bitmap.state) %{
-                let result = "Unknown" ;
-                switch(state) {
-                    case AnimationState.idle:
-                        result = "Start" ;
-                    break ;
-                    case AnimationState.run:
-                        result = "Stop" ;
-                    break ;
-                    case AnimationState.pause:
-                        result = "Wait" ;
-                    break ;
-                }
-                return result ;
-            %}
-            pressed: Event() %{
-                let grp = top.bitmap ;
-                switch(grp.state) {
-                    case AnimationState.idle:
-                        grp.start(1.0, 10.0) ;
-                    break ;
-                    case AnimationState.run:
-                        grp.stop() ;
-                    break ;
+				context.set(xr, ysr, Color.green) ;
+				context.set(xr, ycr, Color.blue) ;
+				context.set(xr, ytr, Color.red) ;
+			}
+		%}
+	}
+	buttons: HBox {
+		start_button: Button {
+            title: Listner(state: top.bitmap.state) %{
+				let result = "Unknown" ;
+				switch(state) {
+					case AnimationState.idle:
+						result = "Start" ;
+					break ;
+					case AnimationState.run:
+						result = "Stop" ;
+					break ;
+					case AnimationState.pause:
+						result = "Wait" ;
+					break ;
+				}
+				return result ;
+			%}
+			pressed: Event() %{
+				let grp = top.bitmap ;
+				switch(grp.state) {
+					case AnimationState.idle:
+						grp.start(1.0, 10.0) ;
+					break ;
+					case AnimationState.run:
+						grp.stop() ;
+					break ;
                     case AnimationState.pause:
                         console.log("No effect") ;
                     break ;
                 }
             %}
         }
-        quit_button: Button {
-   		    title: String "Quit"
-		    isEnabled: Bool Listner(state: top.bitmap.state) %{
+		quit_button: Button {
+			title: "Quit"
+		    isEnabled: Listner(state: top.bitmap.state) %{
                 let result = false ;
                 switch(state) {
                     case AnimationState.idle:
@@ -430,7 +472,6 @@
             %}
         }
     }
-
 }
 
 
@@ -447,21 +488,21 @@
         50
       draw: Event 
         Event(context, count) %{
-                      let off  = 3.14 / 100.0 * count ;
-          	    context.clean() ;
-                      for(x=0 ; x<6.28 ; x+=0.1) {
-                          let ys = Math.sin(off + x) ;
-                          let yc = Math.cos(off + x) ;
-                          let yt = Math.tan(off + x) ;
-                          let xr  = Math.round(x  * (50/6.28) ) ;
-                          let ysr = Math.round((ys * 25.0) + 25.0) ;
-                          let ycr = Math.round((yc * 25.0) + 25.0) ;
-                          let ytr = Math.round((yt * 25.0) + 25.0) ;
-                          context.set(xr, ysr, Color.green) ;
-                          context.set(xr, ycr, Color.blue) ;
-                          context.set(xr, ytr, Color.red) ;
-                      }
-                  
+          			let off  = 3.14 / 100.0 * count ;
+          			context.clean() ;
+          			for(x=0 ; x<6.28 ; x+=0.1) {
+          				let ys = Math.sin(off + x) ;
+          				let yc = Math.cos(off + x) ;
+          				let yt = Math.tan(off + x) ;
+          				let xr  = Math.round(x  * (50/6.28) ) ;
+          				let ysr = Math.round((ys * 25.0) + 25.0) ;
+          				let ycr = Math.round((yc * 25.0) + 25.0) ;
+          				let ytr = Math.round((yt * 25.0) + 25.0) ;
+          				context.set(xr, ysr, Color.green) ;
+          				context.set(xr, ycr, Color.blue) ;
+          				context.set(xr, ytr, Color.red) ;
+          			}
+          		
         %}
     }
   buttons: HBox 
@@ -469,32 +510,32 @@
       start_button: Button 
         start_button: Button {
           title: Listner 
-            String Listner(state) %{
-                              let result = "Unknown" ;
-                              switch(state) {
-                                  case AnimationState.idle:
-                                      result = "Start" ;
-                                  break ;
-                                  case AnimationState.run:
-                                      result = "Stop" ;
-                                  break ;
-                                  case AnimationState.pause:
-                                      result = "Wait" ;
-                                  break ;
-                              }
-                              return result ;
-                          
+            Listner(state) %{
+              				let result = "Unknown" ;
+              				switch(state) {
+              					case AnimationState.idle:
+              						result = "Start" ;
+              					break ;
+              					case AnimationState.run:
+              						result = "Stop" ;
+              					break ;
+              					case AnimationState.pause:
+              						result = "Wait" ;
+              					break ;
+              				}
+              				return result ;
+              			
             %}
           pressed: Event 
             Event() %{
-                              let grp = top.bitmap ;
-                              switch(grp.state) {
-                                  case AnimationState.idle:
-                                      grp.start(1.0, 10.0) ;
-                                  break ;
-                                  case AnimationState.run:
-                                      grp.stop() ;
-                                  break ;
+              				let grp = top.bitmap ;
+              				switch(grp.state) {
+              					case AnimationState.idle:
+              						grp.start(1.0, 10.0) ;
+              					break ;
+              					case AnimationState.run:
+              						grp.stop() ;
+              					break ;
                                   case AnimationState.pause:
                                       console.log("No effect") ;
                                   break ;
@@ -507,7 +548,7 @@
           title: String 
             "Quit"
           isEnabled: Listner 
-            Bool Listner(state) %{
+            Listner(state) %{
                               let result = false ;
                               switch(state) {
                                   case AnimationState.idle:
@@ -598,28 +639,28 @@
   }
 }
 [SOURCE] top: VBox {
-    ok_button: Button {
-        title:     String "OK"
-	isEnabled: Bool  true
+	ok_button: Button {
+		title:     	"OK"
+		isEnabled:	true
         pressed: Event() %{
-		console.log("pressed: OK") ;
+			console.log("pressed: OK") ;
 	    	leaveView(1) ;
         %}
     }
-    arrows_button: Button {
-        title:     String "->"
-	isEnabled: Bool  true
+	arrows_button: Button {
+		title:     "->"
+		isEnabled: true
         pressed: Event() %{
-		console.log("pressed: right arrow") ;
+			console.log("pressed: right arrow") ;
 	    	leaveView(1) ;
-        %}
-    }
+		%}
+	}
     cancel_button: Button {
-        title:  String "Cancel"
-	isEnabled: Bool  true
+		title:  	"Cancel"
+		isEnabled:	true
         pressed: Event() %{
-		console.log("pressed: Cancel") ;
-		leaveView(0) ;
+			console.log("pressed: Cancel") ;
+			leaveView(0) ;
         %}
     }
 }
@@ -634,7 +675,7 @@
         true
       pressed: Event 
         Event() %{
-          		console.log("pressed: OK") ;
+          			console.log("pressed: OK") ;
           	    	leaveView(1) ;
                   
         %}
@@ -647,9 +688,9 @@
         true
       pressed: Event 
         Event() %{
-          		console.log("pressed: right arrow") ;
+          			console.log("pressed: right arrow") ;
           	    	leaveView(1) ;
-                  
+          		
         %}
     }
   cancel_button: Button 
@@ -660,8 +701,8 @@
         true
       pressed: Event 
         Event() %{
-          		console.log("pressed: Cancel") ;
-          		leaveView(0) ;
+          			console.log("pressed: Cancel") ;
+          			leaveView(0) ;
                   
         %}
     }
@@ -767,78 +808,78 @@
   }
 }
 [SOURCE] top: VBox {
-    members: Storage {
-        name: String "main"
-        path: String "town.members"
-    }
+	members: Storage {
+		name: "main"
+		path: "town.members"
+	}
 
-    title: ImageView {
-        name: String "town_title"
+	title: ImageView {
+		name: "town_title"
     }
-    party_title: Label {
-	text: String "The current party"
+	party_title: Label {
+		text: "The current party"
     }
-    partyTable: TableView {
-	hasHeader:    Bool true
-	isSelectable: Bool true
-	fieldNames: Array [
+	partyTable: TableView {
+		hasHeader:    	true
+		isSelectable:	true
+		fieldNames: [
                 {field:"name",          title:"Name"},
                 {field:"level",         title:"Level"},
                 {field:"hitPoint",      title:"HP"},
                 {field:"magicPoint",    title:"MP"}
         ]
-	init: Init %{
-		self.dataTable = top.members.table ;
-		self.reload() ;
-	%}
-	filter: Event(record) %{
-		let char = new Character.Character(record) ;
-		return char.isPartyMember() ;
-	%}
-    }
-    tavern_button: Button {
-        title:  String "Tavern"
-        pressed: Event() %{
-		enterView("tavern", null) ;
+		init: Init %{
+			self.dataTable = top.members.table ;
+			self.reload() ;
+		%}
+		filter: Event(record) %{
+			let char = new Character.Character(record) ;
+			return char.isPartyMember() ;
+		%}
+	}
+	tavern_button: Button {
+		title:  	"Tavern"
+		pressed: Event() %{
+			enterView("tavern", null) ;
 		top.partyTable.reload() ;
-        %}
+		%}
     }
-    inn_button: Button {
-        title:  String "Inn"
-        pressed: Event() %{
-		enterView("inn", null) ;
-        %}
-    }
+	inn_button: Button {
+		title:  "Inn"
+		pressed: Event() %{
+			enterView("inn", null) ;
+		%}
+	}
     temple_button: Button {
-        title:  String "Temple"
+        title:  "Temple"
         pressed: Event() %{
-		enterView("temple", null) ;
+			enterView("temple", null) ;
         %}
     }
     shop_button: Button {
-        title:  String "Shop"
-        pressed: Event() %{
-		enterView("shop", null) ;
-        %}
+		title:  "Shop"
+		pressed: Event() %{
+			enterView("shop", null) ;
+		%}
     }
-    edge_button: Button {
-        title:  String "Edge of town"
+	edge_button: Button {
+        title:  "Edge of town"
         pressed: Event() %{
-		console.log("pressed: Edge") ;
-        %}
+			console.log("pressed: Edge") ;
+		%}
     }
     ret_button: Button {
-        title:  String "Opening"
+		title:  "Opening"
         pressed: Event() %{
-		let table = top.members.table ;
-		console.print("Save table ... ") ;
-		if(table.save()){
-			console.print("done\n") ;
-		} else {
-			console.print("fail\n") ;
-		}
-		leaveView(0) ;
-        %}
+			let table = top.members.table ;
+			console.print("Save table ... ") ;
+			if(table.save()){
+				console.print("done\n") ;
+			} else {
+				console.print("fail\n") ;
+			}
+			leaveView(0) ;
+		%}
     }
 }
 
@@ -896,15 +937,15 @@
         ]
       init: Init 
         Init %{
-          		self.dataTable = top.members.table ;
-          		self.reload() ;
-          	
+          			self.dataTable = top.members.table ;
+          			self.reload() ;
+          		
         %}
       filter: Event 
         Event(record) %{
-          		let char = new Character.Character(record) ;
-          		return char.isPartyMember() ;
-          	
+          			let char = new Character.Character(record) ;
+          			return char.isPartyMember() ;
+          		
         %}
     }
   tavern_button: Button 
@@ -913,9 +954,9 @@
         "Tavern"
       pressed: Event 
         Event() %{
-          		enterView("tavern", null) ;
+          			enterView("tavern", null) ;
           		top.partyTable.reload() ;
-                  
+          		
         %}
     }
   inn_button: Button 
@@ -924,8 +965,8 @@
         "Inn"
       pressed: Event 
         Event() %{
-          		enterView("inn", null) ;
-                  
+          			enterView("inn", null) ;
+          		
         %}
     }
   temple_button: Button 
@@ -934,7 +975,7 @@
         "Temple"
       pressed: Event 
         Event() %{
-          		enterView("temple", null) ;
+          			enterView("temple", null) ;
                   
         %}
     }
@@ -944,8 +985,8 @@
         "Shop"
       pressed: Event 
         Event() %{
-          		enterView("shop", null) ;
-                  
+          			enterView("shop", null) ;
+          		
         %}
     }
   edge_button: Button 
@@ -954,8 +995,8 @@
         "Edge of town"
       pressed: Event 
         Event() %{
-          		console.log("pressed: Edge") ;
-                  
+          			console.log("pressed: Edge") ;
+          		
         %}
     }
   ret_button: Button 
@@ -964,15 +1005,15 @@
         "Opening"
       pressed: Event 
         Event() %{
-          		let table = top.members.table ;
-          		console.print("Save table ... ") ;
-          		if(table.save()){
-          			console.print("done\n") ;
-          		} else {
-          			console.print("fail\n") ;
-          		}
-          		leaveView(0) ;
-                  
+          			let table = top.members.table ;
+          			console.print("Save table ... ") ;
+          			if(table.save()){
+          				console.print("done\n") ;
+          			} else {
+          				console.print("fail\n") ;
+          			}
+          			leaveView(0) ;
+          		
         %}
     }
 }

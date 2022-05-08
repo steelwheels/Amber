@@ -1,0 +1,6 @@
+a: Object
+{
+	a: {key:"field-a", value:0}
+	b: {key:"field-b", value:1}
+}
+

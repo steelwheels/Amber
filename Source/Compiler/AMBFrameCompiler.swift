@@ -107,9 +107,9 @@ open class AMBFrameCompiler
 				}
 			case .initFunction:
 				if let ifunc = value as? AMBInitFunctionValue {
-					switch compileFunction(reactObject: newobj, function: ifunc, context: ctxt, config: conf, console: cons) {
+					switch compileFunction(reactObject: newobj, identifier: ident, function: ifunc, context: ctxt, config: conf, console: cons) {
 					case .success(let funcval):
-						newobj.setImmediateValue(value: funcval, forProperty: ifunc.objectName)
+						newobj.setImmediateValue(value: funcval, forProperty: AMBInitFunctionValue.objectName(identifier: ident))
 					case .failure(let err):
 						return .failure(err)
 					}
@@ -118,7 +118,7 @@ open class AMBFrameCompiler
 				}
 			case .eventFunction:
 				if let efunc = value as? AMBEventFunctionValue {
-					switch compileFunction(reactObject: newobj, function: efunc, context: ctxt, config: conf, console: cons) {
+					switch compileFunction(reactObject: newobj, identifier: ident, function: efunc, context: ctxt, config: conf, console: cons) {
 					case .success(let funcval):
 						newobj.setImmediateValue(value: funcval, forProperty: ident)
 					case .failure(let err):
@@ -129,9 +129,9 @@ open class AMBFrameCompiler
 				}
 			case .listnerFunction:
 				if let lfunc = value as? AMBListnerFunctionValue {
-					switch compileFunction(reactObject: newobj, function: lfunc, context: ctxt, config: conf, console: cons) {
+					switch compileFunction(reactObject: newobj, identifier: ident, function: lfunc, context: ctxt, config: conf, console: cons) {
 					case .success(let funcval):
-						newobj.setListnerFunctionValue(value: funcval, forProperty: lfunc.identifier)
+						newobj.setListnerFunctionValue(value: funcval, forProperty: ident)
 						newobj.initListnerReturnValue(forProperty: ident)
 					case .failure(let err):
 						return .failure(err)
@@ -141,7 +141,7 @@ open class AMBFrameCompiler
 				}
 			case .procedureFunction:
 				if let proc = value as? AMBProcedureFunctionValue {
-					switch compileFunction(reactObject: newobj, function: proc, context: ctxt, config: conf, console: cons) {
+					switch compileFunction(reactObject: newobj, identifier: ident, function: proc, context: ctxt, config: conf, console: cons) {
 					case .success(let funcval):
 						newobj.setImmediateValue(value: funcval, forProperty: ident)
 					case .failure(let err):
@@ -175,22 +175,22 @@ open class AMBFrameCompiler
 		return eval.toJSValue(context: ctxt)
 	}
 
-	private func compileFunction(reactObject dst: AMBReactObject, function afunc: AMBFunctionValue, context ctxt: KEContext, config conf: KEConfig, console cons: CNConsole) -> Result<JSValue, NSError> {
+	private func compileFunction(reactObject dst: AMBReactObject, identifier ident: String, function afunc: AMBFunctionValue, context ctxt: KEContext, config conf: KEConfig, console cons: CNConsole) -> Result<JSValue, NSError> {
 		/* Make JavaScript function */
-		let varname = TEMPORARY_VARIABLE_NAME + afunc.identifier
+		let varname = TEMPORARY_VARIABLE_NAME + ident
 		let funcscr = afunc.toScript()
 		let script  = varname + " = " + funcscr
 		/* Evaluate the function */
 		let _ = ctxt.evaluateScript(script)
 		if ctxt.errorCount != 0 {
 			ctxt.resetErrorCount()
-			let err = NSError.parseError(message: "Failed to compile function: \(afunc.identifier)\n\(script)")
+			let err = NSError.parseError(message: "Failed to compile function: \(ident)\n\(script)")
 			return .failure(err)
 		}
 		if let val = ctxt.getValue(name: varname) {
 			return .success(val)
 		} else {
-			let err = NSError.parseError(message: "No compile result for function: \(afunc.identifier)")
+			let err = NSError.parseError(message: "No compile result for function: \(ident)")
 			return .failure(err)
 		}
 	}

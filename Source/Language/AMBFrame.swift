@@ -5,9 +5,9 @@
  *   Copyright (C) 2020 Steel Wheels Project
  */
 
+import CoconutData
 import KiwiEngine
 import KiwiLibrary
-import CoconutData
 import JavaScriptCore
 import Foundation
 
@@ -39,28 +39,6 @@ public class AMBValue: AMBObject
 		case listnerFunction
 		case procedureFunction
 
-		public func isScalar() -> Bool {
-			let result: Bool
-			switch self {
-			case .scalar(_):
-				result = true
-			default:
-				result = false
-			}
-			return result
-		}
-
-		public func isFrame() -> Bool {
-			let result: Bool
-			switch self {
-			case .frame(_):
-				result = true
-			default:
-				result = false
-			}
-			return result
-		}
-
 		public var description: String { get {
 			let result: String
 			switch self {
@@ -89,38 +67,6 @@ public class AMBValue: AMBObject
 			}
 			return result
 		}}
-
-		public static func decode(string str: String) -> ValueType {
-			let result: ValueType
-			switch str {
-			/* Array and dictionary does not have explicitry type definition
-			 * case AMBArrayValue.TypeName:
-			 *	result = .array
-			 * case AMBDictionaryValue.TypeName:
-			 *	result = .dictionary
-			 */
-			case AMBInitFunctionValue.TypeName:
-				result = .initFunction
-			case AMBEventFunctionValue.TypeName:
-				result = .eventFunction
-			case AMBListnerFunctionValue.TypeName:
-				result = .listnerFunction
-			case AMBProcedureFunctionValue.TypeName:
-				result = .procedureFunction
-			default:
-				/* Object is treated as frame */
-				if str == "Object" {
-					result = .frame(str)
-				} else if let _ = KEEnumTable.shared.search(by: str) {
-					result = .enumerate(str)
-				} else if let vtype = CNValueType.decode(string: str) {
-					result = .scalar(vtype)
-				} else {
-					result = .frame(str)
-				}
-			}
-			return result
-		}
 	}
 
 	private var mValueType:	ValueType
@@ -262,14 +208,11 @@ public class AMBDictionaryValue: AMBValue
 
 public class AMBFunctionValue: AMBValue
 {
-	private var 	mIdentifier	: String
 	private var	mScript		: String
 
-	public var identifier: String { get { return mIdentifier }}
 	public var script:     String { get { return mScript     }}
 
-	public init(valueType vtype: AMBValue.ValueType, identifier ident: String, script scr: String){
-		mIdentifier	= ident
+	public init(valueType vtype: AMBValue.ValueType, script scr: String){
 		mScript		= scr
 		super.init(valueType: vtype)
 	}
@@ -310,18 +253,17 @@ public class AMBInitFunctionValue: AMBFunctionValue
 {
 	public static var TypeName	= "Init"
 
-
-	public init(identifier ident: String, script scr: String){
-		super.init(valueType: .initFunction, identifier: ident, script: scr)
+	public init(script scr: String){
+		super.init(valueType: .initFunction, script: scr)
 	}
 
 	public override func typeName() -> String {
 		return AMBInitFunctionValue.TypeName
 	}
 
-	public var objectName: String { get {
-		return super.identifier + "@body"
-	}}
+	public static func objectName(identifier ident: String) -> String {
+		return ident + "@body"
+	}
 
 	public override func makeFunctionHeader() -> String {
 		let functype = AMBInitFunctionValue.TypeName
@@ -349,9 +291,9 @@ public class AMBEventFunctionValue: AMBFunctionValue
 
 	public var arguments: Array<AMBArgument> { get { return mArguments }}
 
-	public init(identifier ident: String, script scr: String, arguments args: Array<AMBArgument>){
+	public init(script scr: String, arguments args: Array<AMBArgument>){
 		mArguments = args
-		super.init(valueType: .eventFunction, identifier: ident, script: scr)
+		super.init(valueType: .eventFunction, script: scr)
 	}
 
 	public override func typeName() -> String {
@@ -385,15 +327,13 @@ public class AMBListnerFunctionValue: AMBFunctionValue
 {
 	public static var TypeName	= "Listner"
 
-	private var mReturnType:	AMBValue.ValueType
 	private var mArguments: Array<AMBPathArgument>
 
 	public var arguments: Array<AMBPathArgument> { get { return mArguments }}
 
-	public init(identifier ident: String, script scr: String, returnType rtype: AMBValue.ValueType, arguments args: Array<AMBPathArgument>){
+	public init(arguments args: Array<AMBPathArgument>, script scr: String){
 		mArguments  = args
-		mReturnType = rtype
-		super.init(valueType: .listnerFunction, identifier: ident, script: scr)
+		super.init(valueType: .listnerFunction, script: scr)
 	}
 
 	public override func typeName() -> String {
@@ -404,8 +344,7 @@ public class AMBListnerFunctionValue: AMBFunctionValue
 		let args     = AMBPathArgument.arguments(from: mArguments)
 		let paramstr = args.joined(separator: ", ")
 		let functype = AMBListnerFunctionValue.TypeName
-		let rettype  = mReturnType.description
-		return rettype + " " + functype + "(\(paramstr)) %{"
+		return functype + "(\(paramstr)) %{"
 	}
 
 	public override func makeScriptArgument() -> String {
@@ -427,15 +366,13 @@ public class AMBProcedureFunctionValue: AMBFunctionValue
 {
 	public static var TypeName	= "Func"
 
-	private var mReturnType:	AMBValue.ValueType
 	private var mArguments: 	Array<AMBArgument>
 
 	public var arguments: Array<AMBArgument> { get { return mArguments }}
 
-	public init(identifier ident: String, script scr: String, returnType rtype: AMBValue.ValueType, arguments args: Array<AMBArgument>){
-		mReturnType	= rtype
+	public init(arguments args: Array<AMBArgument>, script scr: String){
 		mArguments 	= args
-		super.init(valueType: .procedureFunction, identifier: ident, script: scr)
+		super.init(valueType: .procedureFunction, script: scr)
 	}
 
 	public override func typeName() -> String {
@@ -446,8 +383,7 @@ public class AMBProcedureFunctionValue: AMBFunctionValue
 		let args     = AMBArgument.arguments(from: mArguments)
 		let paramstr = args.joined(separator: ", ")
 		let functype = AMBProcedureFunctionValue.TypeName
-		let rettype  = mReturnType.description
-		return rettype + " " + functype + "(\(paramstr)) %{"
+		return functype + "(\(paramstr)) %{"
 	}
 
 	public override func makeScriptArgument() -> String {

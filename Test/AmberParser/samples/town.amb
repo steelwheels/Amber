@@ -1,76 +1,76 @@
 top: VBox {
-    members: Storage {
-        name: String "main"
-        path: String "town.members"
-    }
+	members: Storage {
+		name: "main"
+		path: "town.members"
+	}
 
-    title: ImageView {
-        name: String "town_title"
+	title: ImageView {
+		name: "town_title"
     }
-    party_title: Label {
-	text: String "The current party"
+	party_title: Label {
+		text: "The current party"
     }
-    partyTable: TableView {
-	hasHeader:    Bool true
-	isSelectable: Bool true
-	fieldNames: Array [
+	partyTable: TableView {
+		hasHeader:    	true
+		isSelectable:	true
+		fieldNames: [
                 {field:"name",          title:"Name"},
                 {field:"level",         title:"Level"},
                 {field:"hitPoint",      title:"HP"},
                 {field:"magicPoint",    title:"MP"}
         ]
-	init: Init %{
-		self.dataTable = top.members.table ;
-		self.reload() ;
-	%}
-	filter: Event(record) %{
-		let char = new Character.Character(record) ;
-		return char.isPartyMember() ;
-	%}
-    }
-    tavern_button: Button {
-        title:  String "Tavern"
-        pressed: Event() %{
-		enterView("tavern", null) ;
+		init: Init %{
+			self.dataTable = top.members.table ;
+			self.reload() ;
+		%}
+		filter: Event(record) %{
+			let char = new Character.Character(record) ;
+			return char.isPartyMember() ;
+		%}
+	}
+	tavern_button: Button {
+		title:  	"Tavern"
+		pressed: Event() %{
+			enterView("tavern", null) ;
 		top.partyTable.reload() ;
-        %}
+		%}
     }
-    inn_button: Button {
-        title:  String "Inn"
-        pressed: Event() %{
-		enterView("inn", null) ;
-        %}
-    }
+	inn_button: Button {
+		title:  "Inn"
+		pressed: Event() %{
+			enterView("inn", null) ;
+		%}
+	}
     temple_button: Button {
-        title:  String "Temple"
+        title:  "Temple"
         pressed: Event() %{
-		enterView("temple", null) ;
+			enterView("temple", null) ;
         %}
     }
     shop_button: Button {
-        title:  String "Shop"
-        pressed: Event() %{
-		enterView("shop", null) ;
-        %}
+		title:  "Shop"
+		pressed: Event() %{
+			enterView("shop", null) ;
+		%}
     }
-    edge_button: Button {
-        title:  String "Edge of town"
+	edge_button: Button {
+        title:  "Edge of town"
         pressed: Event() %{
-		console.log("pressed: Edge") ;
-        %}
+			console.log("pressed: Edge") ;
+		%}
     }
     ret_button: Button {
-        title:  String "Opening"
+		title:  "Opening"
         pressed: Event() %{
-		let table = top.members.table ;
-		console.print("Save table ... ") ;
-		if(table.save()){
-			console.print("done\n") ;
-		} else {
-			console.print("fail\n") ;
-		}
-		leaveView(0) ;
-        %}
+			let table = top.members.table ;
+			console.print("Save table ... ") ;
+			if(table.save()){
+				console.print("done\n") ;
+			} else {
+				console.print("fail\n") ;
+			}
+			leaveView(0) ;
+		%}
     }
 }
 

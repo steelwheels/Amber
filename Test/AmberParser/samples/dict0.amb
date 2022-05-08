@@ -1,0 +1,8 @@
+a: Object {
+	b: [
+		{key:"field-a", value:0},
+		{key:"field-b", value:1}
+	]
+	c: ["hello", "good morning", "god night"]
+}
+

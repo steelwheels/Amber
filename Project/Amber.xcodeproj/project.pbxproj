@@ -429,7 +429,6 @@
 				05ED776425204BD2000EC3FC /* Headers */,
 				05ED776525204BD2000EC3FC /* Sources */,
 				05ED776625204BD2000EC3FC /* Frameworks */,
-				05ED776725204BD2000EC3FC /* Resources */,
 			);
 			buildRules = (
 			);
@@ -447,7 +446,6 @@
 				05ED777325204BF9000EC3FC /* Headers */,
 				05ED777425204BF9000EC3FC /* Sources */,
 				05ED777525204BF9000EC3FC /* Frameworks */,
-				05ED777625204BF9000EC3FC /* Resources */,
 			);
 			buildRules = (
 			);
@@ -518,20 +516,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				05A51A7D25D95E5400CE633F /* data0.amb in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		05ED776725204BD2000EC3FC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		05ED777625204BF9000EC3FC /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
