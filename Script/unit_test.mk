@@ -28,6 +28,7 @@ exec: dummy
 	$(test_exec) $(test_dir)/samples/buttons.amb 2>&1 | $(TEE) $(log_file)
 	$(test_exec) $(test_dir)/samples/terminal.amb 2>&1 | $(TEE) $(log_file)
 	$(test_exec) $(test_dir)/samples/town.amb 2>&1 | $(TEE) $(log_file)
+	$(test_exec) $(test_dir)/samples/table.amb 2>&1 | $(TEE) $(log_file)
 
 diff: dummy
 	grep -v CoreText $(log_file) \

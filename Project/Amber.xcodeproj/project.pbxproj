@@ -27,7 +27,6 @@
 		05A392692523763700A1A37A /* AMBReactObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A392672523763700A1A37A /* AMBReactObject.swift */; };
 		05A3926C252378A500A1A37A /* AMBFrameCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A3926B252378A500A1A37A /* AMBFrameCompiler.swift */; };
 		05A3926D252378A500A1A37A /* AMBFrameCompiler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05A3926B252378A500A1A37A /* AMBFrameCompiler.swift */; };
-		05A51A7D25D95E5400CE633F /* data0.amb in Resources */ = {isa = PBXBuildFile; fileRef = 05A51A7C25D95E5400CE633F /* data0.amb */; };
 		05B973D827ECB6CE00ED9577 /* KiwiEngine.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		05B973DC27ECB6D000ED9577 /* KiwiLibrary.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		05B973E027ECB6D800ED9577 /* Amber.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 05ED77DC252098B5000EC3FC /* Amber.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -118,6 +117,19 @@
 		052F454B256A9D2B00CF8A99 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0535C1A02520B1F3002A9172 /* ambparser */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ambparser; sourceTree = BUILT_PRODUCTS_DIR; };
 		0535C1A22520B1F4002A9172 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		05369BD2282A11F200D44F9B /* welcome.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = welcome.amb; sourceTree = "<group>"; };
+		05369BD3282A11F200D44F9B /* buttons.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = buttons.amb; sourceTree = "<group>"; };
+		05369BD4282A11F200D44F9B /* terminal.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = terminal.amb; sourceTree = "<group>"; };
+		05369BD5282A11F200D44F9B /* empty.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = empty.amb; sourceTree = "<group>"; };
+		05369BD6282A11F200D44F9B /* single.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = single.amb; sourceTree = "<group>"; };
+		05369BD7282A11F200D44F9B /* dict0.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = dict0.amb; sourceTree = "<group>"; };
+		05369BD8282A11F200D44F9B /* dict1.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = dict1.amb; sourceTree = "<group>"; };
+		05369BD9282A11F200D44F9B /* bitmap.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = bitmap.amb; sourceTree = "<group>"; };
+		05369BDA282A11F200D44F9B /* table.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = table.amb; sourceTree = "<group>"; };
+		05369BDB282A11F200D44F9B /* vfunc.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = vfunc.amb; sourceTree = "<group>"; };
+		05369BDC282A11F200D44F9B /* nest2.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = nest2.amb; sourceTree = "<group>"; };
+		05369BDD282A11F200D44F9B /* nest.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = nest.amb; sourceTree = "<group>"; };
+		05369BDE282A11F200D44F9B /* town.amb */ = {isa = PBXFileReference; lastKnownFileType = text; path = town.amb; sourceTree = "<group>"; };
 		055C9EA525236BED00E6B266 /* KiwiEngine.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = KiwiEngine.xcframework; path = ../../../Library/Frameworks/KiwiEngine.xcframework; sourceTree = "<group>"; };
 		055C9EA625236BED00E6B266 /* KiwiLibrary.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = KiwiLibrary.xcframework; path = ../../../Library/Frameworks/KiwiLibrary.xcframework; sourceTree = "<group>"; };
 		05851CBA2574637F00359DDC /* AMBLibraryCompiler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AMBLibraryCompiler.swift; sourceTree = "<group>"; };
@@ -186,6 +198,19 @@
 		0525A036281FC41A00E5F14A /* samples */ = {
 			isa = PBXGroup;
 			children = (
+				05369BD9282A11F200D44F9B /* bitmap.amb */,
+				05369BD3282A11F200D44F9B /* buttons.amb */,
+				05369BD7282A11F200D44F9B /* dict0.amb */,
+				05369BD8282A11F200D44F9B /* dict1.amb */,
+				05369BD5282A11F200D44F9B /* empty.amb */,
+				05369BDD282A11F200D44F9B /* nest.amb */,
+				05369BDC282A11F200D44F9B /* nest2.amb */,
+				05369BD6282A11F200D44F9B /* single.amb */,
+				05369BDA282A11F200D44F9B /* table.amb */,
+				05369BD4282A11F200D44F9B /* terminal.amb */,
+				05369BDE282A11F200D44F9B /* town.amb */,
+				05369BDB282A11F200D44F9B /* vfunc.amb */,
+				05369BD2282A11F200D44F9B /* welcome.amb */,
 			);
 			path = samples;
 			sourceTree = "<group>";
@@ -515,7 +540,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05A51A7D25D95E5400CE633F /* data0.amb in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

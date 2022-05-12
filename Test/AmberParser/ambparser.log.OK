@@ -78,6 +78,41 @@
   children: {
   }
 }
+[SOURCE] a: Object
+{
+	a: {key:"field-a", value:0}
+	b: {key:"field-b", value:1}
+}
+
+
+[FRAME] a: Object {
+  a: Dictionary 
+    {
+      key:
+        "field-a"
+      value:
+        0
+    }
+  b: Dictionary 
+    {
+      key:
+        "field-b"
+      value:
+        1
+    }
+}
+[COMPONENT] component a:Object {
+  react-object: {
+    properties: {
+      className
+      instanceName
+      a
+      b
+    }
+  }
+  children: {
+  }
+}
 [SOURCE] a: Object {
 	b: Object {
 		c: 124
@@ -1154,6 +1189,284 @@
         }
       }
       children: {
+      }
+    }
+  }
+}
+[SOURCE] top: VBox {
+	table: TableView {
+		hasHeader:			true
+		isSelectable:		true
+		fieldNames: [
+			{field:"c0", title:"column 0"},
+			{field:"c1", title:"column 1"},
+			{field:"c2", title:"column 2"}
+		]
+		init: Init %{
+			let storage = Storage("storage") ;
+	        if(storage == null){
+		        console.log("Failed to allocate storage") ;
+	        }
+	        let table = Table("root", storage) ;
+	        if(table == null){
+		        console.log("Failed to allocate table") ;
+	        }
+			// Set table into this view
+			self.dataTable = table ;
+			self.reload() ;
+        %}
+		filter: Event(record) %{
+			console.log("filter: " + record.toString()) ;
+			return true ;
+		%}
+		virtualFields: Object {
+			c3: Func(rec) %{
+				return 0 ;
+			%}
+		}
+		pressed: Event(row, col) %{
+			console.log("row    = " + row + "/" + self.rowCount) ;
+			console.log("column = " + col + "/" + self.columnCount) ;
+		%}
+    }
+    buttons: HBox {
+		rm_button: Button {
+			title: "Remove"
+			isEnabled: Listner(selected: top.table.didSelected) %{
+				return selected ;
+			%}
+			pressed: Event() %{
+				/*
+				let recs = top.table.selectedRecords() ;
+				console.log("selected recs: " + recs.length) ;
+				for(rec of recs){
+					console.log("rec: " + rec.toString()) ;
+				}
+				*/
+				top.table.removeSelectedRows() ;
+        	%}
+    	}
+	save_button: Button {
+		title: "Save"
+		pressed: Event() %{
+			if(top.table.dataTable.save()){
+				console.print("save ... done\n") ;
+			} else {
+				console.print("save ... failed\n") ;
+			}
+        %}
+    }
+	quit_button: Button {
+   		title: "Quit"
+		pressed: Event() %{
+			leaveView(1) ;
+        	%}
+    	}
+    }
+}
+
+
+[FRAME] top: VBox {
+  table: TableView 
+    table: TableView {
+      hasHeader: Bool 
+        true
+      isSelectable: Bool 
+        true
+      fieldNames: Array 
+        [
+          {
+            field:
+              "c0"
+            title:
+              "column 0"
+          }
+          {
+            field:
+              "c1"
+            title:
+              "column 1"
+          }
+          {
+            field:
+              "c2"
+            title:
+              "column 2"
+          }
+        ]
+      init: Init 
+        Init %{
+          			let storage = Storage("storage") ;
+          	        if(storage == null){
+          		        console.log("Failed to allocate storage") ;
+          	        }
+          	        let table = Table("root", storage) ;
+          	        if(table == null){
+          		        console.log("Failed to allocate table") ;
+          	        }
+          			// Set table into this view
+          			self.dataTable = table ;
+          			self.reload() ;
+                  
+        %}
+      filter: Event 
+        Event(record) %{
+          			console.log("filter: " + record.toString()) ;
+          			return true ;
+          		
+        %}
+      virtualFields: Object 
+        virtualFields: Object {
+          c3: Func 
+            Func(rec) %{
+              				return 0 ;
+              			
+            %}
+        }
+      pressed: Event 
+        Event(row, col) %{
+          			console.log("row    = " + row + "/" + self.rowCount) ;
+          			console.log("column = " + col + "/" + self.columnCount) ;
+          		
+        %}
+    }
+  buttons: HBox 
+    buttons: HBox {
+      rm_button: Button 
+        rm_button: Button {
+          title: String 
+            "Remove"
+          isEnabled: Listner 
+            Listner(selected) %{
+              				return selected ;
+              			
+            %}
+          pressed: Event 
+            Event() %{
+              				/*
+              				let recs = top.table.selectedRecords() ;
+              				console.log("selected recs: " + recs.length) ;
+              				for(rec of recs){
+              					console.log("rec: " + rec.toString()) ;
+              				}
+              				*/
+              				top.table.removeSelectedRows() ;
+                      	
+            %}
+        }
+      save_button: Button 
+        save_button: Button {
+          title: String 
+            "Save"
+          pressed: Event 
+            Event() %{
+              			if(top.table.dataTable.save()){
+              				console.print("save ... done\n") ;
+              			} else {
+              				console.print("save ... failed\n") ;
+              			}
+                      
+            %}
+        }
+      quit_button: Button 
+        quit_button: Button {
+          title: String 
+            "Quit"
+          pressed: Event 
+            Event() %{
+              			leaveView(1) ;
+                      	
+            %}
+        }
+    }
+}
+[COMPONENT] component top:VBox {
+  react-object: {
+    properties: {
+      buttons
+      table
+      className
+      instanceName
+    }
+  }
+  children: {
+    component table:TableView {
+      react-object: {
+        properties: {
+          pressed
+          filter
+          virtualFields
+          init@body
+          className
+          hasHeader
+          isSelectable
+          instanceName
+          fieldNames
+        }
+      }
+      children: {
+        component virtualFields:Object {
+          react-object: {
+            properties: {
+              c3
+              className
+              instanceName
+            }
+          }
+          children: {
+          }
+        }
+      }
+    }
+    component buttons:HBox {
+      react-object: {
+        properties: {
+          quit_button
+          save_button
+          className
+          instanceName
+          rm_button
+        }
+      }
+      children: {
+        component rm_button:Button {
+          react-object: {
+            properties: {
+              pressed
+              title
+              _lfunc_isEnabled
+              className
+              instanceName
+              isEnabled
+            }
+          }
+          children: {
+          }
+        }
+        component save_button:Button {
+          react-object: {
+            properties: {
+              pressed
+              title
+              className
+              instanceName
+            }
+          }
+          children: {
+          }
+        }
+        component quit_button:Button {
+          react-object: {
+            properties: {
+              pressed
+              title
+              className
+              instanceName
+            }
+          }
+          children: {
+          }
+        }
       }
     }
   }

@@ -129,7 +129,7 @@ public class AMBParser
 						return .failure(err)
 					}
 				case .procedureFunction:
-					switch parseListnerFunc(stream: strm) {
+					switch parseProceduralFunc(stream: strm) {
 					case .success(let val):
 						return .success(AMBMember(identifier: ident, value: val))
 					case .failure(let err):

@@ -268,11 +268,6 @@ import JavaScriptCore
 		}
 	}
 
-	/*
-	private func propertyToListnerFuncName(_ name: String) -> String {
-		return "_lfunc_" + name
-	}*/
-
 	public func setListnerFuncPointers(pointers ptrs: Array<AMBObjectPointer>, forProperty prop: String) {
 		let lname = propertyToListnerFuncParameterName(prop)
 		mListerFuncPointers[lname] = ptrs
