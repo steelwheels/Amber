@@ -45,7 +45,7 @@ public class AMBValue: AMBObject
 			case .scalar(let type):
 				result = type.description
 			case .enumerate(let typename):
-				if let enumtype = KEEnumTable.shared.search(by: typename) {
+				if let enumtype = CNEnumTable.defaultTable().search(byTypeName: typename) {
 					result = enumtype.typeName
 				} else {
 					result = "<unknown-enum>"
