@@ -138,7 +138,7 @@ public class AMBParser
 				default:
 					return .failure(parseError(message: "Unexpected function type", stream: strm))
 				}
-			} else if let etype = CNEnumTable.defaultTable().search(byTypeName: clsname) {
+			} else if let etype = CNEnumTable.currentEnumTable().search(byTypeName: clsname) {
 				switch parseEnumValue(enumType: etype, stream: strm) {
 				case .success(let val):
 					return .success(AMBMember(identifier: ident, value: val))
