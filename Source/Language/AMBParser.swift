@@ -177,7 +177,8 @@ public class AMBParser
 		if strm.requireSymbol(symbol: ".") {
 			if let ident = strm.getIdentifier() {
 				if let eval = etype.search(byName: ident) {
-					return .success(AMBScalarValue(value: .enumValue(eval)))
+					let num = NSNumber(value: eval.value)
+					return .success(AMBScalarValue(value: .numberValue(num)))
 				} else {
 					return .failure(parseError(message: "Unknown enum value \(ident) for enum type \(etype.typeName)", stream: strm))
 				}
@@ -244,6 +245,14 @@ public class AMBParser
 					}
 				default:
 					return .failure(parseError(message: "Unknown function type: \(funcstr)", stream: strm))
+				}
+
+			} else if let etype = CNEnumTable.currentEnumTable().search(byTypeName: funcstr) {
+				switch parseEnumValue(enumType: etype, stream: strm) {
+				case .success(let val):
+					return .success(val)
+				case .failure(let err):
+					return .failure(err)
 				}
 			} else {
 				return .failure(parseError(message: "Unknown function type: \(funcstr)", stream: strm))

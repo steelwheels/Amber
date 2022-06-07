@@ -30,7 +30,6 @@ public class AMBValue: AMBObject
 {
 	public enum ValueType {
 		case scalar(CNValueType)
-		case enumerate(String)		// The type name managed by KEEnumTable
 		case frame(String)		// (class name)
 		case array
 		case dictionary
@@ -44,12 +43,6 @@ public class AMBValue: AMBObject
 			switch self {
 			case .scalar(let type):
 				result = type.description
-			case .enumerate(let typename):
-				if let enumtype = CNEnumTable.currentEnumTable().search(byTypeName: typename) {
-					result = enumtype.typeName
-				} else {
-					result = "<unknown-enum>"
-				}
 			case .frame(let clsname):
 				result = clsname
 			case .array:

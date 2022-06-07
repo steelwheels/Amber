@@ -73,13 +73,6 @@ open class AMBFrameCompiler
 				} else {
 					CNLog(logLevel: .error, message: "Can not happen (0)", atFunction: #function, inFile: #file)
 				}
-			case .enumerate(_):
-				if let scalar = value as? AMBScalarValue {
-					let val = compileEnumValueProperty(enumValue: scalar.value, context: ctxt)
-					newobj.setImmediateValue(value: val, forProperty: ident)
-				} else {
-					CNLog(logLevel: .error, message: "Can not happen (0)", atFunction: #function, inFile: #file)
-				}
 			case .array:
 				if let array = value as? AMBArrayValue {
 					let val = array.toJSValue(context: ctxt)
