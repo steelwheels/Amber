@@ -208,20 +208,28 @@ import JavaScriptCore
 
 	public func arrayValue(forProperty prop: String) -> Array<Any>? {
 		if let imm = immediateValue(forProperty: prop) {
-			if imm.isArray {
-				return imm.toArray()
-			}
+			return imm.toArray()
+		} else {
+			return nil
 		}
-		return nil
 	}
 
 	public func setArrayValue(value arr: Array<CNValue>, forProperty prop: String) {
 		let arrobj = CNValue.arrayValue(arr).toJSValue(context: self.context)
-		if let val = JSValue(object: arrobj, in: self.context) {
-			setImmediateValue(value: val, forProperty: prop)
+		setImmediateValue(value: arrobj, forProperty: prop)
+	}
+
+	public func dictionaryValue(forProperty prop: String) -> Dictionary<AnyHashable, Any>? {
+		if let imm = immediateValue(forProperty: prop) {
+			return imm.toDictionary()
 		} else {
-			NSLog("Failed to allocate array value")
+			return nil
 		}
+	}
+
+	public func setDictionaryValue(value dict: Dictionary<String, CNValue>, forProperty prop: String) {
+		let dictobj = CNValue.dictionaryValue(dict).toJSValue(context: self.context)
+		setImmediateValue(value: dictobj, forProperty: prop)
 	}
 
 	public func objectValue(forProperty prop: String) -> NSObject? {
