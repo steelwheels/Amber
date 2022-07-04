@@ -39,11 +39,13 @@ public class AMBThread: CNThread
 
 		let script:	String
 		let resource:	KEResource
+		let srcfile:    URL?
 		switch mSource {
 		case .script(let url):
 			resource = KEResource(packageDirectory: url)
 			if let scr = url.loadContents() {
-				script = scr as String
+				script  = scr as String
+				srcfile = url
 			} else {
 				console.error(string: "Failed to load script from \(url.absoluteString)\n")
 				return -1
@@ -51,7 +53,8 @@ public class AMBThread: CNThread
 		case .application(let res):
 			resource = res
 			if let scr = res.loadView() {
-				script = scr
+				script  = scr
+				srcfile = res.URLOfView()
 			} else {
 				console.error(string: "Failed to load script from the resource\n")
 				return -1
@@ -73,7 +76,7 @@ public class AMBThread: CNThread
 		/* Compile the Amber script */
 		let ambparser = AMBParser()
 		let frame: AMBFrame
-		switch ambparser.parse(source: script as String) {
+		switch ambparser.parse(source: script as String, sourceFile: srcfile) {
 		case .success(let val):
 			if let frm = val as? AMBFrame {
 				frame = frm

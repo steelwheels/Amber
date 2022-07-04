@@ -12,16 +12,15 @@ import Foundation
 public class AMBParser
 {
 	public init() {
-
 	}
 
-	public func parse(source src: String) -> Result<AMBValue, NSError> {
+	public func parse(source src: String, sourceFile srcfile: URL?) -> Result<AMBValue, NSError> {
 		let conf = CNParserConfig(allowIdentiferHasPeriod: false)
 		switch CNStringToToken(string: src, config: conf) {
 		case .ok(let tokens):
 			let ptokens = preprocess(source: tokens)
 			let stream  = CNTokenStream(source: ptokens)
-			return parseFrame(stream: stream)
+			return parseFrame(stream: stream, sourceFile: srcfile)
 		case .error(let err):
 			return .failure(err)
 		@unknown default:
@@ -57,7 +56,7 @@ public class AMBParser
 		return result
 	}
 
-	private func parseFrame(stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
+	private func parseFrame(stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBValue, NSError> {
 		guard let ident = strm.getIdentifier() else {
 			return .failure(parseError(message: "Identifier is required", stream: strm))
 		}
@@ -65,7 +64,7 @@ public class AMBParser
 			return .failure(parseError(message: "\":\" is required", stream: strm))
 		}
 		if let clsname = strm.requireIdentifier() {
-			switch parseFrame(identifier: ident, className: clsname, stream: strm) {
+			switch parseFrame(identifier: ident, className: clsname, stream: strm, sourceFile: srcfile) {
 			case .success(let value):
 				return .success(value)
 			case .failure(let err):
@@ -76,7 +75,7 @@ public class AMBParser
 		}
 	}
 
-	private func parseFrame(identifier ident: String, className clsname: String, stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
+	private func parseFrame(identifier ident: String, className clsname: String, stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBValue, NSError> {
 		let newframe = AMBFrame(className: clsname, instanceName: ident)
 		guard strm.requireSymbol(symbol: "{") else {
 			return .failure(parseError(message: "\"{\" is required for \"\(ident)\" component", stream: strm))
@@ -86,7 +85,7 @@ public class AMBParser
 			if strm.requireSymbol(symbol: "}") {
 				finished = true
 			} else {
-				switch parseMember(stream: strm) {
+				switch parseMember(stream: strm, sourceFile: srcfile) {
 				case .success(let memb):
 					newframe.append(member: memb)
 				case .failure(let err):
@@ -97,7 +96,7 @@ public class AMBParser
 		return .success(newframe)
 	}
 
-	private func parseMember(stream strm: CNTokenStream) -> Result<AMBMember, NSError> {
+	private func parseMember(stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBMember, NSError> {
 		guard let ident = strm.getIdentifier() else {
 			return .failure(parseError(message: "Identifier for frame member is required", stream: strm))
 		}
@@ -108,28 +107,28 @@ public class AMBParser
 			if let ftype = decodeFunctionType(string: clsname) {
 				switch ftype {
 				case .initFunction:
-					switch parseInitFunc(stream: strm) {
+					switch parseInitFunc(stream: strm, sourceFile: srcfile) {
 					case .success(let val):
 						return .success(AMBMember(identifier: ident, value: val))
 					case .failure(let err):
 						return .failure(err)
 					}
 				case .eventFunction:
-					switch parseEventFunc(stream: strm) {
+					switch parseEventFunc(stream: strm, sourceFile: srcfile) {
 					case .success(let val):
 						return .success(AMBMember(identifier: ident, value: val))
 					case .failure(let err):
 						return .failure(err)
 					}
 				case .listnerFunction:
-					switch parseListnerFunc(stream: strm) {
+					switch parseListnerFunc(stream: strm, sourceFile: srcfile) {
 					case .success(let val):
 						return .success(AMBMember(identifier: ident, value: val))
 					case .failure(let err):
 						return .failure(err)
 					}
 				case .procedureFunction:
-					switch parseProceduralFunc(stream: strm) {
+					switch parseProceduralFunc(stream: strm, sourceFile: srcfile) {
 					case .success(let val):
 						return .success(AMBMember(identifier: ident, value: val))
 					case .failure(let err):
@@ -146,7 +145,7 @@ public class AMBParser
 					return .failure(err)
 				}
 			} else {
-				switch parseFrame(identifier: ident, className: clsname, stream: strm){
+				switch parseFrame(identifier: ident, className: clsname, stream: strm, sourceFile: srcfile){
 				case .success(let val):
 					return .success(AMBMember(identifier: ident, value: val))
 				case .failure(let err):
@@ -154,7 +153,7 @@ public class AMBParser
 				}
 			}
 		} else {
-			switch parseValue(stream: strm) {
+			switch parseValue(stream: strm, sourceFile: srcfile) {
 			case .success(let val):
 				return .success(AMBMember(identifier: ident, value: val))
 			case .failure(let err):
@@ -190,12 +189,12 @@ public class AMBParser
 		}
 	}
 
-	private func parseValue(stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
+	private func parseValue(stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBValue, NSError> {
 		if let sym = strm.requireSymbol() {
 			switch sym {
 			case "[":
 				let _ = strm.unget() // unget "["
-				switch parseArrayValue(stream: strm) {
+				switch parseArrayValue(stream: strm, sourceFile: srcfile) {
 				case .success(let val):
 					return .success(val)
 				case .failure(let err):
@@ -203,7 +202,7 @@ public class AMBParser
 				}
 			case "{":
 				let _ = strm.unget() // unget "{"
-				switch parseDictionaryValue(stream: strm) {
+				switch parseDictionaryValue(stream: strm, sourceFile: srcfile) {
 				case .success(let val):
 					return .success(val)
 				case .failure(let err):
@@ -216,28 +215,28 @@ public class AMBParser
 			if let functype = decodeFunctionType(string: funcstr) {
 				switch functype {
 				case .initFunction:
-					switch parseInitFunc(stream: strm) {
+					switch parseInitFunc(stream: strm, sourceFile: srcfile) {
 					case .success(let val):
 						return .success(val)
 					case .failure(let err):
 						return .failure(err)
 					}
 				case .eventFunction:
-					switch parseEventFunc(stream: strm) {
+					switch parseEventFunc(stream: strm, sourceFile: srcfile) {
 					case .success(let val):
 						return .success(val)
 					case .failure(let err):
 						return .failure(err)
 					}
 				case .listnerFunction:
-					switch parseListnerFunc(stream: strm) {
+					switch parseListnerFunc(stream: strm, sourceFile: srcfile) {
 					case .success(let val):
 						return .success(val)
 					case .failure(let err):
 						return .failure(err)
 					}
 				case .procedureFunction:
-					switch parseProceduralFunc(stream: strm) {
+					switch parseProceduralFunc(stream: strm, sourceFile: srcfile) {
 					case .success(let val):
 						return .success(val)
 					case .failure(let err):
@@ -267,7 +266,7 @@ public class AMBParser
 		}
 	}
 
-	private func parseArrayValue(stream strm: CNTokenStream) -> Result<AMBArrayValue, NSError> {
+	private func parseArrayValue(stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBArrayValue, NSError> {
 		let result = AMBArrayValue()
 		guard strm.requireSymbol(symbol: "[") else {
 			return .failure(parseError(message: "\"[\" for frame member is required", stream: strm))
@@ -285,7 +284,7 @@ public class AMBParser
 						return .failure(parseError(message: "\",\" is required between array elements", stream: strm))
 					}
 				}
-				switch parseValue(stream: strm) {
+				switch parseValue(stream: strm, sourceFile: srcfile) {
 				case .success(let val):
 					result.append(value: val)
 				case .failure(let err):
@@ -296,7 +295,7 @@ public class AMBParser
 		return .success(result)
 	}
 
-	private func parseDictionaryValue(stream strm: CNTokenStream) -> Result<AMBDictionaryValue, NSError> {
+	private func parseDictionaryValue(stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBDictionaryValue, NSError> {
 		let result = AMBDictionaryValue()
 		guard strm.requireSymbol(symbol: "{") else {
 			return .failure(parseError(message: "\"{\" for frame member is required", stream: strm))
@@ -320,7 +319,7 @@ public class AMBParser
 				guard strm.requireSymbol(symbol: ":") else {
 					return .failure(parseError(message: "\":\" to divide key and value is required", stream: strm))
 				}
-				switch parseValue(stream: strm) {
+				switch parseValue(stream: strm, sourceFile: srcfile) {
 				case .success(let val):
 					result.set(member: AMBMember(identifier: ident, value: val))
 				case .failure(let err):
@@ -359,15 +358,15 @@ public class AMBParser
 		}
 	}
 
-	private func parseInitFunc(stream strm: CNTokenStream) -> Result<AMBInitFunctionValue, NSError> {
+	private func parseInitFunc(stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBInitFunctionValue, NSError> {
 		if let text = strm.getText() {
-			return .success(AMBInitFunctionValue(script: text))
+			return .success(AMBInitFunctionValue(script: text, sourceFile: srcfile))
 		} else {
 			return .failure(parseError(message: "The body of Init function is required", stream: strm))
 		}
 	}
 
-	private func parseEventFunc(stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
+	private func parseEventFunc(stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBValue, NSError> {
 		guard strm.requireSymbol(symbol: "(") else {
 			return .failure(parseError(message: "\"(\" is required to define event function parameters", stream: strm))
 		}
@@ -389,13 +388,13 @@ public class AMBParser
 			}
 		}
 		if let text = strm.getText() {
-			return .success(AMBEventFunctionValue(script: text, arguments: args))
+			return .success(AMBEventFunctionValue(script: text, arguments: args, sourceFile: srcfile))
 		} else {
 			return .failure(parseError(message: "The body of Event function is required", stream: strm))
 		}
 	}
 
-	private func parseListnerFunc(stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
+	private func parseListnerFunc(stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBValue, NSError> {
 		guard strm.requireSymbol(symbol: "(") else {
 			return .failure(parseError(message: "\"(\" is required to define listner function parameters", stream: strm))
 		}
@@ -417,13 +416,13 @@ public class AMBParser
 			}
 		}
 		if let text = strm.getText() {
-			return .success(AMBListnerFunctionValue(arguments: args, script: text))
+			return .success(AMBListnerFunctionValue(arguments: args, script: text, sourceFile: srcfile))
 		} else {
 			return .failure(parseError(message: "The body of Event function is required", stream: strm))
 		}
 	}
 
-	private func parseProceduralFunc(stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
+	private func parseProceduralFunc(stream strm: CNTokenStream, sourceFile srcfile: URL?) -> Result<AMBValue, NSError> {
 		var args: Array<AMBArgument> = []
 		guard strm.requireSymbol(symbol: "(") else {
 			return .failure(parseError(message: "\"(\" is required to define procedural function parameters", stream: strm))
@@ -445,7 +444,7 @@ public class AMBParser
 			}
 		}
 		if let text = strm.getText() {
-			return .success(AMBProcedureFunctionValue(arguments: args, script: text))
+			return .success(AMBProcedureFunctionValue(arguments: args, script: text, sourceFile: srcfile))
 		} else {
 			return .failure(parseError(message: "The body of Event function is required", stream: strm))
 		}

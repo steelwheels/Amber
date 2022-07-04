@@ -202,20 +202,22 @@ public class AMBDictionaryValue: AMBValue
 public class AMBFunctionValue: AMBValue
 {
 	private var	mScript		: String
+	private var 	mSourceFile	: URL?
 
-	public var script:     String { get { return mScript     }}
+	public var script:	String { get { return mScript     }}
+	public var sourceFile:	URL?   { get { return mSourceFile  }}
 
-	public init(valueType vtype: AMBValue.ValueType, script scr: String){
+	public init(valueType vtype: AMBValue.ValueType, script scr: String, sourceFile srcfile: URL?){
 		mScript		= scr
+		mSourceFile	= srcfile
 		super.init(valueType: vtype)
 	}
 
 	public override func toAny(context ctxt: KEContext) -> Any {
 		let scr = self.toScript()
-		if let resval = ctxt.evaluateScript(scr) {
-			if ctxt.errorCount == 0 {
-				return resval
-			}
+		let resval = ctxt.evaluateScript(script: scr, sourceFile: mSourceFile)
+		if ctxt.errorCount == 0 {
+			return resval
 		}
 		ctxt.resetErrorCount()
 		CNLog(logLevel: .error, message: "Failed to compile script: \(scr)", atFunction: #function, inFile: #file)
@@ -246,8 +248,8 @@ public class AMBInitFunctionValue: AMBFunctionValue
 {
 	public static var TypeName	= "Init"
 
-	public init(script scr: String){
-		super.init(valueType: .initFunction, script: scr)
+	public init(script scr: String, sourceFile srcfile: URL?){
+		super.init(valueType: .initFunction, script: scr, sourceFile: srcfile)
 	}
 
 	public override func typeName() -> String {
@@ -284,9 +286,9 @@ public class AMBEventFunctionValue: AMBFunctionValue
 
 	public var arguments: Array<AMBArgument> { get { return mArguments }}
 
-	public init(script scr: String, arguments args: Array<AMBArgument>){
+	public init(script scr: String, arguments args: Array<AMBArgument>, sourceFile srcfile: URL?){
 		mArguments = args
-		super.init(valueType: .eventFunction, script: scr)
+		super.init(valueType: .eventFunction, script: scr, sourceFile: srcfile)
 	}
 
 	public override func typeName() -> String {
@@ -324,9 +326,9 @@ public class AMBListnerFunctionValue: AMBFunctionValue
 
 	public var arguments: Array<AMBPathArgument> { get { return mArguments }}
 
-	public init(arguments args: Array<AMBPathArgument>, script scr: String){
+	public init(arguments args: Array<AMBPathArgument>, script scr: String, sourceFile srcfile: URL?){
 		mArguments  = args
-		super.init(valueType: .listnerFunction, script: scr)
+		super.init(valueType: .listnerFunction, script: scr, sourceFile: srcfile)
 	}
 
 	public override func typeName() -> String {
@@ -363,9 +365,9 @@ public class AMBProcedureFunctionValue: AMBFunctionValue
 
 	public var arguments: Array<AMBArgument> { get { return mArguments }}
 
-	public init(arguments args: Array<AMBArgument>, script scr: String){
+	public init(arguments args: Array<AMBArgument>, script scr: String, sourceFile srcfile: URL?){
 		mArguments 	= args
-		super.init(valueType: .procedureFunction, script: scr)
+		super.init(valueType: .procedureFunction, script: scr, sourceFile: srcfile)
 	}
 
 	public override func typeName() -> String {

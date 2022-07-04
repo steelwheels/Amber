@@ -174,13 +174,13 @@ open class AMBFrameCompiler
 		let funcscr = afunc.toScript()
 		let script  = varname + " = " + funcscr
 		/* Evaluate the function */
-		let _ = ctxt.evaluateScript(script)
+		let _ = ctxt.evaluateScript(script: script, sourceFile: afunc.sourceFile)
 		if ctxt.errorCount != 0 {
 			ctxt.resetErrorCount()
 			let err = NSError.parseError(message: "Failed to compile function: \(ident)\n\(script)")
 			return .failure(err)
 		}
-		if let val = ctxt.getValue(name: varname) {
+		if let val = ctxt.get(name: varname) {
 			return .success(val)
 		} else {
 			let err = NSError.parseError(message: "No compile result for function: \(ident)")
