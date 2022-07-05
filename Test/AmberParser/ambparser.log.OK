@@ -1243,7 +1243,7 @@
 					console.log("rec: " + rec.toString()) ;
 				}
 				*/
-				top.table.removeSelectedRows() ;
+				top.table.removeSelectedRecord() ;
         	%}
     	}
 	save_button: Button {
@@ -1350,7 +1350,7 @@
               					console.log("rec: " + rec.toString()) ;
               				}
               				*/
-              				top.table.removeSelectedRows() ;
+              				top.table.removeSelectedRecord() ;
                       	
             %}
         }
