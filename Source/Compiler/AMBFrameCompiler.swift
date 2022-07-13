@@ -41,10 +41,6 @@ open class AMBFrameCompiler
 		case .failure(let err):
 			return .failure(err)
 		}
-		/* Setup listner function */
-		if let err = allocateListnerCallers(rootObject: rootobj, console: cons) {
-			return .failure(err)
-		}
 		/* Allocate components by frame */
 		let rootcomp: AMBComponent
 		switch allocateComponents(reactObject: rootobj, mapper: cmapper, console: cons) {
@@ -57,6 +53,13 @@ open class AMBFrameCompiler
 		defineRootProperty(component: rootcomp, context: ctxt, console: cons)
 		/* Add setter/getter */
 		defineGetterAndSetters(component: rootcomp, context: ctxt, console: cons)
+		/* Setup listner function: This must be execute component allocation.
+		 * If this placed before component allocation, KVO operation will
+		 * occured.
+		 */
+		if let err = allocateListnerCallers(rootObject: rootobj, console: cons) {
+			return .failure(err)
+		}
 		return .success(rootcomp)
 	}
 
