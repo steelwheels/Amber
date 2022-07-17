@@ -11,7 +11,9 @@ This framework contains following implementation:
 ### Language
 * [AmberScript language specification](Document/amber-language.md): The specificiation of Amber programming language
 
-### Data formats
+### Component
+* [The overview of the component](Document/Component.md): Over view of the *Component*. It is primitive data structure for Amber programming language.
+
 # References
 * [Steel Wheels Project](https://steelwheels.github.io): The owner of this project
 
