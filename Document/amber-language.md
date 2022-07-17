@@ -4,7 +4,7 @@
 
 ## Introduction
 The Amber programming language is used to declare GUI.
-It consists of hierarchical structure of _frames_. The frame is used to declare the GUI component, thread interface and database model. The structure and property of the component is described by [JSON](https://www.json.org/json-en.html) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
+It consists of hierarchical structure of _frames_. The frame is used to declare the GUI component, thread interface and database model. The structure and property of the component is described by [Newton Script](https://www.newted.org/download/manuals/NewtonScriptProgramLanguage.pdf) like syntax. And the logic is described by [JavaScript](https://en.wikipedia.org/wiki/JavaScript).
 
 This is a sample Amber script:
 ````
@@ -32,7 +32,7 @@ The source code is [here](https://github.com/steelwheels/JSTerminal/tree/master/
 
 The frame contains multiple members such as properties, functions and child frames. The `identifier` is the name of the frame. The frame will  allocated as the instance of `class-name` class.
 
-You can see the list of built-in classes at [component library](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Library.md). Each components has special propeties to control it. 
+You can see the list of built-in classes at [component library](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Library.md). Each components has special propeties to control it.
 ````
 identifier : class-name
 {
@@ -41,7 +41,7 @@ identifier : class-name
 ````
 
 ### Properties
-The property is named variable to get/set value. The variable will be mapped on to the component. 
+The property is named variable to get/set value. The variable will be mapped on to the component.
 
 ````
 {
@@ -242,110 +242,6 @@ text: String %{
 %}
 ````
 
-## Syntax
-This is BNF of this language:
-````
-frame           := property_name ':' class '{'
-                        frame_members_opt
-                   '}'
-                ;
-class           := IDENTIFIER
-                ;
-frame_members_opt
-                := /* empty */
-                |  frame_members
-                ;
-frame_members   := frame_member
-                |  frame_members frame_member
-                ;
-frame_member    := property_name ':' expression
-                |  frame
-                ;
-property_name   := IDENTIFIER
-expression      := type typed_expression
-                |  event_function
-                |  init_function
-                |  frame
-                ;
-type            := 'Bool'
-                |  'Int'
-                |  'Float'
-                |  'String'
-                ;
-typed_expression
-                := constant_expression
-                |  array_expression
-                |  dictionary_expression
-                |  listner_function
-                |  procedural_function
-                ;
-event_function  := 'Event' '(' function_parameters_opt ')'
-                   function_body
-                ;
-init_function   := 'Init'
-                   function_body
-                ;
-constant_expression
-                := CONSTANT_VALUE
-                ;
-array_expression
-                : '[' array_elements ']'
-                ;
-array_elements:
-                := array_element
-                |  array_elements ',' array_element
-                ;
-array_element:
-                := constant_expression
-                |  array_expression
-                ;
-dictionary_expression
-                : '{' dictionary_elements '}'
-                ;
-dictionary_elements:
-                := dictionary_element
-                |  dictionary_elements ',' dictionary_element
-                ;
-dictionary_element: IDENTIFIER ':' expression
-                ;
-listner_function
-                := 'Listner' '(' listner_parameters_opt ')'
-                   function_body
-                ;
-listner_parameters_opt
-                := /* empty */
-                |  listner_parameters
-                ;
-listner_parameters
-                := listner_parameter
-                |  listner_parameters ',' listner_parameter
-                ;
-listner_parameter
-                := parameter ':' path_expression
-                ;
-procedural_function
-                := 'Func' '(' function_parameters_opt ')'
-                   function_body
-                ;
-function_parameters_opt
-                := /* empty */
-                |  function_parameters
-                ;
-function_parameters
-                := parameter
-                |  parameters ',' parameter
-                ;
-parameter       := IDENTIFIER
-                ;
-path_expression := parameter
-                |  path_expression '.' parameter
-                ;
-function_body   := '%{' ... any test ... '%}'
-                ;
-````
-
-The comment will be removed before parsing.
-
 ## Reserved words
 There is reserved word for Amber programming language. They are case sensitive.
 * `Bool`
@@ -360,4 +256,5 @@ There is reserved word for Amber programming language. They are case sensitive.
 * `true`
 
 ## Related links
+* Component: [Overview of the component](https://github.com/steelwheels/Amber/blob/master/Document/Component.md), [Component library](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Library.md).
 * [Steel Wheels Project](https://steelwheels.github.io): Developer's web site

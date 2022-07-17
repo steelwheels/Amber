@@ -1,5 +1,6 @@
 # Component
 The component is used for *event driven programming*.
+For more infomation, see the [Component library](https://github.com/steelwheels/KiwiCompnents/blob/master/Document/Library.md).
 
 ## Feature
 The component is an *extended object*.
@@ -7,7 +8,7 @@ It is similar to usual object (such as JavaScript object, Swift's  Object), but 
 
 ### Observable property
 The property which can be observed. The [listner function](https://github.com/steelwheels/Amber/blob/master/Document/amber-language.md) is used to detect it.
-Some components have `update` property. 
+Some components have `update` property.
 The property has the count which is incremented when the contents is updated.
 
 ### Event method
