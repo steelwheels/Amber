@@ -21,7 +21,7 @@ top: VBox {
 			return true ;
 		%}
 		virtualFields: Object {
-			c3: Func(rec) %{
+			c3: Func(self, rec) %{
 				return 0 ;
 			%}
 		}

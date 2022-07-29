@@ -131,6 +131,11 @@ import JavaScriptCore
 	}
 
 	public func setBoolValue(value val: Bool, forProperty prop: String) {
+		if let curval = boolValue(forProperty: prop) {
+			if curval == val {
+				return // already defined
+			}
+		}
 		if let val = JSValue(bool: val, in: self.context) {
 			setImmediateValue(value: val, forProperty: prop)
 		} else {
@@ -148,6 +153,11 @@ import JavaScriptCore
 	}
 
 	public func setInt32Value(value val: Int32, forProperty prop: String) {
+		if let curval = int32Value(forProperty: prop) {
+			if curval == val {
+				return // already defined
+			}
+		}
 		if let val = JSValue(int32: val , in: self.context) {
 			setImmediateValue(value: val, forProperty: prop)
 		} else {
@@ -165,6 +175,11 @@ import JavaScriptCore
 	}
 
 	public func setFloatValue(value val: Double, forProperty prop: String) {
+		if let curval = floatValue(forProperty: prop) {
+			if curval == val {
+				return // already defined
+			}
+		}
 		if let val = JSValue(double: val, in: self.context) {
 			setImmediateValue(value: val, forProperty: prop)
 		} else {
@@ -182,6 +197,14 @@ import JavaScriptCore
 	}
 
 	public func setNumberValue(value val: NSNumber, forProperty prop: String) {
+		if let curval = numberValue(forProperty: prop) {
+			switch curval.compare(val) {
+			case .orderedSame:
+				return // already defined
+			case .orderedAscending, .orderedDescending:
+				break
+			}
+		}
 		if let val = JSValue(object: val, in: self.context) {
 			setImmediateValue(value: val, forProperty: prop)
 		} else {
@@ -198,8 +221,13 @@ import JavaScriptCore
 		return nil
 	}
 
-	public func setStringValue(value str: String, forProperty prop: String) {
-		if let val = JSValue(object: str, in: self.context) {
+	public func setStringValue(value val: String, forProperty prop: String) {
+		if let curval = stringValue(forProperty: prop) {
+			if curval == val {
+				return // already defined
+			}
+		}
+		if let val = JSValue(object: val, in: self.context) {
 			setImmediateValue(value: val, forProperty: prop)
 		} else {
 			NSLog("Failed to allocate string value")
