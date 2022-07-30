@@ -12,7 +12,6 @@ top: VBox {
     }
 	partyTable: TableView {
 		hasHeader:    	true
-		isSelectable:	true
 		fieldNames: [
                 {field:"name",          title:"Name"},
                 {field:"level",         title:"Level"},
