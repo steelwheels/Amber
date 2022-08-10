@@ -83,7 +83,7 @@ public class AMBValue: AMBObject
 		return NSNull()
 	}
 
-	open func toText() -> CNText {
+	open func toScript() -> CNText {
 		CNLog(logLevel: .error, message: "Must be override", atFunction: #function, inFile: #file)
 		return CNTextLine(string: "?")
 	}
@@ -108,8 +108,8 @@ public class AMBScalarValue: AMBValue
 		return mValue.toAny()
 	}
 
-	public override func toText() -> CNText {
-		return mValue.toText()
+	public override func toScript() -> CNText {
+		return mValue.toScript()
 	}
 }
 
@@ -142,11 +142,11 @@ public class AMBArrayValue: AMBValue
 		return result
 	}
 
-	public override func toText() -> CNText {
+	public override func toScript() -> CNText {
 		let result = CNTextSection()
 		result.header = "[" ; result.footer = "]"
 		for elm in mValue {
-			result.add(text: elm.toText())
+			result.add(text: elm.toScript())
 		}
 		return result
 	}
@@ -181,7 +181,7 @@ public class AMBDictionaryValue: AMBValue
 		return result
 	}
 
-	public override func toText() -> CNText {
+	public override func toScript() -> CNText {
 		let result = CNTextSection()
 		result.header = "{" ; result.footer = "}"
 		let keys = mValue.keys.sorted()
@@ -190,7 +190,7 @@ public class AMBDictionaryValue: AMBValue
 				let newsect = CNTextSection()
 				newsect.header = "\(key):"
 				newsect.footer = ""
-				newsect.add(text: val.toText())
+				newsect.add(text: val.toScript())
 
 				result.add(text: newsect)
 			}
@@ -214,7 +214,7 @@ public class AMBFunctionValue: AMBValue
 	}
 
 	public override func toAny(context ctxt: KEContext) -> Any {
-		let scr = self.toScript()
+		let scr = self.toJavaScript()
 		let resval = ctxt.evaluateScript(script: scr, sourceFile: mSourceFile)
 		if ctxt.errorCount == 0 {
 			return resval
@@ -224,7 +224,7 @@ public class AMBFunctionValue: AMBValue
 		return NSNull()
 	}
 
-	public func toScript() -> String {
+	public func toJavaScript() -> String {
 		let argstr  = makeScriptArgument()
 		let header  = "function(\(argstr)) {\n"
 		let tail    = "\n}\n"
@@ -269,7 +269,7 @@ public class AMBInitFunctionValue: AMBFunctionValue
 		return "self"
 	}
 
-	public override func toText() -> CNText {
+	public override func toScript() -> CNText {
 		let result = CNTextSection()
 		result.header = makeFunctionHeader()
 		result.footer = "%}"
@@ -308,7 +308,7 @@ public class AMBEventFunctionValue: AMBFunctionValue
 		return args.joined(separator: ", ")
 	}
 
-	public override func toText() -> CNText {
+	public override func toScript() -> CNText {
 		let result = CNTextSection()
 		result.header = makeFunctionHeader()
 		result.footer = "%}"
@@ -348,7 +348,7 @@ public class AMBListnerFunctionValue: AMBFunctionValue
 		return args.joined(separator: ", ")
 	}
 
-	public override func toText() -> CNText {
+	public override func toScript() -> CNText {
 		let result = CNTextSection()
 		result.header = makeFunctionHeader()
 		result.footer = "%}"
@@ -386,7 +386,7 @@ public class AMBProcedureFunctionValue: AMBFunctionValue
 		return args.joined(separator: ", ")
 	}
 
-	public override func toText() -> CNText {
+	public override func toScript() -> CNText {
 		let result = CNTextSection()
 		result.header = makeFunctionHeader()
 		result.footer = "%}"
@@ -416,7 +416,7 @@ public class AMBFrame: AMBValue
 		mMembers.append(memb)
 	}
 
-	public override func toText() -> CNText {
+	public override func toScript() -> CNText {
 		let result = CNTextSection()
 		result.header = "\(instanceName): \(className) {"
 		result.footer = "}"
@@ -427,7 +427,7 @@ public class AMBFrame: AMBValue
 			newsect.header = "\(memb.identifier): \(value.type.description) "
 			newsect.footer = ""
 
-			newsect.add(text: value.toText())
+			newsect.add(text: value.toScript())
 			result.add(text: newsect)
 		}
 		return result

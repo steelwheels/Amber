@@ -269,12 +269,8 @@
             Before using this software, please select the home directory of this application.
             I recommend you to create unique directory
             such as ~/Development."
-          fontSize: Enum 
-            {
-              class: "enum",
-              name: "large",
-              value: 19
-            }
+          fontSize: Number 
+            19
         }
     }
   select: HBox 
@@ -856,7 +852,6 @@
     }
 	partyTable: TableView {
 		hasHeader:    	true
-		isSelectable:	true
 		fieldNames: [
                 {field:"name",          title:"Name"},
                 {field:"level",         title:"Level"},
@@ -940,8 +935,6 @@
   partyTable: TableView 
     partyTable: TableView {
       hasHeader: Bool 
-        true
-      isSelectable: Bool 
         true
       fieldNames: Array 
         [
@@ -1111,7 +1104,6 @@
           init@body
           className
           hasHeader
-          isSelectable
           instanceName
           fieldNames
         }
@@ -1196,18 +1188,13 @@
 [SOURCE] top: VBox {
 	table: TableView {
 		hasHeader:			true
-		isSelectable:		true
 		fieldNames: [
 			{field:"c0", title:"column 0"},
 			{field:"c1", title:"column 1"},
 			{field:"c2", title:"column 2"}
 		]
 		init: Init %{
-			let storage = Storage("storage") ;
-	        if(storage == null){
-		        console.log("Failed to allocate storage") ;
-	        }
-	        let table = Table("root", storage) ;
+	        let table = TableStorage("storage", "root") ;
 	        if(table == null){
 		        console.log("Failed to allocate table") ;
 	        }
@@ -1220,13 +1207,13 @@
 			return true ;
 		%}
 		virtualFields: Object {
-			c3: Func(rec) %{
+			c3: Func(self, rec) %{
 				return 0 ;
 			%}
 		}
-		pressed: Event(row, col) %{
-			console.log("row    = " + row + "/" + self.rowCount) ;
-			console.log("column = " + col + "/" + self.columnCount) ;
+		pressed: Event(record, field) %{
+			console.log("record = " + record + "\n") ;
+			console.log("field  = " + field  + "\n") ;
 		%}
     }
     buttons: HBox {
@@ -1236,13 +1223,11 @@
 				return selected ;
 			%}
 			pressed: Event() %{
-				/*
-				let recs = top.table.selectedRecords() ;
-				console.log("selected recs: " + recs.length) ;
-				for(rec of recs){
-					console.log("rec: " + rec.toString()) ;
+				let rec = top.table.selectedRecord() ;
+				if(rec == null){
+					return ;
 				}
-				*/
+				console.log("selected rec: " + rec.toString()) ;
 				top.table.removeSelectedRecord() ;
         	%}
     	}
@@ -1271,8 +1256,6 @@
     table: TableView {
       hasHeader: Bool 
         true
-      isSelectable: Bool 
-        true
       fieldNames: Array 
         [
           {
@@ -1296,11 +1279,7 @@
         ]
       init: Init 
         Init %{
-          			let storage = Storage("storage") ;
-          	        if(storage == null){
-          		        console.log("Failed to allocate storage") ;
-          	        }
-          	        let table = Table("root", storage) ;
+          	        let table = TableStorage("storage", "root") ;
           	        if(table == null){
           		        console.log("Failed to allocate table") ;
           	        }
@@ -1318,15 +1297,15 @@
       virtualFields: Object 
         virtualFields: Object {
           c3: Func 
-            Func(rec) %{
+            Func(self, rec) %{
               				return 0 ;
               			
             %}
         }
       pressed: Event 
-        Event(row, col) %{
-          			console.log("row    = " + row + "/" + self.rowCount) ;
-          			console.log("column = " + col + "/" + self.columnCount) ;
+        Event(record, field) %{
+          			console.log("record = " + record + "\n") ;
+          			console.log("field  = " + field  + "\n") ;
           		
         %}
     }
@@ -1343,13 +1322,11 @@
             %}
           pressed: Event 
             Event() %{
-              				/*
-              				let recs = top.table.selectedRecords() ;
-              				console.log("selected recs: " + recs.length) ;
-              				for(rec of recs){
-              					console.log("rec: " + rec.toString()) ;
+              				let rec = top.table.selectedRecord() ;
+              				if(rec == null){
+              					return ;
               				}
-              				*/
+              				console.log("selected rec: " + rec.toString()) ;
               				top.table.removeSelectedRecord() ;
                       	
             %}
@@ -1399,7 +1376,6 @@
           init@body
           className
           hasHeader
-          isSelectable
           instanceName
           fieldNames
         }

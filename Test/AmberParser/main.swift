@@ -24,10 +24,10 @@ public func main() -> Int
 
 		let frame: AMBFrame
 		let parser = AMBParser()
-		switch parser.parse(source: source) {
+		switch parser.parse(source: source, sourceFile: infile){
 		case .success(let val):
 			if let frm = val as? AMBFrame {
-				let txt = frm.toText().toStrings().joined(separator: "\n")
+				let txt = frm.toScript().toStrings().joined(separator: "\n")
 				console.print(string: "[FRAME] \(txt)\n")
 				frame = frm
 			} else {

@@ -174,7 +174,7 @@ open class AMBFrameCompiler
 	private func compileFunction(reactObject dst: AMBReactObject, identifier ident: String, function afunc: AMBFunctionValue, context ctxt: KEContext, config conf: KEConfig, console cons: CNConsole) -> Result<JSValue, NSError> {
 		/* Make JavaScript function */
 		let varname = TEMPORARY_VARIABLE_NAME + ident
-		let funcscr = afunc.toScript()
+		let funcscr = afunc.toJavaScript()
 		let script  = varname + " = " + funcscr
 		/* Evaluate the function */
 		let _ = ctxt.evaluateScript(script: script, sourceFile: afunc.sourceFile)

@@ -91,7 +91,7 @@ public class AMBThread: CNThread
 
 		if doVerbose() {
 			console.print(string: "[Frame dump]\n")
-			let txt = frame.toText().toStrings().joined(separator: "\n")
+			let txt = frame.toScript().toStrings().joined(separator: "\n")
 			console.print(string: txt + "\n")
 		}
 
@@ -109,7 +109,7 @@ public class AMBThread: CNThread
 
 		if doVerbose() {
 			console.print(string: "[Component dump]\n")
-			let txt = frame.toText().toStrings().joined(separator: "\n")
+			let txt = frame.toScript().toStrings().joined(separator: "\n")
 			console.print(string: txt + "\n")
 		}
 
