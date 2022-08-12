@@ -175,8 +175,8 @@ public class AMBParser
 	private func parseEnumValue(enumType etype: CNEnumType, stream strm: CNTokenStream) -> Result<AMBValue, NSError> {
 		if strm.requireSymbol(symbol: ".") {
 			if let ident = strm.getIdentifier() {
-				if let eval = etype.search(byName: ident) {
-					let num = NSNumber(value: eval.value)
+				if let eobj = etype.allocate(name: ident) {
+					let num = NSNumber(integerLiteral: eobj.value)
 					return .success(AMBScalarValue(value: .numberValue(num)))
 				} else {
 					return .failure(parseError(message: "Unknown enum value \(ident) for enum type \(etype.typeName)", stream: strm))
